@@ -1,4 +1,4 @@
-import pyRssa
+from pyRssa import pyRssa
 import numpy as np
 
 n = 100

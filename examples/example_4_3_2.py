@@ -1,6 +1,6 @@
-import pyRssa
+from pyRssa import pyRssa
 import numpy as np
-import time
+
 pyRssa.seed(1)
 N = 71
 sigma = 5
