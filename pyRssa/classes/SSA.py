@@ -15,7 +15,6 @@ class SSA:
         self.U = ssa_get(self.obj, "U").T
         self.V = ssa_get(self.obj, "V")
 
-    # TODO
     def contributions(self, idx):
         idx = np.asarray(idx) + 1
         return ssa_contributions(self.obj, idx)
