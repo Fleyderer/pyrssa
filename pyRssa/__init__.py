@@ -1,3 +1,4 @@
-from pyRssa.classes.SSA import Ssa
-from pyRssa.classes.Resonstruction import Reconstruct
+from pyRssa.classes.SSA import SSA
+from pyRssa.classes.Resonstruction import Reconstruction
+from pyRssa.classes.WCorMatrix import WCorMatrix
 from pyRssa.pyRssa import *

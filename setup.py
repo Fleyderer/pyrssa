@@ -7,5 +7,5 @@ setup(
     version='1.0',
     description='Rssa for Python',
     author='Fleyderer',
-    install_requires=['rpy2', 'pandas', 'numpy']
+    install_requires=['rpy2', 'pandas', 'numpy', 'matplotlib']
 )

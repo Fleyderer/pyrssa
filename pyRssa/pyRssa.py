@@ -1,5 +1,6 @@
-from pyRssa import Ssa
-from pyRssa import Reconstruct
+from pyRssa import SSA
+from pyRssa import Reconstruction
+from pyRssa import WCorMatrix
 from rpy2 import robjects
 import rpy2.robjects.packages as rpackages
 import rpy2.robjects.conversion as conversion
@@ -100,7 +101,7 @@ pyRssa_converter.py2rpy.register(type(None), none_to_null)
 pyRssa_converter.py2rpy.register(range, range_to_vec)
 pyRssa_converter.py2rpy.register(list, list_to_vec)
 pyRssa_converter.py2rpy.register(dict, dict_to_vec)
-pyRssa_converter.py2rpy.register(Ssa, pyssa_to_rssa)
+pyRssa_converter.py2rpy.register(SSA, pyssa_to_rssa)
 conversion_rules = default_converter + pyRssa_converter + numpy_converter + pandas_converter
 conversion.set_conversion(conversion_rules)
 
@@ -162,8 +163,16 @@ def parestimate(ds, group, method):
     return r.parestimate(ds, group=group, method=method)
 
 
-def wcor(ds, groups):
-    return r.wcor(ds, groups=groups)
+def ssa(ds, L, kind):
+    return SSA(ds, L, kind)
+
+
+def reconstruct(ds, groups):
+    return Reconstruction(ds, groups)
+
+
+def wcor(ds, groups=range(1, 50)):
+    return WCorMatrix(ds, groups)
 
 
 def rnorm(*args, **kwargs):
@@ -215,9 +224,13 @@ def vector_plot_2(dt, idx):
     plt.show()
 
 
-def vector_plot(dt, idx):
+def vector_plot(dt: SSA, idx, contrib=True):
     if idx is None:
         idx = range(len(dt.U))
+    if contrib is True:
+        cntrb = dt.contributions(idx)
+    else:
+        cntrb = None
     cols = 4
     rows = int(np.ceil(len(idx) / cols))
 
@@ -229,16 +242,23 @@ def vector_plot(dt, idx):
     for i in range(len(idx)):
         ax = fig.add_subplot(gs[i], sharey=ax)
         ax.plot(range(len(dt.U[idx[i]])), dt.U[idx[i]])
-        ax.set_title(idx[i])
+        if cntrb is None:
+            ax.set_title(idx[i])
+        else:
+            ax.set_title(f'{idx[i]} ({cntrb[i] * 100:.2f} %)')
         ax.set_xticks([])
         ax.set_yticks([])
         ax.set_aspect(aspect='auto', adjustable='box')
     plt.show()
 
 
-def paired_plot(dt, idx):
+def paired_plot(dt: SSA, idx, contrib=True):
     if idx is None:
         idx = range(len(dt.U))
+    if contrib is True:
+        cntrb = dt.contributions(idx)
+    else:
+        cntrb = None
     cols = 4
     rows = int(np.ceil(len(idx) / cols))
     fig = plt.figure(figsize=(cols + 1, rows + 1))
@@ -249,21 +269,24 @@ def paired_plot(dt, idx):
     for i in range(len(idx) - 1):
         ax = fig.add_subplot(gs[i])
         ax.plot(dt.U[idx[i + 1]], dt.U[idx[i]])
-        ax.set_title(f'{idx[i]} vs {idx[i + 1]}')
+        if cntrb is None:
+            ax.set_title(f'{idx[i]} vs {idx[i + 1]}')
+        else:
+            ax.set_title(f'{idx[i]} ({cntrb[i] * 100:.2f}%) vs {idx[i + 1]} ({cntrb[i + 1] * 100:.2f}%)')
         ax.set_xticks([])
         ax.set_yticks([])
         ax.set_aspect(aspect='auto', adjustable='box')
     plt.show()
 
 
-def xyplot(dt: Reconstruct, x, add_residuals, add_original):
+def xyplot(dt: Reconstruction, x, add_residuals, add_original):
     fig, ax = plt.subplots()
     if x is None:
         x = range(len(dt.series))
     if add_original:
         ax.plot(x, dt.series, label="Original")
-    ax.plot(x, dt.trend, label='Trend')
-    ax.plot(x, dt.seasonality, label='Seasonality')
+    for name in dt.names:
+        ax.plot(x, getattr(dt, name), label=name)
     if add_residuals:
         ax.plot(x, dt.residuals, label='Residuals')
     ax.legend()
@@ -271,7 +294,7 @@ def xyplot(dt: Reconstruct, x, add_residuals, add_original):
     plt.show()
 
 
-def sigma_plot(ts: Ssa):
+def sigma_plot(ts: SSA):
     plt.suptitle('Component norms')
     plt.plot(ts.sigma, marker='o')
     plt.xlabel('Index')
@@ -280,15 +303,33 @@ def sigma_plot(ts: Ssa):
     plt.show()
 
 
-def plot(ts, x=None, kind=None, add_residuals=False, add_original=False, idx=None):
+def wcor_plot(wcor_matrix: WCorMatrix, scales=None):
 
+    plt.imshow(np.asarray(wcor_matrix.matrix), cmap='gray_r', vmin=0, vmax=1)
+    plt.gca().invert_yaxis()
+
+    if scales is None:
+        ticks = range(len(wcor_matrix.groups))
+        labels = wcor_matrix.groups
+    else:
+        ticks = scales
+        labels = scales
+
+    plt.xticks(ticks, labels=labels)
+    plt.yticks(ticks, labels=labels)
+    plt.show()
+
+
+def plot(ts, x=None, kind=None, add_residuals=False, add_original=False, idx=None, scales=None, contrib=True):
     if kind == "vectors":
-        return vector_plot(ts, idx)
+        return vector_plot(ts, idx, contrib=contrib)
     elif kind == "paired":
-        return paired_plot(ts, idx)
-    elif type(ts) == Reconstruct:
+        return paired_plot(ts, idx, contrib=contrib)
+    elif type(ts) == Reconstruction:
         return xyplot(ts, x, add_residuals, add_original)
-    elif type(ts) == Ssa:
+    elif type(ts) == SSA:
         return sigma_plot(ts)
+    elif type(ts) == WCorMatrix:
+        return wcor_plot(ts, scales)
 
 
