@@ -1,9 +1,9 @@
 from setuptools import setup
 
 setup(
-    name='pyRssa',
+    name='pyrssa',
     package_dir={"": "classes"},
-    packages=['pyRssa.pyRssa'],
+    packages=['pyrssa.pyrssa'],
     version='1.0',
     description='Rssa for Python',
     author='Fleyderer',

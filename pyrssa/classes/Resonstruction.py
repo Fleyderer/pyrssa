@@ -8,9 +8,6 @@ r_ssa = rpackages.importr('Rssa')
 class Reconstruction:
 
     def __init__(self, ds, groups):
-        if isinstance(groups, dict):
-            for k in groups:
-                groups[k] = np.asarray(groups[k]) + 1
         self.obj = r_ssa.reconstruct(ds, groups=groups)
         self.series = robjects.r.attr(self.obj, "series")
         self.residuals = robjects.r.attr(self.obj, "residuals")

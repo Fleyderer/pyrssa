@@ -9,5 +9,4 @@ class WCorMatrix:
 
     def __init__(self, ds, groups, **kwargs):
         self.groups = np.copy(groups)
-        groups = np.asarray(groups) + 1
-        self.matrix = robjects.r.wcor(ds, groups, **kwargs)
+        self.matrix = robjects.r.wcor(ds, self.groups, **kwargs)
