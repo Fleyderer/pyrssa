@@ -2,6 +2,7 @@ from pyrssa import SSA
 from pyrssa import Reconstruction
 from pyrssa import RForecast, VForecast, BForecast
 from pyrssa import WCorMatrix
+from pyrssa import installer
 from rpy2 import robjects
 import rpy2.robjects.packages as rpackages
 import rpy2.robjects.conversion as conversion
@@ -12,8 +13,11 @@ import matplotlib.pyplot as plt
 import matplotlib.gridspec as gridspec
 from pandas import read_csv
 import numpy as np
+
 import os
 
+# Install required R packages.
+installer.install_required()
 
 r = robjects.r
 r_ssa = rpackages.importr('Rssa')
