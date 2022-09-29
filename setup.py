@@ -2,7 +2,7 @@ from setuptools import setup
 
 setup(
     name='pyrssa',
-    packages=['pyrssa'],
+    packages=['pyrssa', 'pyrssa.classes'],
     version='1.0.1',
     description='Rssa for Python',
     author='Fleyderer',
