@@ -6,15 +6,20 @@ from pyrssa import installer
 from rpy2 import robjects
 import rpy2.robjects.packages as rpackages
 import rpy2.robjects.conversion as conversion
+from rpy2.rinterface_lib import callbacks
 from rpy2.robjects import default_converter
 from rpy2.robjects.numpy2ri import converter as numpy_converter
 from rpy2.robjects.pandas2ri import converter as pandas_converter
+import matplotlib
+matplotlib.use('TkAgg')
 import matplotlib.pyplot as plt
 import matplotlib.gridspec as gridspec
 from pandas import read_csv
 import numpy as np
-
 import os
+
+# Ignore warnings
+callbacks.consolewrite_warnerror = lambda *args: None
 
 # Install required R packages.
 installer.install_required()
@@ -234,7 +239,6 @@ def vector_plot_2(dt, idx):
     eig_n = 0
     for row in range(rows):
         for col in range(cols):
-            print(row, col, eig_n)
             ax[row, col].plot(range(len(dt.U[idx[eig_n]])), dt.U[idx[eig_n]], label=eig_n)
 
             ax[row, col].set_xticks([])
