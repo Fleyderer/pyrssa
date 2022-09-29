@@ -3,7 +3,7 @@ from setuptools import setup
 setup(
     name='pyrssa',
     packages=['pyrssa'],
-    version='1.0',
+    version='1.0.1',
     description='Rssa for Python',
     author='Fleyderer',
     author_email='fleyderer@gmail.com',
