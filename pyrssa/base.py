@@ -117,7 +117,7 @@ conversion.set_conversion(conversion_rules)
 
 
 def data(ds_name):
-    return read_csv(f'{os.path.join(os.path.dirname(os.path.realpath(__file__)), "data")}/{ds_name}.csv')
+    return read_csv(os.path.join(os.path.join(os.path.dirname(os.path.realpath(__file__)), "data"), f'{ds_name}.csv'))
 
 
 def time(ds):
