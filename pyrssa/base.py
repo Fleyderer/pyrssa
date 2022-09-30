@@ -7,6 +7,7 @@ from rpy2 import robjects
 import rpy2.robjects.packages as rpackages
 import rpy2.robjects.conversion as conversion
 from rpy2.rinterface_lib import callbacks
+from rpy2.rinterface import StrSexpVector
 from rpy2.robjects import default_converter
 from rpy2.robjects.numpy2ri import converter as numpy_converter
 from rpy2.robjects.pandas2ri import converter as pandas_converter

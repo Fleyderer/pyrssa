@@ -7,11 +7,11 @@ setup(
     package_data={
         'data': ['*']
     },
-    version='1.0.3',
+    version='1.0.4',
     description='Rssa for Python',
     author='Fleyderer',
     author_email='fleyderer@gmail.com',
     url="https://github.com/Fleyderer/pyrssa",
     license="Apache 2.0",
-    install_requires=['rpy2', 'pandas', 'numpy', 'matplotlib']
+    install_requires=['rpy2<=3.4.5', 'pandas', 'numpy', 'matplotlib']
 )
