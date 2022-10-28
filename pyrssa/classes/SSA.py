@@ -18,3 +18,9 @@ class SSA:
 
     def contributions(self, idx):
         return ssa_contributions(self.obj, idx)
+
+    def __str__(self):
+        return str(self.obj)
+
+    def __repr__(self):
+        return self.__str__()
