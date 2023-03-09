@@ -28,6 +28,10 @@ class FloatVector(robjects.FloatVector):
         elif isinstance(other, int):
             return robjects.r.sapply(self, "+", other)
 
+    def __pow__(self, power, modulo=None):
+        if isinstance(power, float) or isinstance(power, int):
+            return robjects.r.sapply(self, "^", power)
+
     __rmul__ = __mul__
 
     __radd__ = __add__
@@ -46,6 +50,10 @@ class IntVector(robjects.IntVector):
             return robjects.r.sapply(self, "*", other)
         elif isinstance(other, int):
             return robjects.r.sapply(self, "*", other)
+
+    def __pow__(self, power, modulo=None):
+        if isinstance(power, float) or isinstance(power, int):
+            return robjects.r.sapply(self, "^", power)
 
     __rmul__ = __mul__
 

@@ -1,4 +1,4 @@
-from pyrssa import SSA, Parestimate
+from pyrssa import SSA, IOSSA, Parestimate
 from pyrssa import Reconstruction
 from pyrssa import RForecast, VForecast, BForecast
 from pyrssa import WCorMatrix
@@ -14,6 +14,8 @@ import matplotlib.gridspec as gridspec
 from pandas import read_csv
 import numpy as np
 import os
+import inspect
+from typing import Callable
 
 
 # This line solve problem for PyCharm: module 'backend_interagg' has no attribute 'FigureCanvas'...
@@ -32,6 +34,11 @@ r = robjects.r
 r_ssa = rpackages.importr('Rssa')
 
 
+def _get_call(frame):
+    call = inspect.getframeinfo(frame)[3][0]
+    return call[call.find('=') + 1:].strip().rstrip()
+
+
 # Read pyrssa dataframes
 def data(ds_name):
     return read_csv(os.path.join(os.path.join(os.path.dirname(os.path.realpath(__file__)), "data"), f'{ds_name}.csv'))
@@ -43,8 +50,17 @@ def parestimate(x, groups, method="esprit", subspace="column", normalize_roots=N
                        dimensions=dimensions, solve_method=solve_method, drop=drop)
 
 
-def ssa(ds, L, kind="1d-ssa"):
-    return SSA(ds, L=L, kind=kind)
+def ssa(ds, L=None, kind="1d-ssa", column_projector="none", row_projector="none", svd_method="auto"):
+    return SSA(ds, L=L, kind=kind,
+               column_projector=column_projector,
+               row_projector=row_projector,
+               svd_method=svd_method,
+               call=_get_call(inspect.currentframe().f_back))
+
+
+def iossa(x: SSA, nested_groups, tol=1e-5, kappa=2, maxiter=100, norm=None, trace=False, kappa_balance=0.5, **kwargs):
+    return IOSSA(x=x, nested_groups=nested_groups, tol=tol, kappa=kappa, maxiter=maxiter, norm=norm, trace=trace,
+                 kappa_balance=kappa_balance, call=_get_call(inspect.currentframe().f_back), **kwargs)
 
 
 def reconstruct(ds, groups):
@@ -75,7 +91,7 @@ def bforecast(ds, groups, length=1, R=100, level=0.95, kind="recurrent", interva
 
 
 # Deprecated
-def vector_plot_2(dt, idx):
+def vector_plot_old(dt, idx):
     if idx is None:
         idx = range(len(dt.U))
     cols = 4
@@ -100,7 +116,7 @@ def vector_plot_2(dt, idx):
 
 def vector_plot(dt: SSA, idx, contrib=True, layout=None):
     if idx is None:
-        idx = range(1, len(dt.U) + 1)
+        idx = range(1, min(10, len(dt.U)) + 1)
     if contrib is True:
         cntrb = dt.contributions(idx)
     else:
@@ -138,11 +154,11 @@ def paired_plot(dt: SSA, idx, contrib=True):
         cntrb = dt.contributions(idx)
     else:
         cntrb = None
-    cols = 4
-    rows = int(np.ceil(len(idx) / cols))
+    cols = 5
+    rows = int(np.ceil((len(idx) - 1) / cols))
     fig = plt.figure(figsize=(cols + 1, rows + 1))
     fig.tight_layout(h_pad=1)
-    gs = gridspec.GridSpec(rows, cols, width_ratios=[1, 1, 1, 1], figure=fig, wspace=0, hspace=0.5)
+    gs = gridspec.GridSpec(rows, cols, width_ratios=[1] * cols, figure=fig, wspace=0, hspace=0.5)
 
     fig.suptitle("Pairs of eigenvectors")
     for i in range(len(idx) - 1):
@@ -161,13 +177,25 @@ def paired_plot(dt: SSA, idx, contrib=True):
     plt.show()
 
 
+def should_share_limits(series_arr, max_diff=1):
+    range_values = [[min(ser), max(ser)] for ser in series_arr]
+    arr_start, arr_end = list(map(list, zip(*range_values)))
+    min_start = min(arr_start)
+    max_end = max(arr_end)
+    max_start = max(arr_start)
+    min_end = min(arr_end)
+    max_range = abs(min_start - max_end)
+    return abs(max_start - min_start) / max_range <= max_diff and abs(max_end - min_end) / max_range <= max_diff
+
+
 def xyplot(dt: Reconstruction, x, add_residuals, add_original, layout, superpose):
 
     if x is None:
-        x = range(len(dt.series))
+        x = dt.series.index
 
     if superpose:
         fig, ax = plt.subplots()
+        fig.tight_layout()
         if add_original:
             ax.plot(x, dt.series, label="Original")
         for name in dt.names:
@@ -177,8 +205,11 @@ def xyplot(dt: Reconstruction, x, add_residuals, add_original, layout, superpose
         ax.legend()
         plt.title(label="Reconstructed series")
         plt.show()
+
     else:
+
         cnt = len(dt.names) + add_original + add_residuals
+
         if layout is not None:
             if layout[0] * layout[1] < cnt:
                 raise ValueError(f"Layout size {layout} is less than count of plotting series ({cnt}).")
@@ -187,29 +218,61 @@ def xyplot(dt: Reconstruction, x, add_residuals, add_original, layout, superpose
         else:
             rows = cnt
             cols = 1
+
+        plotting_series = []
+        if add_original:
+            plotting_series.append({'name': 'Original', 'series': dt.series})
+        for i in range(add_original, cnt - add_residuals):
+            name = dt.names[i - add_original]
+            plotting_series.append({'name': name, 'series': getattr(dt, name)})
+        if add_residuals:
+            plotting_series.append({'name': 'Residuals', 'series': dt.residuals})
+
+        if cols > 1:
+            all_series = [ser['series'] for ser in plotting_series]
+            share_y = should_share_limits(all_series)
+        else:
+            share_y = False
+
         fig = plt.figure(figsize=(2 * (cols + 1), 2 * (rows + 1)))
-        gs = gridspec.GridSpec(rows, cols)
+        if share_y:
+            gs = gridspec.GridSpec(rows, cols, width_ratios=[1] * cols, figure=fig, wspace=0.1, hspace=0.5)
+        else:
+            gs = gridspec.GridSpec(rows, cols)
         fig.suptitle("Reconstructed series")
         ax = None
 
-        if add_original:
-            ax = fig.add_subplot(gs[0])
-            ax.plot(x, dt.series)
-            ax.set_title("Original")
+        for i in range(len(plotting_series)):
+            if share_y:
+                is_first = ax is None
+                ax = fig.add_subplot(gs[i], sharex=ax, sharey=ax)
+                if not is_first:
+                    ax.tick_params(left=False, labelleft=False)
+            else:
+                ax = fig.add_subplot(gs[i], sharex=ax)
+            ax.plot(x, plotting_series[i]['series'])
+            ax.set_title(plotting_series[i]['name'])
 
-        for i in range(add_original, cnt - add_residuals):
-            ax = fig.add_subplot(gs[i], sharex=ax, sharey=ax)
-            name = dt.names[i - add_original]
-            ax.plot(x, getattr(dt, name))
-            ax.set_title(name)
-
-        if add_residuals:
-            ax = fig.add_subplot(gs[cnt - 1], sharex=ax, sharey=ax)
-            ax.plot(x, dt.residuals)
-            ax.set_title("Residuals")
-
-        fig.tight_layout()
+        if not share_y:
+            fig.tight_layout()
         plt.show()
+
+
+def matplot(dt: Reconstruction, x, add_residuals, add_original):
+
+    if x is None:
+        x = dt.series.index
+
+    fig, ax = plt.subplots()
+    if add_original:
+        ax.plot(x, dt.series, label="Original", color="black", linewidth=0.5)
+    for name in dt.names:
+        ax.plot(x, getattr(dt, name), label=name, linestyle="dashed")
+    if add_residuals:
+        ax.plot(x, dt.residuals, label='Residuals', linestyle="dashed")
+    ax.legend()
+    plt.title(label="Reconstructed series")
+    plt.show()
 
 
 def sigma_plot(ts: SSA):
@@ -229,7 +292,7 @@ def wcor_plot(wcor_matrix: WCorMatrix, scales=None):
         ticks = range(len(wcor_matrix.groups))
         labels = wcor_matrix.groups
     else:
-        ticks = np.array(scales) - 1  # fix for indexing of components while plotting
+        ticks = np.array(scales) - 1  # fix for indexing of components on the plot
         labels = scales
 
     plt.title("W-correlation matrix")
@@ -244,8 +307,11 @@ def plot(ts, x=None, kind=None, add_residuals=True, add_original=True, idx=None,
         return vector_plot(ts, idx, contrib=contrib)
     elif kind == "paired":
         return paired_plot(ts, idx, contrib=contrib)
-    elif type(ts) == Reconstruction or method == "xyplot":
-        return xyplot(ts, x, add_residuals, add_original, layout, superpose)
+    elif type(ts) == Reconstruction:
+        if method == "matplot":
+            return matplot(ts, x, add_residuals, add_original)
+        if method == "xyplot":
+            return xyplot(ts, x, add_residuals, add_original, layout, superpose)
     elif type(ts) == SSA:
         return sigma_plot(ts)
     elif type(ts) == WCorMatrix:

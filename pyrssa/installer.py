@@ -12,4 +12,5 @@ def install_required():
     pack_names = ('Rssa',)
     names_to_install = [x for x in pack_names if not rpackages.isinstalled(x)]
     if len(names_to_install) > 0:
-        utils.install_packages(StrVector(names_to_install))
+        utils.install_packages(
+            StrVector(names_to_install))
