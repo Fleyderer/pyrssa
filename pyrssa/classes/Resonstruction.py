@@ -17,8 +17,14 @@ class Reconstruction:
         for name in self.names:
             setattr(self, name, self.obj.rx(name)[0])
 
+    def __getitem__(self, item):
+        if isinstance(item, str):
+            return getattr(self, item)
+
     def __str__(self):
         return str(self.obj)
 
     def __repr__(self):
         return self.__str__()
+
+

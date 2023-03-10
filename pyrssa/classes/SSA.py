@@ -21,7 +21,7 @@ class SSABase:
 
     def contributions(self, idx=None):
         if idx is None:
-            idx = range(1, len(self.sigma) + 1)
+            idx = range(1, self.nsigma() + 1)
         return r_ssa.contributions(self.obj, idx)
 
     def nspecial(self):
@@ -43,17 +43,24 @@ class SSA(SSABase):
 
     def __init__(self, x,
                  L=None,
+                 neig=None,
+                 mask=None,
+                 wmask=None,
                  kind="1d-ssa",
                  column_projector="none",
                  row_projector="none",
                  svd_method="auto",
                  call=None):
+
         if L is None:
             L = (len(x) + 1) // 2
 
+        if isinstance(x, pd.DataFrame):
+            x = x.iloc[:, 0]
+
         self.L = L
         self.kind = kind
-        super().__init__(x, r_ssa.ssa(x, L=L, kind=kind,
+        super().__init__(x, r_ssa.ssa(x, L=L, neig=neig, mask=mask, wmask=wmask, kind=kind,
                                       column_projector=column_projector,
                                       row_projector=row_projector,
                                       svd_method=svd_method), call=call)

@@ -50,8 +50,9 @@ def parestimate(x, groups, method="esprit", subspace="column", normalize_roots=N
                        dimensions=dimensions, solve_method=solve_method, drop=drop)
 
 
-def ssa(ds, L=None, kind="1d-ssa", column_projector="none", row_projector="none", svd_method="auto"):
-    return SSA(ds, L=L, kind=kind,
+def ssa(ds, L=None, neig=None, mask=None, wmask=None, kind="1d-ssa",
+        column_projector="none", row_projector="none", svd_method="auto"):
+    return SSA(ds, L=L, neig=neig, mask=mask, wmask=wmask, kind=kind,
                column_projector=column_projector,
                row_projector=row_projector,
                svd_method=svd_method,
@@ -71,9 +72,9 @@ def wcor(ds, groups=range(1, 50)):
     return WCorMatrix(ds, groups)
 
 
-def rforecast(ds, groups, length=1, base="reconstructed", only_new=True,
+def rforecast(ds, groups, length=1, base="reconstructed", only_new=True, reverse=False,
               drop=False, drop_attributes=False, cache=True, **kwargs):
-    return RForecast(ds, groups, length=length, base=base, only_new=only_new,
+    return RForecast(ds, groups, length=length, base=base, only_new=only_new, reverse=reverse,
                      drop=drop, drop_attributes=drop_attributes, cache=cache, **kwargs)
 
 

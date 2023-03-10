@@ -68,6 +68,14 @@ def is_int_arr(arg):
     return is_arr_of_type(arg, int)
 
 
+def is_of_int_lists_arr(arr):
+    if isinstance(arr, list):
+        for x in arr:
+            if not isinstance(x, int) and not is_int_arr(x) and not isinstance(x, range):
+                return False
+    return True
+
+
 def none_to_null(obj):
     return robjects.r('NULL')
 
@@ -79,6 +87,14 @@ def range_to_vec(obj):
 def list_to_vec(obj):
     if is_int_arr(obj):
         return IntVector(list(obj))
+    elif is_of_int_lists_arr(obj):
+        result = robjects.ListVector.from_length(len(obj))
+        for i, x in enumerate(obj):
+            if isinstance(x, int):
+                result[i] = robjects.IntVector([x])
+            else:
+                result[i] = robjects.IntVector(list(x))
+        return result
     else:
         return robjects.ListVector(list(obj))
 

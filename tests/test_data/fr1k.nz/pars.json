@@ -1,0 +1,23 @@
+{
+  "name": "fr1k.nz",
+  "names": ["series", "reconstruction", "rforecast.orig", "rforecast.rec", "vforecast"],
+  "what": ["reconstruct", "rforecast", "vforecast"],
+  "kind": "1d-ssa",
+  "Ls":  {"reconstruct":  [17, 493, 499, 500, 670],
+          "forecast":  [17, 493, 499, 500]},
+  "groups": {"reconstruct": [[1], [2], [3], [4], [5], [6], [7], [8], [9], [10]],
+             "forecast":  [[1], [1, 2], [3, 4, 5], [1, 2, 3, 4, 5], [1, 3, 6, 10], [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]]},
+  "len": 100,
+  "neig": 15,
+  "tolerance": 1e-07,
+  "svd_methods": {"reconstruct": [["svd", "eigen", "propack"],
+                                  ["svd", "eigen", "propack"],
+                                  ["svd", "eigen", "propack"],
+                                  ["svd", "eigen", "propack"],
+                                  ["svd", "eigen", "propack"]],
+                  "forecast": [["svd", "eigen", "propack"],
+                               ["svd", "eigen", "propack"],
+                               ["svd", "eigen", "propack"],
+                               ["svd", "eigen", "propack"],
+                               ["svd", "eigen", "propack"]]}
+   }
