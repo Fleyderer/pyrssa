@@ -225,36 +225,76 @@ when possible (length of groups is one)</p></li>
 <dl class="py function">
 <dt class="sig sig-object py" id="pyrssa.base.ssa">
 <span class="sig-name descname"><span class="pre">ssa</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">L</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">neig</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mask</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wmask</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kind</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'1d-ssa'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">circular</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">column_projector</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'none'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">row_projector</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'none'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">svd_method</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'auto'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrssa/base.html#ssa"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrssa.base.ssa" title="Permalink to this definition"></a></dt>
-<dd><dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>x</strong> (Union[class:<cite>pd.DataFrame</cite>, class:<cite>pd.Series</cite>]) – object to be decomposed.</p></li>
-<li><p><strong>L</strong> (<em>int</em><em>, </em><em>optional</em>) – window length. Fixed to half of the series length by default.
-Should be vector of length 2 for 2d SSA</p></li>
-<li><p><strong>neig</strong> (<em>int</em><em>, </em><em>optional</em>) – number of desired eigentriples. If None, then sane default value
-will be used.</p></li>
-<li><p><strong>mask</strong> – for shaped 2d SSA case only. Logical matrix with same dimension as x.
-Specifies form of decomposed array. If None, then all non-NA elements will be used</p></li>
-<li><p><strong>wmask</strong> – for shaped 2d SSA case only. Logical matrix which specifies window form.</p></li>
-<li><p><strong>kind</strong> (<em>str</em><em>, </em><em>optional</em>) – SSA method. This includes ordinary 1d SSA, 2d SSA, Toeplitz variant of 1d SSA, multichannel
-variant of SSA and complex SSA. Defaults to 1d SSA.</p></li>
-<li><p><strong>circular</strong> – logical vector of one or two elements, describes series topology for 1d SSA and Toeplitz SSA
-or field topology for 2d SSA. ‘TRUE’ means series circularity for 1d case or circularity
-by a corresponding coordinate for 2d case. See Shlemov and Golyandina (2014) for more information.</p></li>
-<li><p><strong>row_projector</strong> (<em>int</em><em>, </em><em>optional</em>) – column and row signal subspaces projectors for SSA with projection.</p></li>
-<li><p><strong>svd_method</strong> – singular value decomposition method.</p></li>
-</ul>
+<dd><section id="description">
+<h2>Description<a class="headerlink" href="#description" title="Permalink to this heading"></a></h2>
+<p>Set up the SSA object and perform the decomposition, if necessary.</p>
+<dl class="field-list simple">
+<dt class="field-odd">param x<span class="colon">:</span></dt>
+<dd class="field-odd"><p>object to be decomposed.</p>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dt class="field-even">type x<span class="colon">:</span></dt>
+<dd class="field-even"><p>Union[class:<cite>pd.DataFrame</cite>, class:<cite>pd.Series</cite>]</p>
+</dd>
+<dt class="field-odd">param L<span class="colon">:</span></dt>
+<dd class="field-odd"><p>window length. Fixed to half of the series length by default.
+Should be vector of length 2 for 2d SSA</p>
+</dd>
+<dt class="field-even">type L<span class="colon">:</span></dt>
+<dd class="field-even"><p>int, optional</p>
+</dd>
+<dt class="field-odd">param neig<span class="colon">:</span></dt>
+<dd class="field-odd"><p>number of desired eigentriples. If None, then sane default value
+will be used.</p>
+</dd>
+<dt class="field-even">type neig<span class="colon">:</span></dt>
+<dd class="field-even"><p>int, optional</p>
+</dd>
+<dt class="field-odd">param mask<span class="colon">:</span></dt>
+<dd class="field-odd"><p>for shaped 2d SSA case only. Logical matrix with same dimension as x.
+Specifies form of decomposed array. If None, then all non-NA elements will be used</p>
+</dd>
+<dt class="field-even">param wmask<span class="colon">:</span></dt>
+<dd class="field-even"><p>for shaped 2d SSA case only. Logical matrix which specifies window form.</p>
+</dd>
+<dt class="field-odd">param kind<span class="colon">:</span></dt>
+<dd class="field-odd"><p>SSA method. This includes ordinary 1d SSA, 2d SSA, Toeplitz variant of 1d SSA, multichannel
+variant of SSA and complex SSA. Defaults to 1d SSA.</p>
+</dd>
+<dt class="field-even">type kind<span class="colon">:</span></dt>
+<dd class="field-even"><p>str, optional</p>
+</dd>
+<dt class="field-odd">param circular<span class="colon">:</span></dt>
+<dd class="field-odd"><p>logical vector of one or two elements, describes series topology for 1d SSA and Toeplitz SSA
+or field topology for 2d SSA. ‘TRUE’ means series circularity for 1d case or circularity
+by a corresponding coordinate for 2d case. See Shlemov and Golyandina (2014) for more information.</p>
+</dd>
+<dt class="field-even">param column_projector, row_projector<span class="colon">:</span></dt>
+<dd class="field-even"><p>column and row signal subspaces projectors for SSA with projection.</p>
+</dd>
+<dt class="field-odd">type column_projector<span class="colon">:</span></dt>
+<dd class="field-odd"><p>int, optional</p>
+</dd>
+<dt class="field-even">type row_projector<span class="colon">:</span></dt>
+<dd class="field-even"><p>int, optional</p>
+</dd>
+<dt class="field-odd">param svd_method<span class="colon">:</span></dt>
+<dd class="field-odd"><p>singular value decomposition method.</p>
+</dd>
+<dt class="field-even">return<span class="colon">:</span></dt>
 <dd class="field-even"><p>SSA Object. The precise layout of the object is mostly meant opaque and subject to
 change in different version of the package.</p>
 </dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dt class="field-odd">rtype<span class="colon">:</span></dt>
 <dd class="field-odd"><p>class:<cite>SSA</cite></p>
 </dd>
 </dl>
+</section>
 <section id="details">
 <h2>Details<a class="headerlink" href="#details" title="Permalink to this heading"></a></h2>
+<p>This is the main entry point to the package. This routine constructs the SSA object filling all necessary
+internal structures and performing the decomposition if necessary. For the comprehensive description of SSA
+modifications and their algorithms see Golyandina et al (2018).</p>
+<p>Variants of SSA</p>
 <p>Some details for this SSA.</p>
 </section>
 </dd></dl>

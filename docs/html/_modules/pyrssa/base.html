@@ -151,6 +151,10 @@
 <div class="viewcode-block" id="ssa"><a class="viewcode-back" href="../../pyrssa.html#pyrssa.base.ssa">[docs]</a><span class="k">def</span> <span class="nf">ssa</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">L</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">neig</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">mask</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">wmask</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">kind</span><span class="o">=</span><span class="s2">&quot;1d-ssa&quot;</span><span class="p">,</span> <span class="n">circular</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
         <span class="n">column_projector</span><span class="o">=</span><span class="s2">&quot;none&quot;</span><span class="p">,</span> <span class="n">row_projector</span><span class="o">=</span><span class="s2">&quot;none&quot;</span><span class="p">,</span> <span class="n">svd_method</span><span class="o">=</span><span class="s2">&quot;auto&quot;</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Description</span>
+<span class="sd">    -------</span>
+
+<span class="sd">    Set up the SSA object and perform the decomposition, if necessary.</span>
 
 <span class="sd">    :param x: object to be decomposed.</span>
 <span class="sd">    :type x: Union[class:`pd.DataFrame`, class:`pd.Series`]</span>
@@ -179,6 +183,13 @@
 
 <span class="sd">    Details</span>
 <span class="sd">    -------</span>
+
+<span class="sd">    This is the main entry point to the package. This routine constructs the SSA object filling all necessary</span>
+<span class="sd">    internal structures and performing the decomposition if necessary. For the comprehensive description of SSA</span>
+<span class="sd">    modifications and their algorithms see Golyandina et al (2018).</span>
+
+<span class="sd">    Variants of SSA</span>
+
 
 <span class="sd">    Some details for this SSA.</span>
 
