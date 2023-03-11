@@ -72,13 +72,13 @@ class SSA(SSABase):
         return self.__str__()
 
 
-def norm_conversion(func):
+def _norm_conversion(func):
     def wrapper(x):
         return float(func(np.array(x)))
     return wrapper
 
 
-def default_norm(x):
+def _default_norm(x):
     return np.sqrt(np.mean(x ** 2))
 
 
@@ -89,7 +89,7 @@ class IOSSA(SSABase):
                  tol=1e-5,
                  kappa=2,
                  maxiter=100,
-                 norm: Callable = default_norm,
+                 norm: Callable = _default_norm,
                  trace=False,
                  kappa_balance=0.5,
                  call=None,
@@ -101,8 +101,8 @@ class IOSSA(SSABase):
         self.kappa_balance = kappa_balance
         self.trace = trace
         if norm is None:
-            norm = default_norm
-        self.norm = robjects.rinterface.rternalize(norm_conversion(norm))
+            norm = _default_norm
+        self.norm = robjects.rinterface.rternalize(_norm_conversion(norm))
         super().__init__(x.F, r_ssa.iossa(x=x, nested_groups=self.nested_groups, tol=self.tol,
                                           kappa=self.kappa, maxiter=self.maxiter,
                                           trace=self.trace,

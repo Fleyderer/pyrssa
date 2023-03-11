@@ -18,7 +18,7 @@ import inspect
 from typing import Callable
 
 
-# This line solve problem for PyCharm: module 'backend_interagg' has no attribute 'FigureCanvas'...
+# This line solves problem for PyCharm: module 'backend_interagg' has no attribute 'FigureCanvas'...
 matplotlib.use('TkAgg')
 
 # Set conversion rules
@@ -40,23 +40,99 @@ def _get_call(frame):
 
 
 # Read pyrssa dataframes
-def data(ds_name):
-    return read_csv(os.path.join(os.path.join(os.path.dirname(os.path.realpath(__file__)), "data"), f'{ds_name}.csv'))
+def data(name):
+    """
+    Function for loading available in pyrssa package datasets. Available datasets are stored in the data directory.
+
+    :param name: Name of dataset to load
+    :return:
+    """
+    return read_csv(os.path.join(os.path.join(os.path.dirname(os.path.realpath(__file__)), "data"), f'{name}.csv'))
 
 
 def parestimate(x, groups, method="esprit", subspace="column", normalize_roots=None, dimensions=None,
                 solve_method="ls", drop=True):
+    """
+    Function to estimate the parameters (frequencies and rates) given a set of SSA eigenvectors.
+
+    :param x: SSA object
+    :param groups: list of indices of eigenvectors to estimate from
+    :param method: For 1D-SSA,
+        Toeplitz SSA, and MSSA: parameter estimation method, 'esprit' for 1D-ESPRIT (Algorithm 3.3 in Golyandina et al (
+        2018)), 'pairs' for rough estimation based on pair of eigenvectors (Algorithm 3.4 in Golyandina et al (2018)).
+        For nD-SSA: parameter estimation method. For now only 'esprit' is supported (Algorithm 5.6 in Golyandina et al (
+        2018)). lowest dimension, when possible (length of groups is one)
+    :param subspace: which subspace will be used for parameter estimation
+    :param normalize_roots: logical vector or None, force signal roots to lie on unit circle.
+        None means automatic selection: normalize iff circular topology OR Toeplitz SSA used
+    :param dimensions: a vector of dimension indices to perform ESPRIT along. None means all dimensions.
+    :param solve_method: approximate matrix equation solving method, 'ls' for least-squares,
+        'tls' for total-least-squares.
+    :param drop: logical, if 'TRUE' then the result is coerced to lowest dimension,
+        when possible (length of groups is one)
+
+    :return:
+
+    """
     return Parestimate(x=x, groups=groups, method=method, subspace=subspace, normalize_roots=normalize_roots,
                        dimensions=dimensions, solve_method=solve_method, drop=drop)
 
 
-def ssa(ds, L=None, neig=None, mask=None, wmask=None, kind="1d-ssa",
+def ssa(x, L=None, neig=None, mask=None, wmask=None, kind="1d-ssa", circular=None,
         column_projector="none", row_projector="none", svd_method="auto"):
-    return SSA(ds, L=L, neig=neig, mask=mask, wmask=wmask, kind=kind,
+    """
+    Description
+    -------
+
+    Set up the SSA object and perform the decomposition, if necessary.
+
+    :param x: object to be decomposed.
+    :type x: Union[class:`pd.DataFrame`, class:`pd.Series`]
+    :param L: window length. Fixed to half of the series length by default.
+        Should be vector of length 2 for 2d SSA
+    :type L: int, optional
+    :param neig: number of desired eigentriples. If None, then sane default value
+        will be used.
+    :type neig: int, optional
+    :param mask: for shaped 2d SSA case only. Logical matrix with same dimension as x.
+        Specifies form of decomposed array. If None, then all non-NA elements will be used
+    :param wmask: for shaped 2d SSA case only. Logical matrix which specifies window form.
+    :param kind: SSA method. This includes ordinary 1d SSA, 2d SSA, Toeplitz variant of 1d SSA, multichannel
+        variant of SSA and complex SSA. Defaults to 1d SSA.
+    :type kind: str, optional
+    :param circular: logical vector of one or two elements, describes series topology for 1d SSA and Toeplitz SSA
+        or field topology for 2d SSA. 'TRUE' means series circularity for 1d case or circularity
+        by a corresponding coordinate for 2d case. See Shlemov and Golyandina (2014) for more information.
+    :param column_projector, row_projector: column and row signal subspaces projectors for SSA with projection.
+    :type column_projector: int, optional
+    :type row_projector: int, optional
+    :param svd_method: 	singular value decomposition method.
+    :return: SSA Object. The precise layout of the object is mostly meant opaque and subject to
+        change in different version of the package.
+    :rtype: class:`SSA`
+
+    Details
+    -------
+
+    This is the main entry point to the package. This routine constructs the SSA object filling all necessary
+    internal structures and performing the decomposition if necessary. For the comprehensive description of SSA
+    modifications and their algorithms see Golyandina et al (2018).
+
+    Variants of SSA
+
+
+    Some details for this SSA.
+
+    """
+    return SSA(x, L=L, neig=neig, mask=mask, wmask=wmask, kind=kind,
                column_projector=column_projector,
                row_projector=row_projector,
                svd_method=svd_method,
                call=_get_call(inspect.currentframe().f_back))
+
+
+def reconstruct(ds, groups):
+    return Reconstruction(ds, groups)
 
 
 def iossa(x: SSA, nested_groups, tol=1e-5, kappa=2, maxiter=100, norm=None, trace=False, kappa_balance=0.5, **kwargs):
@@ -64,13 +140,12 @@ def iossa(x: SSA, nested_groups, tol=1e-5, kappa=2, maxiter=100, norm=None, trac
                  kappa_balance=kappa_balance, call=_get_call(inspect.currentframe().f_back), **kwargs)
 
 
-def reconstruct(ds, groups):
-    return Reconstruction(ds, groups)
-
-
+# Weighted correlations
 def wcor(ds, groups=range(1, 50)):
     return WCorMatrix(ds, groups)
 
+
+# Forecasting functions
 
 def rforecast(ds, groups, length=1, base="reconstructed", only_new=True, reverse=False,
               drop=False, drop_attributes=False, cache=True, **kwargs):
@@ -90,32 +165,7 @@ def bforecast(ds, groups, length=1, R=100, level=0.95, kind="recurrent", interva
 
 # Plot functions
 
-
-# Deprecated
-def vector_plot_old(dt, idx):
-    if idx is None:
-        idx = range(len(dt.U))
-    cols = 4
-    rows = round(len(idx) / cols)
-    gs1 = gridspec.GridSpec(rows, cols)
-    gs1.update(wspace=0, hspace=0)
-    fig, ax = plt.subplots(rows, cols)
-    plt.setp(ax.flat, adjustable='box')
-    fig.suptitle("Eigenvectors")
-    eig_n = 0
-    for row in range(rows):
-        for col in range(cols):
-            ax[row, col].plot(range(len(dt.U[idx[eig_n]])), dt.U[idx[eig_n]], label=eig_n)
-
-            ax[row, col].set_xticks([])
-            ax[row, col].set_yticks([])
-            ax[row, col].legend()
-            eig_n += 1
-    plt.subplots_adjust(wspace=0, hspace=0)
-    plt.show()
-
-
-def vector_plot(dt: SSA, idx, contrib=True, layout=None):
+def _vector_plot(dt: SSA, idx, contrib=True, layout=None):
     if idx is None:
         idx = range(1, min(10, len(dt.U)) + 1)
     if contrib is True:
@@ -148,7 +198,7 @@ def vector_plot(dt: SSA, idx, contrib=True, layout=None):
     plt.show()
 
 
-def paired_plot(dt: SSA, idx, contrib=True):
+def _paired_plot(dt: SSA, idx, contrib=True):
     if idx is None:
         idx = range(len(dt.U))
     if contrib is True:
@@ -178,7 +228,7 @@ def paired_plot(dt: SSA, idx, contrib=True):
     plt.show()
 
 
-def should_share_limits(series_arr, max_diff=1):
+def _should_share_limits(series_arr, max_diff=1):
     range_values = [[min(ser), max(ser)] for ser in series_arr]
     arr_start, arr_end = list(map(list, zip(*range_values)))
     min_start = min(arr_start)
@@ -189,7 +239,7 @@ def should_share_limits(series_arr, max_diff=1):
     return abs(max_start - min_start) / max_range <= max_diff and abs(max_end - min_end) / max_range <= max_diff
 
 
-def xyplot(dt: Reconstruction, x, add_residuals, add_original, layout, superpose):
+def _xyplot(dt: Reconstruction, x, add_residuals, add_original, layout, superpose):
 
     if x is None:
         x = dt.series.index
@@ -231,7 +281,7 @@ def xyplot(dt: Reconstruction, x, add_residuals, add_original, layout, superpose
 
         if cols > 1:
             all_series = [ser['series'] for ser in plotting_series]
-            share_y = should_share_limits(all_series)
+            share_y = _should_share_limits(all_series)
         else:
             share_y = False
 
@@ -259,7 +309,7 @@ def xyplot(dt: Reconstruction, x, add_residuals, add_original, layout, superpose
         plt.show()
 
 
-def matplot(dt: Reconstruction, x, add_residuals, add_original):
+def _matplot(dt: Reconstruction, x, add_residuals, add_original):
 
     if x is None:
         x = dt.series.index
@@ -276,7 +326,7 @@ def matplot(dt: Reconstruction, x, add_residuals, add_original):
     plt.show()
 
 
-def sigma_plot(ts: SSA):
+def _sigma_plot(ts: SSA):
     plt.suptitle('Component norms')
     plt.plot(ts.sigma, marker='o')
     plt.xlabel('Index')
@@ -285,7 +335,7 @@ def sigma_plot(ts: SSA):
     plt.show()
 
 
-def wcor_plot(wcor_matrix: WCorMatrix, scales=None):
+def _wcor_plot(wcor_matrix: WCorMatrix, scales=None):
     plt.imshow(np.asarray(wcor_matrix.matrix), cmap='gray_r', vmin=0, vmax=1)
     plt.gca().invert_yaxis()
 
@@ -305,15 +355,15 @@ def wcor_plot(wcor_matrix: WCorMatrix, scales=None):
 def plot(ts, x=None, kind=None, add_residuals=True, add_original=True, idx=None,
          scales=None, contrib=True, layout=None, superpose=False, method=None):
     if kind == "vectors":
-        return vector_plot(ts, idx, contrib=contrib)
+        return _vector_plot(ts, idx, contrib=contrib)
     elif kind == "paired":
-        return paired_plot(ts, idx, contrib=contrib)
+        return _paired_plot(ts, idx, contrib=contrib)
     elif type(ts) == Reconstruction:
         if method == "matplot":
-            return matplot(ts, x, add_residuals, add_original)
+            return _matplot(ts, x, add_residuals, add_original)
         if method == "xyplot":
-            return xyplot(ts, x, add_residuals, add_original, layout, superpose)
+            return _xyplot(ts, x, add_residuals, add_original, layout, superpose)
     elif type(ts) == SSA:
-        return sigma_plot(ts)
+        return _sigma_plot(ts)
     elif type(ts) == WCorMatrix:
-        return wcor_plot(ts, scales)
+        return _wcor_plot(ts, scales)

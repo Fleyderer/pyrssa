@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>pyrssa.base &mdash; pyrssa 1.0.6 documentation</title>
+      <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/sphinx_highlight.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            pyrssa
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../modules.html">pyrssa</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">pyrssa</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">pyrssa.base</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for pyrssa.base</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">pyrssa</span> <span class="kn">import</span> <span class="n">SSA</span><span class="p">,</span> <span class="n">IOSSA</span><span class="p">,</span> <span class="n">Parestimate</span>
+<span class="kn">from</span> <span class="nn">pyrssa</span> <span class="kn">import</span> <span class="n">Reconstruction</span>
+<span class="kn">from</span> <span class="nn">pyrssa</span> <span class="kn">import</span> <span class="n">RForecast</span><span class="p">,</span> <span class="n">VForecast</span><span class="p">,</span> <span class="n">BForecast</span>
+<span class="kn">from</span> <span class="nn">pyrssa</span> <span class="kn">import</span> <span class="n">WCorMatrix</span>
+<span class="kn">from</span> <span class="nn">pyrssa</span> <span class="kn">import</span> <span class="n">installer</span>
+<span class="kn">from</span> <span class="nn">pyrssa.conversion</span> <span class="kn">import</span> <span class="n">pyrssa_conversion_rules</span>
+<span class="kn">from</span> <span class="nn">rpy2</span> <span class="kn">import</span> <span class="n">robjects</span>
+<span class="kn">import</span> <span class="nn">rpy2.robjects.conversion</span> <span class="k">as</span> <span class="nn">conversion</span>
+<span class="kn">import</span> <span class="nn">rpy2.robjects.packages</span> <span class="k">as</span> <span class="nn">rpackages</span>
+<span class="kn">from</span> <span class="nn">rpy2.rinterface_lib</span> <span class="kn">import</span> <span class="n">callbacks</span>
+<span class="kn">import</span> <span class="nn">matplotlib</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">import</span> <span class="nn">matplotlib.gridspec</span> <span class="k">as</span> <span class="nn">gridspec</span>
+<span class="kn">from</span> <span class="nn">pandas</span> <span class="kn">import</span> <span class="n">read_csv</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">inspect</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Callable</span>
+
+
+<span class="c1"># This line solves problem for PyCharm: module &#39;backend_interagg&#39; has no attribute &#39;FigureCanvas&#39;...</span>
+<span class="n">matplotlib</span><span class="o">.</span><span class="n">use</span><span class="p">(</span><span class="s1">&#39;TkAgg&#39;</span><span class="p">)</span>
+
+<span class="c1"># Set conversion rules</span>
+<span class="n">conversion</span><span class="o">.</span><span class="n">set_conversion</span><span class="p">(</span><span class="n">pyrssa_conversion_rules</span><span class="p">)</span>
+
+<span class="c1"># Ignore warnings</span>
+<span class="n">callbacks</span><span class="o">.</span><span class="n">consolewrite_warnerror</span> <span class="o">=</span> <span class="k">lambda</span> <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="kc">None</span>
+
+<span class="c1"># Install required R packages.</span>
+<span class="n">installer</span><span class="o">.</span><span class="n">install_required</span><span class="p">()</span>
+
+<span class="n">r</span> <span class="o">=</span> <span class="n">robjects</span><span class="o">.</span><span class="n">r</span>
+<span class="n">r_ssa</span> <span class="o">=</span> <span class="n">rpackages</span><span class="o">.</span><span class="n">importr</span><span class="p">(</span><span class="s1">&#39;Rssa&#39;</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">_get_call</span><span class="p">(</span><span class="n">frame</span><span class="p">):</span>
+    <span class="n">call</span> <span class="o">=</span> <span class="n">inspect</span><span class="o">.</span><span class="n">getframeinfo</span><span class="p">(</span><span class="n">frame</span><span class="p">)[</span><span class="mi">3</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">call</span><span class="p">[</span><span class="n">call</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s1">&#39;=&#39;</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">:]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">rstrip</span><span class="p">()</span>
+
+
+<span class="c1"># Read pyrssa dataframes</span>
+<div class="viewcode-block" id="data"><a class="viewcode-back" href="../../pyrssa.html#pyrssa.base.data">[docs]</a><span class="k">def</span> <span class="nf">data</span><span class="p">(</span><span class="n">name</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Function for loading available in pyrssa package datasets. Available datasets are stored in the data directory.</span>
+
+<span class="sd">    :param name: Name of dataset to load</span>
+<span class="sd">    :return:</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">read_csv</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">realpath</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)),</span> <span class="s2">&quot;data&quot;</span><span class="p">),</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s1">.csv&#39;</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="parestimate"><a class="viewcode-back" href="../../pyrssa.html#pyrssa.base.parestimate">[docs]</a><span class="k">def</span> <span class="nf">parestimate</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">groups</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s2">&quot;esprit&quot;</span><span class="p">,</span> <span class="n">subspace</span><span class="o">=</span><span class="s2">&quot;column&quot;</span><span class="p">,</span> <span class="n">normalize_roots</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">dimensions</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                <span class="n">solve_method</span><span class="o">=</span><span class="s2">&quot;ls&quot;</span><span class="p">,</span> <span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Function to estimate the parameters (frequencies and rates) given a set of SSA eigenvectors.</span>
+
+<span class="sd">    :param x: SSA object</span>
+<span class="sd">    :param groups: list of indices of eigenvectors to estimate from</span>
+<span class="sd">    :param method: For 1D-SSA,</span>
+<span class="sd">        Toeplitz SSA, and MSSA: parameter estimation method, &#39;esprit&#39; for 1D-ESPRIT (Algorithm 3.3 in Golyandina et al (</span>
+<span class="sd">        2018)), &#39;pairs&#39; for rough estimation based on pair of eigenvectors (Algorithm 3.4 in Golyandina et al (2018)).</span>
+<span class="sd">        For nD-SSA: parameter estimation method. For now only &#39;esprit&#39; is supported (Algorithm 5.6 in Golyandina et al (</span>
+<span class="sd">        2018)). lowest dimension, when possible (length of groups is one)</span>
+<span class="sd">    :param subspace: which subspace will be used for parameter estimation</span>
+<span class="sd">    :param normalize_roots: logical vector or None, force signal roots to lie on unit circle.</span>
+<span class="sd">        None means automatic selection: normalize iff circular topology OR Toeplitz SSA used</span>
+<span class="sd">    :param dimensions: a vector of dimension indices to perform ESPRIT along. None means all dimensions.</span>
+<span class="sd">    :param solve_method: approximate matrix equation solving method, &#39;ls&#39; for least-squares,</span>
+<span class="sd">        &#39;tls&#39; for total-least-squares.</span>
+<span class="sd">    :param drop: logical, if &#39;TRUE&#39; then the result is coerced to lowest dimension,</span>
+<span class="sd">        when possible (length of groups is one)</span>
+
+<span class="sd">    :return:</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">Parestimate</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">x</span><span class="p">,</span> <span class="n">groups</span><span class="o">=</span><span class="n">groups</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="n">method</span><span class="p">,</span> <span class="n">subspace</span><span class="o">=</span><span class="n">subspace</span><span class="p">,</span> <span class="n">normalize_roots</span><span class="o">=</span><span class="n">normalize_roots</span><span class="p">,</span>
+                       <span class="n">dimensions</span><span class="o">=</span><span class="n">dimensions</span><span class="p">,</span> <span class="n">solve_method</span><span class="o">=</span><span class="n">solve_method</span><span class="p">,</span> <span class="n">drop</span><span class="o">=</span><span class="n">drop</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="ssa"><a class="viewcode-back" href="../../pyrssa.html#pyrssa.base.ssa">[docs]</a><span class="k">def</span> <span class="nf">ssa</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">L</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">neig</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">mask</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">wmask</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">kind</span><span class="o">=</span><span class="s2">&quot;1d-ssa&quot;</span><span class="p">,</span> <span class="n">circular</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">column_projector</span><span class="o">=</span><span class="s2">&quot;none&quot;</span><span class="p">,</span> <span class="n">row_projector</span><span class="o">=</span><span class="s2">&quot;none&quot;</span><span class="p">,</span> <span class="n">svd_method</span><span class="o">=</span><span class="s2">&quot;auto&quot;</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">    :param x: object to be decomposed.</span>
+<span class="sd">    :type x: Union[class:`pd.DataFrame`, class:`pd.Series`]</span>
+<span class="sd">    :param L: window length. Fixed to half of the series length by default.</span>
+<span class="sd">        Should be vector of length 2 for 2d SSA</span>
+<span class="sd">    :type L: int, optional</span>
+<span class="sd">    :param neig: number of desired eigentriples. If None, then sane default value</span>
+<span class="sd">        will be used.</span>
+<span class="sd">    :type neig: int, optional</span>
+<span class="sd">    :param mask: for shaped 2d SSA case only. Logical matrix with same dimension as x.</span>
+<span class="sd">        Specifies form of decomposed array. If None, then all non-NA elements will be used</span>
+<span class="sd">    :param wmask: for shaped 2d SSA case only. Logical matrix which specifies window form.</span>
+<span class="sd">    :param kind: SSA method. This includes ordinary 1d SSA, 2d SSA, Toeplitz variant of 1d SSA, multichannel</span>
+<span class="sd">        variant of SSA and complex SSA. Defaults to 1d SSA.</span>
+<span class="sd">    :type kind: str, optional</span>
+<span class="sd">    :param circular: logical vector of one or two elements, describes series topology for 1d SSA and Toeplitz SSA</span>
+<span class="sd">        or field topology for 2d SSA. &#39;TRUE&#39; means series circularity for 1d case or circularity</span>
+<span class="sd">        by a corresponding coordinate for 2d case. See Shlemov and Golyandina (2014) for more information.</span>
+<span class="sd">    :param column_projector, row_projector: column and row signal subspaces projectors for SSA with projection.</span>
+<span class="sd">    :type column_projector: int, optional</span>
+<span class="sd">    :type row_projector: int, optional</span>
+<span class="sd">    :param svd_method: 	singular value decomposition method.</span>
+<span class="sd">    :return: SSA Object. The precise layout of the object is mostly meant opaque and subject to</span>
+<span class="sd">        change in different version of the package.</span>
+<span class="sd">    :rtype: class:`SSA`</span>
+
+<span class="sd">    Details</span>
+<span class="sd">    -------</span>
+
+<span class="sd">    Some details for this SSA.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">SSA</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">L</span><span class="o">=</span><span class="n">L</span><span class="p">,</span> <span class="n">neig</span><span class="o">=</span><span class="n">neig</span><span class="p">,</span> <span class="n">mask</span><span class="o">=</span><span class="n">mask</span><span class="p">,</span> <span class="n">wmask</span><span class="o">=</span><span class="n">wmask</span><span class="p">,</span> <span class="n">kind</span><span class="o">=</span><span class="n">kind</span><span class="p">,</span>
+               <span class="n">column_projector</span><span class="o">=</span><span class="n">column_projector</span><span class="p">,</span>
+               <span class="n">row_projector</span><span class="o">=</span><span class="n">row_projector</span><span class="p">,</span>
+               <span class="n">svd_method</span><span class="o">=</span><span class="n">svd_method</span><span class="p">,</span>
+               <span class="n">call</span><span class="o">=</span><span class="n">_get_call</span><span class="p">(</span><span class="n">inspect</span><span class="o">.</span><span class="n">currentframe</span><span class="p">()</span><span class="o">.</span><span class="n">f_back</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="reconstruct"><a class="viewcode-back" href="../../pyrssa.html#pyrssa.base.reconstruct">[docs]</a><span class="k">def</span> <span class="nf">reconstruct</span><span class="p">(</span><span class="n">ds</span><span class="p">,</span> <span class="n">groups</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">Reconstruction</span><span class="p">(</span><span class="n">ds</span><span class="p">,</span> <span class="n">groups</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="iossa"><a class="viewcode-back" href="../../pyrssa.html#pyrssa.base.iossa">[docs]</a><span class="k">def</span> <span class="nf">iossa</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="n">SSA</span><span class="p">,</span> <span class="n">nested_groups</span><span class="p">,</span> <span class="n">tol</span><span class="o">=</span><span class="mf">1e-5</span><span class="p">,</span> <span class="n">kappa</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">maxiter</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">norm</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">trace</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">kappa_balance</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">IOSSA</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">x</span><span class="p">,</span> <span class="n">nested_groups</span><span class="o">=</span><span class="n">nested_groups</span><span class="p">,</span> <span class="n">tol</span><span class="o">=</span><span class="n">tol</span><span class="p">,</span> <span class="n">kappa</span><span class="o">=</span><span class="n">kappa</span><span class="p">,</span> <span class="n">maxiter</span><span class="o">=</span><span class="n">maxiter</span><span class="p">,</span> <span class="n">norm</span><span class="o">=</span><span class="n">norm</span><span class="p">,</span> <span class="n">trace</span><span class="o">=</span><span class="n">trace</span><span class="p">,</span>
+                 <span class="n">kappa_balance</span><span class="o">=</span><span class="n">kappa_balance</span><span class="p">,</span> <span class="n">call</span><span class="o">=</span><span class="n">_get_call</span><span class="p">(</span><span class="n">inspect</span><span class="o">.</span><span class="n">currentframe</span><span class="p">()</span><span class="o">.</span><span class="n">f_back</span><span class="p">),</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+
+
+<span class="c1"># Weighted correlations</span>
+<div class="viewcode-block" id="wcor"><a class="viewcode-back" href="../../pyrssa.html#pyrssa.base.wcor">[docs]</a><span class="k">def</span> <span class="nf">wcor</span><span class="p">(</span><span class="n">ds</span><span class="p">,</span> <span class="n">groups</span><span class="o">=</span><span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">50</span><span class="p">)):</span>
+    <span class="k">return</span> <span class="n">WCorMatrix</span><span class="p">(</span><span class="n">ds</span><span class="p">,</span> <span class="n">groups</span><span class="p">)</span></div>
+
+
+<span class="c1"># Forecasting functions</span>
+
+<div class="viewcode-block" id="rforecast"><a class="viewcode-back" href="../../pyrssa.html#pyrssa.base.rforecast">[docs]</a><span class="k">def</span> <span class="nf">rforecast</span><span class="p">(</span><span class="n">ds</span><span class="p">,</span> <span class="n">groups</span><span class="p">,</span> <span class="n">length</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">base</span><span class="o">=</span><span class="s2">&quot;reconstructed&quot;</span><span class="p">,</span> <span class="n">only_new</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">reverse</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+              <span class="n">drop</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">drop_attributes</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">cache</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">RForecast</span><span class="p">(</span><span class="n">ds</span><span class="p">,</span> <span class="n">groups</span><span class="p">,</span> <span class="n">length</span><span class="o">=</span><span class="n">length</span><span class="p">,</span> <span class="n">base</span><span class="o">=</span><span class="n">base</span><span class="p">,</span> <span class="n">only_new</span><span class="o">=</span><span class="n">only_new</span><span class="p">,</span> <span class="n">reverse</span><span class="o">=</span><span class="n">reverse</span><span class="p">,</span>
+                     <span class="n">drop</span><span class="o">=</span><span class="n">drop</span><span class="p">,</span> <span class="n">drop_attributes</span><span class="o">=</span><span class="n">drop_attributes</span><span class="p">,</span> <span class="n">cache</span><span class="o">=</span><span class="n">cache</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="vforecast"><a class="viewcode-back" href="../../pyrssa.html#pyrssa.base.vforecast">[docs]</a><span class="k">def</span> <span class="nf">vforecast</span><span class="p">(</span><span class="n">ds</span><span class="p">,</span> <span class="n">groups</span><span class="p">,</span> <span class="n">length</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">only_new</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">drop</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">drop_attributes</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">VForecast</span><span class="p">(</span><span class="n">ds</span><span class="p">,</span> <span class="n">groups</span><span class="p">,</span> <span class="n">length</span><span class="o">=</span><span class="n">length</span><span class="p">,</span> <span class="n">only_new</span><span class="o">=</span><span class="n">only_new</span><span class="p">,</span> <span class="n">drop</span><span class="o">=</span><span class="n">drop</span><span class="p">,</span> <span class="n">drop_attributes</span><span class="o">=</span><span class="n">drop_attributes</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="bforecast"><a class="viewcode-back" href="../../pyrssa.html#pyrssa.base.bforecast">[docs]</a><span class="k">def</span> <span class="nf">bforecast</span><span class="p">(</span><span class="n">ds</span><span class="p">,</span> <span class="n">groups</span><span class="p">,</span> <span class="n">length</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">R</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">level</span><span class="o">=</span><span class="mf">0.95</span><span class="p">,</span> <span class="n">kind</span><span class="o">=</span><span class="s2">&quot;recurrent&quot;</span><span class="p">,</span> <span class="n">interval</span><span class="o">=</span><span class="s2">&quot;confidence&quot;</span><span class="p">,</span>
+              <span class="n">only_new</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">only_intervals</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">drop_attributes</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">cache</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">BForecast</span><span class="p">(</span><span class="n">ds</span><span class="p">,</span> <span class="n">groups</span><span class="p">,</span> <span class="n">length</span><span class="o">=</span><span class="n">length</span><span class="p">,</span> <span class="n">r</span><span class="o">=</span><span class="n">R</span><span class="p">,</span> <span class="n">level</span><span class="o">=</span><span class="n">level</span><span class="p">,</span> <span class="n">kind</span><span class="o">=</span><span class="n">kind</span><span class="p">,</span> <span class="n">interval</span><span class="o">=</span><span class="n">interval</span><span class="p">,</span> <span class="n">only_new</span><span class="o">=</span><span class="n">only_new</span><span class="p">,</span>
+                     <span class="n">only_intervals</span><span class="o">=</span><span class="n">only_intervals</span><span class="p">,</span> <span class="n">drop</span><span class="o">=</span><span class="n">drop</span><span class="p">,</span> <span class="n">drop_attributes</span><span class="o">=</span><span class="n">drop_attributes</span><span class="p">,</span> <span class="n">cache</span><span class="o">=</span><span class="n">cache</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+
+
+<span class="c1"># Plot functions</span>
+
+<span class="k">def</span> <span class="nf">_vector_plot</span><span class="p">(</span><span class="n">dt</span><span class="p">:</span> <span class="n">SSA</span><span class="p">,</span> <span class="n">idx</span><span class="p">,</span> <span class="n">contrib</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">layout</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">idx</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">idx</span> <span class="o">=</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">min</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">dt</span><span class="o">.</span><span class="n">U</span><span class="p">))</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">contrib</span> <span class="ow">is</span> <span class="kc">True</span><span class="p">:</span>
+        <span class="n">cntrb</span> <span class="o">=</span> <span class="n">dt</span><span class="o">.</span><span class="n">contributions</span><span class="p">(</span><span class="n">idx</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">cntrb</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="k">if</span> <span class="n">layout</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">cols</span> <span class="o">=</span> <span class="mi">4</span>
+        <span class="n">rows</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ceil</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">idx</span><span class="p">)</span> <span class="o">/</span> <span class="n">cols</span><span class="p">))</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">cols</span> <span class="o">=</span> <span class="n">layout</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">rows</span> <span class="o">=</span> <span class="n">layout</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+
+    <span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="n">cols</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">rows</span> <span class="o">+</span> <span class="mi">1</span><span class="p">))</span>
+    <span class="n">fig</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">(</span><span class="n">h_pad</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">gs</span> <span class="o">=</span> <span class="n">gridspec</span><span class="o">.</span><span class="n">GridSpec</span><span class="p">(</span><span class="n">rows</span><span class="p">,</span> <span class="n">cols</span><span class="p">,</span> <span class="n">width_ratios</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">figure</span><span class="o">=</span><span class="n">fig</span><span class="p">,</span> <span class="n">wspace</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">hspace</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
+    <span class="n">fig</span><span class="o">.</span><span class="n">suptitle</span><span class="p">(</span><span class="s2">&quot;Eigenvectors&quot;</span><span class="p">)</span>
+    <span class="n">ax</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">idx</span><span class="p">)):</span>
+        <span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="n">gs</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">sharey</span><span class="o">=</span><span class="n">ax</span><span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">dt</span><span class="o">.</span><span class="n">U</span><span class="p">[</span><span class="n">idx</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">-</span> <span class="mi">1</span><span class="p">])),</span> <span class="n">dt</span><span class="o">.</span><span class="n">U</span><span class="p">[</span><span class="n">idx</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">-</span> <span class="mi">1</span><span class="p">])</span>
+        <span class="k">if</span> <span class="n">cntrb</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="n">idx</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">idx</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="si">}</span><span class="s1"> (</span><span class="si">{</span><span class="n">cntrb</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">100</span><span class="si">:</span><span class="s1">.2f</span><span class="si">}</span><span class="s1"> %)&#39;</span><span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_xticks</span><span class="p">([])</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_yticks</span><span class="p">([])</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_aspect</span><span class="p">(</span><span class="n">aspect</span><span class="o">=</span><span class="s1">&#39;auto&#39;</span><span class="p">,</span> <span class="n">adjustable</span><span class="o">=</span><span class="s1">&#39;box&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+
+<span class="k">def</span> <span class="nf">_paired_plot</span><span class="p">(</span><span class="n">dt</span><span class="p">:</span> <span class="n">SSA</span><span class="p">,</span> <span class="n">idx</span><span class="p">,</span> <span class="n">contrib</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">idx</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">idx</span> <span class="o">=</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">dt</span><span class="o">.</span><span class="n">U</span><span class="p">))</span>
+    <span class="k">if</span> <span class="n">contrib</span> <span class="ow">is</span> <span class="kc">True</span><span class="p">:</span>
+        <span class="n">cntrb</span> <span class="o">=</span> <span class="n">dt</span><span class="o">.</span><span class="n">contributions</span><span class="p">(</span><span class="n">idx</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">cntrb</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">cols</span> <span class="o">=</span> <span class="mi">5</span>
+    <span class="n">rows</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ceil</span><span class="p">((</span><span class="nb">len</span><span class="p">(</span><span class="n">idx</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">/</span> <span class="n">cols</span><span class="p">))</span>
+    <span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="n">cols</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">rows</span> <span class="o">+</span> <span class="mi">1</span><span class="p">))</span>
+    <span class="n">fig</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">(</span><span class="n">h_pad</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">gs</span> <span class="o">=</span> <span class="n">gridspec</span><span class="o">.</span><span class="n">GridSpec</span><span class="p">(</span><span class="n">rows</span><span class="p">,</span> <span class="n">cols</span><span class="p">,</span> <span class="n">width_ratios</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="n">cols</span><span class="p">,</span> <span class="n">figure</span><span class="o">=</span><span class="n">fig</span><span class="p">,</span> <span class="n">wspace</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">hspace</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
+
+    <span class="n">fig</span><span class="o">.</span><span class="n">suptitle</span><span class="p">(</span><span class="s2">&quot;Pairs of eigenvectors&quot;</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">idx</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">):</span>
+        <span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="n">gs</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">dt</span><span class="o">.</span><span class="n">U</span><span class="p">[</span><span class="n">idx</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="mi">1</span><span class="p">],</span> <span class="n">dt</span><span class="o">.</span><span class="n">U</span><span class="p">[</span><span class="n">idx</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">-</span> <span class="mi">1</span><span class="p">])</span>
+        <span class="k">if</span> <span class="n">cntrb</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">idx</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="si">}</span><span class="s1"> vs </span><span class="si">{</span><span class="n">idx</span><span class="p">[</span><span class="n">i</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">idx</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="si">}</span><span class="s1"> (</span><span class="si">{</span><span class="n">cntrb</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">100</span><span class="si">:</span><span class="s1">.2f</span><span class="si">}</span><span class="s1">%) vs </span><span class="si">{</span><span class="n">idx</span><span class="p">[</span><span class="n">i</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s1"> (</span><span class="si">{</span><span class="n">cntrb</span><span class="p">[</span><span class="n">i</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="p">]</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">100</span><span class="si">:</span><span class="s1">.2f</span><span class="si">}</span><span class="s1">%)&#39;</span><span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_xticks</span><span class="p">([])</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_yticks</span><span class="p">([])</span>
+        <span class="n">ratio</span> <span class="o">=</span> <span class="mf">1.0</span>
+        <span class="n">xleft</span><span class="p">,</span> <span class="n">xright</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">get_xlim</span><span class="p">()</span>
+        <span class="n">ybottom</span><span class="p">,</span> <span class="n">ytop</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">get_ylim</span><span class="p">()</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_aspect</span><span class="p">(</span><span class="nb">abs</span><span class="p">((</span><span class="n">xright</span> <span class="o">-</span> <span class="n">xleft</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">ybottom</span> <span class="o">-</span> <span class="n">ytop</span><span class="p">))</span> <span class="o">*</span> <span class="n">ratio</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+
+<span class="k">def</span> <span class="nf">_should_share_limits</span><span class="p">(</span><span class="n">series_arr</span><span class="p">,</span> <span class="n">max_diff</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+    <span class="n">range_values</span> <span class="o">=</span> <span class="p">[[</span><span class="nb">min</span><span class="p">(</span><span class="n">ser</span><span class="p">),</span> <span class="nb">max</span><span class="p">(</span><span class="n">ser</span><span class="p">)]</span> <span class="k">for</span> <span class="n">ser</span> <span class="ow">in</span> <span class="n">series_arr</span><span class="p">]</span>
+    <span class="n">arr_start</span><span class="p">,</span> <span class="n">arr_end</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="nb">zip</span><span class="p">(</span><span class="o">*</span><span class="n">range_values</span><span class="p">)))</span>
+    <span class="n">min_start</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">arr_start</span><span class="p">)</span>
+    <span class="n">max_end</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">arr_end</span><span class="p">)</span>
+    <span class="n">max_start</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">arr_start</span><span class="p">)</span>
+    <span class="n">min_end</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">arr_end</span><span class="p">)</span>
+    <span class="n">max_range</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">min_start</span> <span class="o">-</span> <span class="n">max_end</span><span class="p">)</span>
+    <span class="k">return</span> <span class="nb">abs</span><span class="p">(</span><span class="n">max_start</span> <span class="o">-</span> <span class="n">min_start</span><span class="p">)</span> <span class="o">/</span> <span class="n">max_range</span> <span class="o">&lt;=</span> <span class="n">max_diff</span> <span class="ow">and</span> <span class="nb">abs</span><span class="p">(</span><span class="n">max_end</span> <span class="o">-</span> <span class="n">min_end</span><span class="p">)</span> <span class="o">/</span> <span class="n">max_range</span> <span class="o">&lt;=</span> <span class="n">max_diff</span>
+
+
+<span class="k">def</span> <span class="nf">_xyplot</span><span class="p">(</span><span class="n">dt</span><span class="p">:</span> <span class="n">Reconstruction</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">add_residuals</span><span class="p">,</span> <span class="n">add_original</span><span class="p">,</span> <span class="n">layout</span><span class="p">,</span> <span class="n">superpose</span><span class="p">):</span>
+
+    <span class="k">if</span> <span class="n">x</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">dt</span><span class="o">.</span><span class="n">series</span><span class="o">.</span><span class="n">index</span>
+
+    <span class="k">if</span> <span class="n">superpose</span><span class="p">:</span>
+        <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">()</span>
+        <span class="n">fig</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">add_original</span><span class="p">:</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">dt</span><span class="o">.</span><span class="n">series</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Original&quot;</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">dt</span><span class="o">.</span><span class="n">names</span><span class="p">:</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">dt</span><span class="p">,</span> <span class="n">name</span><span class="p">),</span> <span class="n">label</span><span class="o">=</span><span class="n">name</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">add_residuals</span><span class="p">:</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">dt</span><span class="o">.</span><span class="n">residuals</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Residuals&#39;</span><span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="s2">&quot;Reconstructed series&quot;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+    <span class="k">else</span><span class="p">:</span>
+
+        <span class="n">cnt</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">dt</span><span class="o">.</span><span class="n">names</span><span class="p">)</span> <span class="o">+</span> <span class="n">add_original</span> <span class="o">+</span> <span class="n">add_residuals</span>
+
+        <span class="k">if</span> <span class="n">layout</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">layout</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">layout</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">cnt</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Layout size </span><span class="si">{</span><span class="n">layout</span><span class="si">}</span><span class="s2"> is less than count of plotting series (</span><span class="si">{</span><span class="n">cnt</span><span class="si">}</span><span class="s2">).&quot;</span><span class="p">)</span>
+            <span class="n">rows</span> <span class="o">=</span> <span class="n">layout</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">cols</span> <span class="o">=</span> <span class="n">layout</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">rows</span> <span class="o">=</span> <span class="n">cnt</span>
+            <span class="n">cols</span> <span class="o">=</span> <span class="mi">1</span>
+
+        <span class="n">plotting_series</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">if</span> <span class="n">add_original</span><span class="p">:</span>
+            <span class="n">plotting_series</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;Original&#39;</span><span class="p">,</span> <span class="s1">&#39;series&#39;</span><span class="p">:</span> <span class="n">dt</span><span class="o">.</span><span class="n">series</span><span class="p">})</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">add_original</span><span class="p">,</span> <span class="n">cnt</span> <span class="o">-</span> <span class="n">add_residuals</span><span class="p">):</span>
+            <span class="n">name</span> <span class="o">=</span> <span class="n">dt</span><span class="o">.</span><span class="n">names</span><span class="p">[</span><span class="n">i</span> <span class="o">-</span> <span class="n">add_original</span><span class="p">]</span>
+            <span class="n">plotting_series</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="n">name</span><span class="p">,</span> <span class="s1">&#39;series&#39;</span><span class="p">:</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">dt</span><span class="p">,</span> <span class="n">name</span><span class="p">)})</span>
+        <span class="k">if</span> <span class="n">add_residuals</span><span class="p">:</span>
+            <span class="n">plotting_series</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;Residuals&#39;</span><span class="p">,</span> <span class="s1">&#39;series&#39;</span><span class="p">:</span> <span class="n">dt</span><span class="o">.</span><span class="n">residuals</span><span class="p">})</span>
+
+        <span class="k">if</span> <span class="n">cols</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">all_series</span> <span class="o">=</span> <span class="p">[</span><span class="n">ser</span><span class="p">[</span><span class="s1">&#39;series&#39;</span><span class="p">]</span> <span class="k">for</span> <span class="n">ser</span> <span class="ow">in</span> <span class="n">plotting_series</span><span class="p">]</span>
+            <span class="n">share_y</span> <span class="o">=</span> <span class="n">_should_share_limits</span><span class="p">(</span><span class="n">all_series</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">share_y</span> <span class="o">=</span> <span class="kc">False</span>
+
+        <span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="p">(</span><span class="n">cols</span> <span class="o">+</span> <span class="mi">1</span><span class="p">),</span> <span class="mi">2</span> <span class="o">*</span> <span class="p">(</span><span class="n">rows</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)))</span>
+        <span class="k">if</span> <span class="n">share_y</span><span class="p">:</span>
+            <span class="n">gs</span> <span class="o">=</span> <span class="n">gridspec</span><span class="o">.</span><span class="n">GridSpec</span><span class="p">(</span><span class="n">rows</span><span class="p">,</span> <span class="n">cols</span><span class="p">,</span> <span class="n">width_ratios</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="n">cols</span><span class="p">,</span> <span class="n">figure</span><span class="o">=</span><span class="n">fig</span><span class="p">,</span> <span class="n">wspace</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">hspace</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">gs</span> <span class="o">=</span> <span class="n">gridspec</span><span class="o">.</span><span class="n">GridSpec</span><span class="p">(</span><span class="n">rows</span><span class="p">,</span> <span class="n">cols</span><span class="p">)</span>
+        <span class="n">fig</span><span class="o">.</span><span class="n">suptitle</span><span class="p">(</span><span class="s2">&quot;Reconstructed series&quot;</span><span class="p">)</span>
+        <span class="n">ax</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">plotting_series</span><span class="p">)):</span>
+            <span class="k">if</span> <span class="n">share_y</span><span class="p">:</span>
+                <span class="n">is_first</span> <span class="o">=</span> <span class="n">ax</span> <span class="ow">is</span> <span class="kc">None</span>
+                <span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="n">gs</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">sharex</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span> <span class="n">sharey</span><span class="o">=</span><span class="n">ax</span><span class="p">)</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">is_first</span><span class="p">:</span>
+                    <span class="n">ax</span><span class="o">.</span><span class="n">tick_params</span><span class="p">(</span><span class="n">left</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">labelleft</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="n">gs</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">sharex</span><span class="o">=</span><span class="n">ax</span><span class="p">)</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">plotting_series</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="s1">&#39;series&#39;</span><span class="p">])</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="n">plotting_series</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="s1">&#39;name&#39;</span><span class="p">])</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">share_y</span><span class="p">:</span>
+            <span class="n">fig</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+
+<span class="k">def</span> <span class="nf">_matplot</span><span class="p">(</span><span class="n">dt</span><span class="p">:</span> <span class="n">Reconstruction</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">add_residuals</span><span class="p">,</span> <span class="n">add_original</span><span class="p">):</span>
+
+    <span class="k">if</span> <span class="n">x</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">dt</span><span class="o">.</span><span class="n">series</span><span class="o">.</span><span class="n">index</span>
+
+    <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">add_original</span><span class="p">:</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">dt</span><span class="o">.</span><span class="n">series</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Original&quot;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;black&quot;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">dt</span><span class="o">.</span><span class="n">names</span><span class="p">:</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">dt</span><span class="p">,</span> <span class="n">name</span><span class="p">),</span> <span class="n">label</span><span class="o">=</span><span class="n">name</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s2">&quot;dashed&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">add_residuals</span><span class="p">:</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">dt</span><span class="o">.</span><span class="n">residuals</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Residuals&#39;</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s2">&quot;dashed&quot;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="s2">&quot;Reconstructed series&quot;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+
+<span class="k">def</span> <span class="nf">_sigma_plot</span><span class="p">(</span><span class="n">ts</span><span class="p">:</span> <span class="n">SSA</span><span class="p">):</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">suptitle</span><span class="p">(</span><span class="s1">&#39;Component norms&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">ts</span><span class="o">.</span><span class="n">sigma</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="s1">&#39;o&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Index&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;Norms&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">yscale</span><span class="p">(</span><span class="s1">&#39;log&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+
+<span class="k">def</span> <span class="nf">_wcor_plot</span><span class="p">(</span><span class="n">wcor_matrix</span><span class="p">:</span> <span class="n">WCorMatrix</span><span class="p">,</span> <span class="n">scales</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">wcor_matrix</span><span class="o">.</span><span class="n">matrix</span><span class="p">),</span> <span class="n">cmap</span><span class="o">=</span><span class="s1">&#39;gray_r&#39;</span><span class="p">,</span> <span class="n">vmin</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">vmax</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">gca</span><span class="p">()</span><span class="o">.</span><span class="n">invert_yaxis</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="n">scales</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">ticks</span> <span class="o">=</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">wcor_matrix</span><span class="o">.</span><span class="n">groups</span><span class="p">))</span>
+        <span class="n">labels</span> <span class="o">=</span> <span class="n">wcor_matrix</span><span class="o">.</span><span class="n">groups</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">ticks</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">scales</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span>  <span class="c1"># fix for indexing of components on the plot</span>
+        <span class="n">labels</span> <span class="o">=</span> <span class="n">scales</span>
+
+    <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;W-correlation matrix&quot;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xticks</span><span class="p">(</span><span class="n">ticks</span><span class="p">,</span> <span class="n">labels</span><span class="o">=</span><span class="n">labels</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">yticks</span><span class="p">(</span><span class="n">ticks</span><span class="p">,</span> <span class="n">labels</span><span class="o">=</span><span class="n">labels</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+
+<div class="viewcode-block" id="plot"><a class="viewcode-back" href="../../pyrssa.html#pyrssa.base.plot">[docs]</a><span class="k">def</span> <span class="nf">plot</span><span class="p">(</span><span class="n">ts</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">kind</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">add_residuals</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">add_original</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">idx</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+         <span class="n">scales</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">contrib</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">layout</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">superpose</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">kind</span> <span class="o">==</span> <span class="s2">&quot;vectors&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">_vector_plot</span><span class="p">(</span><span class="n">ts</span><span class="p">,</span> <span class="n">idx</span><span class="p">,</span> <span class="n">contrib</span><span class="o">=</span><span class="n">contrib</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">kind</span> <span class="o">==</span> <span class="s2">&quot;paired&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">_paired_plot</span><span class="p">(</span><span class="n">ts</span><span class="p">,</span> <span class="n">idx</span><span class="p">,</span> <span class="n">contrib</span><span class="o">=</span><span class="n">contrib</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="nb">type</span><span class="p">(</span><span class="n">ts</span><span class="p">)</span> <span class="o">==</span> <span class="n">Reconstruction</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">method</span> <span class="o">==</span> <span class="s2">&quot;matplot&quot;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">_matplot</span><span class="p">(</span><span class="n">ts</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">add_residuals</span><span class="p">,</span> <span class="n">add_original</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">method</span> <span class="o">==</span> <span class="s2">&quot;xyplot&quot;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">_xyplot</span><span class="p">(</span><span class="n">ts</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">add_residuals</span><span class="p">,</span> <span class="n">add_original</span><span class="p">,</span> <span class="n">layout</span><span class="p">,</span> <span class="n">superpose</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="nb">type</span><span class="p">(</span><span class="n">ts</span><span class="p">)</span> <span class="o">==</span> <span class="n">SSA</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">_sigma_plot</span><span class="p">(</span><span class="n">ts</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="nb">type</span><span class="p">(</span><span class="n">ts</span><span class="p">)</span> <span class="o">==</span> <span class="n">WCorMatrix</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">_wcor_plot</span><span class="p">(</span><span class="n">ts</span><span class="p">,</span> <span class="n">scales</span><span class="p">)</span></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, Fleyderer.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
