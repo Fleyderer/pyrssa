@@ -61,7 +61,6 @@
 <li class="toctree-l3"><a class="reference internal" href="#module-pyrssa.classes.SSA">SSA</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#pyrssa.classes.SSA.IOSSA"><code class="docutils literal notranslate"><span class="pre">IOSSA</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#pyrssa.classes.SSA.SSA"><code class="docutils literal notranslate"><span class="pre">SSA</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#pyrssa.classes.SSA.SSABase"><code class="docutils literal notranslate"><span class="pre">SSABase</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="#module-pyrssa.classes.WCorMatrix">WCorMatrix</a><ul>
@@ -135,7 +134,7 @@
 <span id="resonstruction"></span><h1>Resonstruction<a class="headerlink" href="#module-pyrssa.classes.Resonstruction" title="Permalink to this heading"></a></h1>
 <dl class="py class">
 <dt class="sig sig-object py" id="pyrssa.classes.Resonstruction.Reconstruction">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">Reconstruction</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ds</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#pyrssa.classes.SSA.SSA" title="pyrssa.classes.SSA.SSA"><span class="pre">SSA</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">groups</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrssa/classes/Resonstruction.html#Reconstruction"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrssa.classes.Resonstruction.Reconstruction" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">Reconstruction</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#pyrssa.classes.SSA.SSA" title="pyrssa.classes.SSA.SSA"><span class="pre">SSA</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">groups</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">drop_attributes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cache</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrssa/classes/Resonstruction.html#Reconstruction"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrssa.classes.Resonstruction.Reconstruction" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 </section>
@@ -144,31 +143,41 @@
 <dl class="py class">
 <dt class="sig sig-object py" id="pyrssa.classes.SSA.IOSSA">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">IOSSA</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x:</span> <span class="pre">~pyrssa.classes.SSA.SSA</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nested_groups</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tol=1e-05</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kappa=2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">maxiter=100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">norm:</span> <span class="pre">~typing.Callable</span> <span class="pre">=</span> <span class="pre">&lt;function</span> <span class="pre">_default_norm&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">trace=False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kappa_balance=0.5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">call=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">**kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrssa/classes/SSA.html#IOSSA"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrssa.classes.SSA.IOSSA" title="Permalink to this definition"></a></dt>
-<dd><p>Bases: <a class="reference internal" href="#pyrssa.classes.SSA.SSABase" title="pyrssa.classes.SSA.SSABase"><code class="xref py py-class docutils literal notranslate"><span class="pre">SSABase</span></code></a></p>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">_SSABase</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="pyrssa.classes.SSA.IOSSA.contributions">
+<span class="sig-name descname"><span class="pre">contributions</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">idx</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrssa/classes/SSA.html#IOSSA.contributions"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrssa.classes.SSA.IOSSA.contributions" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyrssa.classes.SSA.IOSSA.nsigma">
+<span class="sig-name descname"><span class="pre">nsigma</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrssa/classes/SSA.html#IOSSA.nsigma"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrssa.classes.SSA.IOSSA.nsigma" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyrssa.classes.SSA.IOSSA.nspecial">
+<span class="sig-name descname"><span class="pre">nspecial</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrssa/classes/SSA.html#IOSSA.nspecial"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrssa.classes.SSA.IOSSA.nspecial" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
 </dd></dl>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="pyrssa.classes.SSA.SSA">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">SSA</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">L</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">neig</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mask</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wmask</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kind</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'1d-ssa'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">column_projector</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'none'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">row_projector</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'none'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">svd_method</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'auto'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">call</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrssa/classes/SSA.html#SSA"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrssa.classes.SSA.SSA" title="Permalink to this definition"></a></dt>
-<dd><p>Bases: <a class="reference internal" href="#pyrssa.classes.SSA.SSABase" title="pyrssa.classes.SSA.SSABase"><code class="xref py py-class docutils literal notranslate"><span class="pre">SSABase</span></code></a></p>
-</dd></dl>
-
-<dl class="py class">
-<dt class="sig sig-object py" id="pyrssa.classes.SSA.SSABase">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">SSABase</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ssa_object</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">call</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrssa/classes/SSA.html#SSABase"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrssa.classes.SSA.SSABase" title="Permalink to this definition"></a></dt>
-<dd><dl class="py method">
-<dt class="sig sig-object py" id="pyrssa.classes.SSA.SSABase.contributions">
-<span class="sig-name descname"><span class="pre">contributions</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">idx</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrssa/classes/SSA.html#SSABase.contributions"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrssa.classes.SSA.SSABase.contributions" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">_SSABase</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="pyrssa.classes.SSA.SSA.contributions">
+<span class="sig-name descname"><span class="pre">contributions</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">idx</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrssa/classes/SSA.html#SSA.contributions"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrssa.classes.SSA.SSA.contributions" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="pyrssa.classes.SSA.SSABase.nsigma">
-<span class="sig-name descname"><span class="pre">nsigma</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrssa/classes/SSA.html#SSABase.nsigma"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrssa.classes.SSA.SSABase.nsigma" title="Permalink to this definition"></a></dt>
+<dt class="sig sig-object py" id="pyrssa.classes.SSA.SSA.nsigma">
+<span class="sig-name descname"><span class="pre">nsigma</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrssa/classes/SSA.html#SSA.nsigma"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrssa.classes.SSA.SSA.nsigma" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="pyrssa.classes.SSA.SSABase.nspecial">
-<span class="sig-name descname"><span class="pre">nspecial</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrssa/classes/SSA.html#SSABase.nspecial"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrssa.classes.SSA.SSABase.nspecial" title="Permalink to this definition"></a></dt>
+<dt class="sig sig-object py" id="pyrssa.classes.SSA.SSA.nspecial">
+<span class="sig-name descname"><span class="pre">nspecial</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrssa/classes/SSA.html#SSA.nspecial"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrssa.classes.SSA.SSA.nspecial" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 </dd></dl>

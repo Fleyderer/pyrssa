@@ -79,7 +79,7 @@
 <span class="n">ssa_get</span> <span class="o">=</span> <span class="n">robjects</span><span class="o">.</span><span class="n">r</span><span class="p">(</span><span class="s1">&#39;utils::getFromNamespace(&quot;$.ssa&quot;, &quot;Rssa&quot;)&#39;</span><span class="p">)</span>
 
 
-<div class="viewcode-block" id="SSABase"><a class="viewcode-back" href="../../../pyrssa.classes.html#pyrssa.classes.SSA.SSABase">[docs]</a><span class="k">class</span> <span class="nc">SSABase</span><span class="p">:</span>
+<span class="k">class</span> <span class="nc">_SSABase</span><span class="p">:</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">ssa_object</span><span class="p">,</span> <span class="n">call</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">obj</span> <span class="o">=</span> <span class="n">ssa_object</span>
@@ -89,16 +89,16 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">F</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">call</span> <span class="o">=</span> <span class="n">call</span>
 
-<div class="viewcode-block" id="SSABase.contributions"><a class="viewcode-back" href="../../../pyrssa.classes.html#pyrssa.classes.SSA.SSABase.contributions">[docs]</a>    <span class="k">def</span> <span class="nf">contributions</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">idx</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_contributions</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">idx</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">idx</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">idx</span> <span class="o">=</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">nsigma</span><span class="p">()</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">r_ssa</span><span class="o">.</span><span class="n">contributions</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">obj</span><span class="p">,</span> <span class="n">idx</span><span class="p">)</span></div>
+            <span class="n">idx</span> <span class="o">=</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_nsigma</span><span class="p">()</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">r_ssa</span><span class="o">.</span><span class="n">contributions</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">obj</span><span class="p">,</span> <span class="n">idx</span><span class="p">)</span>
 
-<div class="viewcode-block" id="SSABase.nspecial"><a class="viewcode-back" href="../../../pyrssa.classes.html#pyrssa.classes.SSA.SSABase.nspecial">[docs]</a>    <span class="k">def</span> <span class="nf">nspecial</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="n">r_ssa</span><span class="o">.</span><span class="n">nspecial</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">obj</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span></div>
+    <span class="k">def</span> <span class="nf">_nspecial</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">r_ssa</span><span class="o">.</span><span class="n">nspecial</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">obj</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
 
-<div class="viewcode-block" id="SSABase.nsigma"><a class="viewcode-back" href="../../../pyrssa.classes.html#pyrssa.classes.SSA.SSABase.nsigma">[docs]</a>    <span class="k">def</span> <span class="nf">nsigma</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="n">r_ssa</span><span class="o">.</span><span class="n">nsigma</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">obj</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span></div>
+    <span class="k">def</span> <span class="nf">_nsigma</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">r_ssa</span><span class="o">.</span><span class="n">nsigma</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">obj</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
 
     <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">result</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">obj</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
@@ -106,10 +106,10 @@
         <span class="k">return</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="fm">__str__</span><span class="p">()</span></div>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="fm">__str__</span><span class="p">()</span>
 
 
-<div class="viewcode-block" id="SSA"><a class="viewcode-back" href="../../../pyrssa.classes.html#pyrssa.classes.SSA.SSA">[docs]</a><span class="k">class</span> <span class="nc">SSA</span><span class="p">(</span><span class="n">SSABase</span><span class="p">):</span>
+<div class="viewcode-block" id="SSA"><a class="viewcode-back" href="../../../pyrssa.classes.html#pyrssa.classes.SSA.SSA">[docs]</a><span class="k">class</span> <span class="nc">SSA</span><span class="p">(</span><span class="n">_SSABase</span><span class="p">):</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span>
                  <span class="n">L</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
@@ -135,6 +135,15 @@
                                       <span class="n">row_projector</span><span class="o">=</span><span class="n">row_projector</span><span class="p">,</span>
                                       <span class="n">svd_method</span><span class="o">=</span><span class="n">svd_method</span><span class="p">),</span> <span class="n">call</span><span class="o">=</span><span class="n">call</span><span class="p">)</span>
 
+<div class="viewcode-block" id="SSA.contributions"><a class="viewcode-back" href="../../../pyrssa.classes.html#pyrssa.classes.SSA.SSA.contributions">[docs]</a>    <span class="k">def</span> <span class="nf">contributions</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">idx</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_contributions</span><span class="p">(</span><span class="n">idx</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="SSA.nspecial"><a class="viewcode-back" href="../../../pyrssa.classes.html#pyrssa.classes.SSA.SSA.nspecial">[docs]</a>    <span class="k">def</span> <span class="nf">nspecial</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_nspecial</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="SSA.nsigma"><a class="viewcode-back" href="../../../pyrssa.classes.html#pyrssa.classes.SSA.SSA.nsigma">[docs]</a>    <span class="k">def</span> <span class="nf">nsigma</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_nsigma</span><span class="p">()</span></div>
+
     <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">obj</span><span class="p">)</span>
 
@@ -152,7 +161,7 @@
     <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">x</span> <span class="o">**</span> <span class="mi">2</span><span class="p">))</span>
 
 
-<div class="viewcode-block" id="IOSSA"><a class="viewcode-back" href="../../../pyrssa.classes.html#pyrssa.classes.SSA.IOSSA">[docs]</a><span class="k">class</span> <span class="nc">IOSSA</span><span class="p">(</span><span class="n">SSABase</span><span class="p">):</span>
+<div class="viewcode-block" id="IOSSA"><a class="viewcode-back" href="../../../pyrssa.classes.html#pyrssa.classes.SSA.IOSSA">[docs]</a><span class="k">class</span> <span class="nc">IOSSA</span><span class="p">(</span><span class="n">_SSABase</span><span class="p">):</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">SSA</span><span class="p">,</span>
                  <span class="n">nested_groups</span><span class="p">,</span>
@@ -177,6 +186,15 @@
                                           <span class="n">kappa</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">kappa</span><span class="p">,</span> <span class="n">maxiter</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">maxiter</span><span class="p">,</span>
                                           <span class="n">trace</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">trace</span><span class="p">,</span>
                                           <span class="n">kappa_balance</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">kappa_balance</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">),</span> <span class="n">call</span><span class="o">=</span><span class="n">call</span><span class="p">)</span>
+
+<div class="viewcode-block" id="IOSSA.contributions"><a class="viewcode-back" href="../../../pyrssa.classes.html#pyrssa.classes.SSA.IOSSA.contributions">[docs]</a>    <span class="k">def</span> <span class="nf">contributions</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">idx</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_contributions</span><span class="p">(</span><span class="n">idx</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="IOSSA.nspecial"><a class="viewcode-back" href="../../../pyrssa.classes.html#pyrssa.classes.SSA.IOSSA.nspecial">[docs]</a>    <span class="k">def</span> <span class="nf">nspecial</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_nspecial</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="IOSSA.nsigma"><a class="viewcode-back" href="../../../pyrssa.classes.html#pyrssa.classes.SSA.IOSSA.nsigma">[docs]</a>    <span class="k">def</span> <span class="nf">nsigma</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_nsigma</span><span class="p">()</span></div>
 
     <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">obj</span><span class="p">)</span>

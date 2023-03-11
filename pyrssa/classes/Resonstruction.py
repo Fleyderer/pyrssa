@@ -8,10 +8,9 @@ r_ssa = rpackages.importr('Rssa')
 
 class Reconstruction:
 
-    def __init__(self, ds: SSA, groups):
-        self.obj = r_ssa.reconstruct(ds, groups=groups)
-        # self.series = robjects.r.attr(self.obj, "series")
-        self.series = ds.F
+    def __init__(self, x: SSA, groups, drop_attributes=False, cache=True):
+        self.obj = r_ssa.reconstruct(x=x, groups=groups, drop_attributes=drop_attributes, cache=cache)
+        self.series = x.F
         self.residuals = robjects.r.attr(self.obj, "residuals")
         self.names = robjects.r.names(self.obj)
         for name in self.names:

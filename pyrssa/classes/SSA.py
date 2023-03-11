@@ -9,7 +9,7 @@ r_ssa = rpackages.importr('Rssa')
 ssa_get = robjects.r('utils::getFromNamespace("$.ssa", "Rssa")')
 
 
-class SSABase:
+class _SSABase:
 
     def __init__(self, x, ssa_object, call):
         self.obj = ssa_object
@@ -19,15 +19,15 @@ class SSABase:
         self.F = pd.DataFrame(x)
         self.call = call
 
-    def contributions(self, idx=None):
+    def _contributions(self, idx=None):
         if idx is None:
-            idx = range(1, self.nsigma() + 1)
+            idx = range(1, self._nsigma() + 1)
         return r_ssa.contributions(self.obj, idx)
 
-    def nspecial(self):
+    def _nspecial(self):
         return r_ssa.nspecial(self.obj)[0]
 
-    def nsigma(self):
+    def _nsigma(self):
         return r_ssa.nsigma(self.obj)[0]
 
     def __str__(self):
@@ -39,7 +39,7 @@ class SSABase:
         return self.__str__()
 
 
-class SSA(SSABase):
+class SSA(_SSABase):
 
     def __init__(self, x,
                  L=None,
@@ -65,6 +65,15 @@ class SSA(SSABase):
                                       row_projector=row_projector,
                                       svd_method=svd_method), call=call)
 
+    def contributions(self, idx=None):
+        return self._contributions(idx)
+
+    def nspecial(self):
+        return self._nspecial()
+
+    def nsigma(self):
+        return self._nsigma()
+
     def __str__(self):
         return str(self.obj)
 
@@ -82,7 +91,7 @@ def _default_norm(x):
     return np.sqrt(np.mean(x ** 2))
 
 
-class IOSSA(SSABase):
+class IOSSA(_SSABase):
 
     def __init__(self, x: SSA,
                  nested_groups,
@@ -107,6 +116,15 @@ class IOSSA(SSABase):
                                           kappa=self.kappa, maxiter=self.maxiter,
                                           trace=self.trace,
                                           kappa_balance=self.kappa_balance, **kwargs), call=call)
+
+    def contributions(self, idx=None):
+        return self._contributions(idx)
+
+    def nspecial(self):
+        return self._nspecial()
+
+    def nsigma(self):
+        return self._nsigma()
 
     def __str__(self):
         return str(self.obj)

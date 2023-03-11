@@ -15,7 +15,6 @@ from pandas import read_csv
 import numpy as np
 import os
 import inspect
-from typing import Callable
 
 
 # This line solves problem for PyCharm: module 'backend_interagg' has no attribute 'FigureCanvas'...
@@ -81,13 +80,9 @@ def parestimate(x, groups, method="esprit", subspace="column", normalize_roots=N
 def ssa(x, L=None, neig=None, mask=None, wmask=None, kind="1d-ssa", circular=None,
         column_projector="none", row_projector="none", svd_method="auto"):
     """
-    Description
-    -------
 
-    Set up the SSA object and perform the decomposition, if necessary.
-
-    :param x: object to be decomposed.
-    :type x: Union[class:`pd.DataFrame`, class:`pd.Series`]
+    :param x: object to be decomposed. If DataFrame passed, the first column will be treated as a series
+    :type x: pd.DataFrame, pd.Series, np.ndarray, list
     :param L: window length. Fixed to half of the series length by default.
         Should be vector of length 2 for 2d SSA
     :type L: int, optional
@@ -104,24 +99,177 @@ def ssa(x, L=None, neig=None, mask=None, wmask=None, kind="1d-ssa", circular=Non
         or field topology for 2d SSA. 'TRUE' means series circularity for 1d case or circularity
         by a corresponding coordinate for 2d case. See Shlemov and Golyandina (2014) for more information.
     :param column_projector, row_projector: column and row signal subspaces projectors for SSA with projection.
-    :type column_projector: int, optional
-    :type row_projector: int, optional
+    :type column_projector: str or int, optional
+    :type row_projector: str or int, optional
     :param svd_method: 	singular value decomposition method.
-    :return: SSA Object. The precise layout of the object is mostly meant opaque and subject to
+    :return: SSA object. The precise layout of the object is mostly meant opaque and subject to
         change in different version of the package.
-    :rtype: class:`SSA`
+    :rtype: SSA
+
+    Description
+    ===========
+
+    Set up the SSA object and perform the decomposition, if necessary.
 
     Details
-    -------
+    ===========
 
     This is the main entry point to the package. This routine constructs the SSA object filling all necessary
     internal structures and performing the decomposition if necessary. For the comprehensive description of SSA
     modifications and their algorithms see Golyandina et al (2018).
 
     Variants of SSA
+    ---------------
 
+    The following implementations of the SSA method are supported (corresponds to different values of kind argument):
 
-    Some details for this SSA.
+    * 1d-ssa
+
+        Basic 1d SSA as described in Chapter 1 of Golyandina et al (2001). This is also known as Broomhead-King
+        variant of SSA or BK-SSA, see Broomhead and King (1986).
+
+    * toeplitz-ssa
+
+        Toeplitz variant of 1d SSA. See Section 1.7.2 in Golyandina et al (2001). This is also known
+        as Vautard-Ghil variant of SSA or VG-SSA for analysis of stationary time series, see Vautard and Ghil (1989).
+
+    * mssa
+
+        Multichannel SSA for simultaneous decomposition of several time series (possible of unequal length). See
+        Golyandina and Stepanov (2005).
+
+    * cssa
+
+        Complex variant of 1d SSA.
+
+    * 2d-ssa
+
+        2d SSA for decomposition of images and arrays. See Golyandina and Usevich (2009) and Golyandina et.al (2015)
+        for more information.
+
+    * nd-ssa
+
+        Multidimensional SSA decomposition for arrays (tensors).
+
+    Window shape selection (for shaped 2d SSA)
+    ------------------------------------------
+
+    Window shape may be specified by argument wmask. If wmask is 'NULL', then standard rectangular window (specified
+    by L) will be used.
+
+    * circle(R)
+
+        circular mask of radius R
+
+    * triangle(side)
+
+        mask in form of isosceles right-angled triangle with cathetus side. Right angle lay on topleft corner of
+        container square matrix
+
+    Also in wmask one may use following functions:
+
+    These functions are not exported, they defined only for wmask expression. If one has objects with the same names
+    and wants to use them rather than these functions, one should use special wrapper function I() (see 'Examples').
+
+    Projectors specification for SSA with projection
+    ------------------------------------------------
+
+    Projectors are specified by means of column.projector and row.projector arguments (see Golyandina and Shlemov (
+    2017)). Each may be a matrix of orthonormal (otherwise QR orthonormalization process will be perfomed) basis of
+    projection subspace, or single integer, which will be interpreted as dimension of orthogonal polynomial basis (
+    note that the dimension equals to degree plus 1, e.g. quadratic basis has dimension 3), or one of following
+    character strings (or unique prefix): 'none', 'constant' (or 'centering'), 'linear', 'quadratic' or 'qubic' for
+    orthonormal bases of the corresponding functions.
+
+    Here is the the list of the most used options
+
+    * both projectors are 'none'
+
+        corresponds to ordinary 1D SSA,
+
+    * column.projector='centering'
+
+        corresponds to 1D SSA with centering,
+
+    * column.projector='centering' and row.projector='centering'
+
+        corresponds to 1D SSA with double centering.
+
+    SSA with centering and double centering may improve the separation of linear trend (see Golyandina et.al (2001)
+    for more information).
+
+    SVD methods
+    -----------
+
+    The main step of the SSA method is the singular decomposition of the so-called series trajectory matrix. Package
+    provides several implementations of this procedure (corresponds to different values of svd.method) argument:
+
+    * auto
+
+        Automatic method selection depending on the series length, window length, SSA kind and number of eigenvalues
+        requested.
+
+    * nutrlan
+
+        Thick-restart Lanczos eigensolver which operates on cross-product matrix. This methods exploits the Hankel
+        structure of the trajectory matrix efficiently and is really fast. The method allows the truncated SVD (only
+        specifid amount of eigentriples to be computed) and the continuation of the decomposition. See Korobeynikov (
+        2010) for more information.
+
+    * propack
+
+        SVD via implicitly restarted Lanczos bidiagonalization with partial reothogonalization. This methods exploits
+        the Hankel structure of the trajectory matrix efficiently and is really fast. This is the 'proper' SVD
+        implementation (the matrix of factor vectors are calculated), thus the memory requirements of the methods are
+        higher than for nu-TRLAN. Usually the method is slightly faster that nu-TRLAN and more numerically stable.
+        The method allows the truncated SVD (only specifid amount of eigentriples to be computed). See Korobeynikov (
+        2010) for more information.
+
+    * svd
+
+        Full SVD as provided by LAPACK DGESDD routine. Neither continuation of the decomposition nor the truncated
+        SVD is supported. The method does not assume anything special about the trajectory matrix and thus is slow.
+
+    * eigen
+
+        Full SVD via eigendecompsition of the cross-product matrix. In many cases faster than previous method,
+        but still really slow for more or less non-trivial matrix sizes.
+
+    * rspectra
+
+        SVD via svds function from Rspectra package (if installed)
+
+    * primme
+
+        SVD via svds function from PRIMME package (if installed)
+
+    Usually the ssa function tries to provide the best SVD implementation for given series length and the window
+    size. In particular, for small series and window sizes it is better to use generic black-box routines (as
+    provided by 'svd' and 'eigen' methods). For long series special-purpose routines are to be used.
+
+    Examples
+    --------
+
+    .. code-block:: python
+
+        import pyrssa as prs
+        import pandas as pd
+        import numpy as np
+
+        AustralianWine = prs.data("AustralianWine")
+        fort = AustralianWine['Fortified'][:174]
+        fort.index = pd.date_range(start='1980/01/01', freq='M', periods=len(fort))
+        s_fort = prs.ssa(fort, L=84, kind="1d-ssa")
+
+        co2 = data("co2")
+        s2 = prs.ssa(co2.value, column_projector="centering", row_projector="centering")
+        s4 = prs.ssa(co2.value, column_projector=2, row_projector=2)
+
+        S = np.exp(a * np.arange(1, n + 1)) * np.sin(2 * np.pi * np.arange(1, n + 1) / 7)
+        f = S + sigma * np.random.normal(size=n)
+        f_center = f - np.mean(f)
+        s = prs.ssa(f, L=L, kind="1d-ssa")
+        st = prs.ssa(f_center, L=L, kind='toeplitz-ssa')
 
     """
     return SSA(x, L=L, neig=neig, mask=mask, wmask=wmask, kind=kind,
@@ -131,8 +279,80 @@ def ssa(x, L=None, neig=None, mask=None, wmask=None, kind="1d-ssa", circular=Non
                call=_get_call(inspect.currentframe().f_back))
 
 
-def reconstruct(ds, groups):
-    return Reconstruction(ds, groups)
+def reconstruct(x, groups, drop_attributes=False, cache=True):
+    """
+
+    :param x: SSA object
+    :type x: SSA
+    :param groups: list of numeric vectors, indices of elementary components used for reconstruction,
+        the entries of the list can be named, see 'Value' for more information
+    : type groups: list or dict
+    :param drop_attributes: if `True` then the attributes of the input objects are not copied to the reconstructed ones.
+    :type drop_attributes: bool
+    :param cache: if `True` then intermediate results will be cached in the SSA object.
+    :type cache: bool
+    :return: List of reconstructed objects. Elements of the list have the same names as elements of groups. If the
+        group is unnamed, then corresponding component will obtain name ‘Fn’, where ‘n’ is its index in groups list.
+    :rtype: Reconstruction
+
+    Description
+    ===========
+
+    Reconstruct the data given the SSA decomposition and the desired grouping of the elementary components.
+
+    Details
+    =======
+
+    Reconstruction is performed in a common form for different types of input objects. See Section 1.1.2.6 in
+    Golyandina et al (2018) for the explanation. Formal algorithms are described in this book in Algorithm 2.2 for
+    1D-SSA, Algorithm 4.3 for MSSA, Algorithm 5.2 for 2D-SSA and Algorithm 5.6 for Shaped 2D-SSA.
+
+    Fast implementation of reconstruction with the help of FFT is described in Korobeynikov (2010) for the 1D case
+    and in Section 6.2 (Rank-one quasi-hankelization) of Golyandina et al (2015) for the general case.
+
+
+    Note
+    ----
+
+    By default (argument drop.attributes) the routine tries to preserve all the attributes of the input object. This
+    way, for example, the reconstruction result of 'ts' object is the 'ts' object with the same time scale.
+
+    References
+    ----------
+
+    Golyandina N., Korobeynikov A., Zhigljavsky A. (2018): Singular Spectrum Analysis with R. Use R!. Springer,
+    Berlin, Heidelberg.
+
+    Korobeynikov, A. (2010): Computation- and space-efficient implementation of SSA. Statistics and Its Interface,
+    Vol. 3, No. 3, Pp. 257-268
+
+    Golyandina, N., Korobeynikov, A., Shlemov, A. and Usevich, K. (2015): Multivariate and 2D Extensions of Singular
+    Spectrum Analysis with the Rssa Package. Journal of Statistical Software, Vol. 67, Issue 2.
+    doi:10.18637/jss.v067.i02
+
+    Examples
+    --------
+
+    .. code-block:: python
+
+        import pyrssa as prs
+        import pandas as pd
+        import numpy as np
+
+        AustralianWine = prs.data("AustralianWine")
+        fort = AustralianWine['Fortified'][:174]
+        fort.index = pd.date_range(start='1980/01/01', freq='M', periods=len(fort))
+        s_fort = prs.ssa(fort, L=84, kind="1d-ssa")
+        r_fort = prs.reconstruct(s_fort, groups={"Trend": 1, "Seasonality": range(2, 13)})
+
+        r_fort_2 = prs.reconstruct(s_fort, groups=[1, range(2, 13)])
+
+        co2 = data("co2")
+        s2 = prs.ssa(co2.value, column_projector="centering", row_projector="centering")
+        rec = prs.reconstruct(s2, groups={"Linear_trend": range(1, s2.nspecial() + 1)})
+
+    """
+    return Reconstruction(x=x, groups=groups, drop_attributes=drop_attributes, cache=cache)
 
 
 def iossa(x: SSA, nested_groups, tol=1e-5, kappa=2, maxiter=100, norm=None, trace=False, kappa_balance=0.5, **kwargs):

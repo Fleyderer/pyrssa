@@ -133,12 +133,16 @@
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="pyrssa.classes.html#module-pyrssa.classes.SSA">SSA</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="pyrssa.classes.html#pyrssa.classes.SSA.IOSSA"><code class="docutils literal notranslate"><span class="pre">IOSSA</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="pyrssa.classes.html#pyrssa.classes.SSA.SSA"><code class="docutils literal notranslate"><span class="pre">SSA</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="pyrssa.classes.html#pyrssa.classes.SSA.SSABase"><code class="docutils literal notranslate"><span class="pre">SSABase</span></code></a><ul>
-<li class="toctree-l3"><a class="reference internal" href="pyrssa.classes.html#pyrssa.classes.SSA.SSABase.contributions"><code class="docutils literal notranslate"><span class="pre">SSABase.contributions()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="pyrssa.classes.html#pyrssa.classes.SSA.SSABase.nsigma"><code class="docutils literal notranslate"><span class="pre">SSABase.nsigma()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="pyrssa.classes.html#pyrssa.classes.SSA.SSABase.nspecial"><code class="docutils literal notranslate"><span class="pre">SSABase.nspecial()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="pyrssa.classes.html#pyrssa.classes.SSA.IOSSA"><code class="docutils literal notranslate"><span class="pre">IOSSA</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="pyrssa.classes.html#pyrssa.classes.SSA.IOSSA.contributions"><code class="docutils literal notranslate"><span class="pre">IOSSA.contributions()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyrssa.classes.html#pyrssa.classes.SSA.IOSSA.nsigma"><code class="docutils literal notranslate"><span class="pre">IOSSA.nsigma()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyrssa.classes.html#pyrssa.classes.SSA.IOSSA.nspecial"><code class="docutils literal notranslate"><span class="pre">IOSSA.nspecial()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="pyrssa.classes.html#pyrssa.classes.SSA.SSA"><code class="docutils literal notranslate"><span class="pre">SSA</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="pyrssa.classes.html#pyrssa.classes.SSA.SSA.contributions"><code class="docutils literal notranslate"><span class="pre">SSA.contributions()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyrssa.classes.html#pyrssa.classes.SSA.SSA.nsigma"><code class="docutils literal notranslate"><span class="pre">SSA.nsigma()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyrssa.classes.html#pyrssa.classes.SSA.SSA.nspecial"><code class="docutils literal notranslate"><span class="pre">SSA.nspecial()</span></code></a></li>
 </ul>
 </li>
 </ul>
@@ -214,8 +218,63 @@ when possible (length of groups is one)</p></li>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="pyrssa.base.reconstruct">
-<span class="sig-name descname"><span class="pre">reconstruct</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ds</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">groups</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrssa/base.html#reconstruct"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrssa.base.reconstruct" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
+<span class="sig-name descname"><span class="pre">reconstruct</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">groups</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">drop_attributes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cache</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrssa/base.html#reconstruct"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrssa.base.reconstruct" title="Permalink to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> (<a class="reference internal" href="pyrssa.classes.html#pyrssa.classes.SSA.SSA" title="pyrssa.classes.SSA.SSA"><em>SSA</em></a>) – SSA object</p></li>
+<li><p><strong>groups</strong> – list of numeric vectors, indices of elementary components used for reconstruction,
+the entries of the list can be named, see ‘Value’ for more information</p></li>
+<li><p><strong>drop_attributes</strong> (<em>bool</em>) – if <cite>True</cite> then the attributes of the input objects are not copied to the reconstructed ones.</p></li>
+<li><p><strong>cache</strong> (<em>bool</em>) – if <cite>True</cite> then intermediate results will be cached in the SSA object.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>List of reconstructed objects. Elements of the list have the same names as elements of groups. If the
+group is unnamed, then corresponding component will obtain name ‘Fn’, where ‘n’ is its index in groups list.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="pyrssa.classes.html#pyrssa.classes.Resonstruction.Reconstruction" title="pyrssa.classes.Resonstruction.Reconstruction">Reconstruction</a></p>
+</dd>
+</dl>
+<section id="description">
+<h2>Description<a class="headerlink" href="#description" title="Permalink to this heading"></a></h2>
+<p>Reconstruct the data given the SSA decomposition and the desired grouping of the elementary components.</p>
+</section>
+<section id="details">
+<h2>Details<a class="headerlink" href="#details" title="Permalink to this heading"></a></h2>
+<p>Reconstruction is performed in a common form for different types of input objects. See Section 1.1.2.6 in
+Golyandina et al (2018) for the explanation. Formal algorithms are described in this book in Algorithm 2.2 for
+1D-SSA, Algorithm 4.3 for MSSA, Algorithm 5.2 for 2D-SSA and Algorithm 5.6 for Shaped 2D-SSA.</p>
+<p>Fast implementation of reconstruction with the help of FFT is described in Korobeynikov (2010) for the 1D case
+and in Section 6.2 (Rank-one quasi-hankelization) of Golyandina et al (2015) for the general case.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>By default (argument drop.attributes) the routine tries to preserve all the attributes of the input object. This
+way, for example, the reconstruction result of ‘ts’ object is the ‘ts’ object with the same time scale.</p>
+</div>
+<p class="rubric">References</p>
+<p>Golyandina N., Korobeynikov A., Zhigljavsky A. (2018): Singular Spectrum Analysis with R. Use R!. Springer,
+Berlin, Heidelberg.</p>
+<p>Korobeynikov, A. (2010): Computation- and space-efficient implementation of SSA. Statistics and Its Interface,
+Vol. 3, No. 3, Pp. 257-268</p>
+<p>Golyandina, N., Korobeynikov, A., Shlemov, A. and Usevich, K. (2015): Multivariate and 2D Extensions of Singular
+Spectrum Analysis with the Rssa Package. Journal of Statistical Software, Vol. 67, Issue 2.
+doi:10.18637/jss.v067.i02</p>
+<p class="rubric">Examples</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">pyrssa</span> <span class="k">as</span> <span class="nn">prs</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+<span class="n">AustralianWine</span> <span class="o">=</span> <span class="n">prs</span><span class="o">.</span><span class="n">data</span><span class="p">(</span><span class="s2">&quot;AustralianWine&quot;</span><span class="p">)</span>
+<span class="n">fort</span> <span class="o">=</span> <span class="n">AustralianWine</span><span class="p">[</span><span class="s1">&#39;Fortified&#39;</span><span class="p">][:</span><span class="mi">174</span><span class="p">]</span>
+<span class="n">fort</span><span class="o">.</span><span class="n">index</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">date_range</span><span class="p">(</span><span class="n">start</span><span class="o">=</span><span class="s1">&#39;1980/01/01&#39;</span><span class="p">,</span> <span class="n">freq</span><span class="o">=</span><span class="s1">&#39;M&#39;</span><span class="p">,</span> <span class="n">periods</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">fort</span><span class="p">))</span>
+<span class="n">s_fort</span> <span class="o">=</span> <span class="n">prs</span><span class="o">.</span><span class="n">ssa</span><span class="p">(</span><span class="n">fort</span><span class="p">,</span> <span class="n">L</span><span class="o">=</span><span class="mi">84</span><span class="p">,</span> <span class="n">kind</span><span class="o">=</span><span class="s2">&quot;1d-ssa&quot;</span><span class="p">)</span>
+<span class="n">r_fort</span> <span class="o">=</span> <span class="n">prs</span><span class="o">.</span><span class="n">reconstruct</span><span class="p">(</span><span class="n">s_fort</span><span class="p">,</span> <span class="n">groups</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;Trend&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;Seasonality&quot;</span><span class="p">:</span> <span class="nb">range</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">13</span><span class="p">)})</span>
+</pre></div>
+</div>
+</section>
+</dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="pyrssa.base.rforecast">
@@ -225,77 +284,189 @@ when possible (length of groups is one)</p></li>
 <dl class="py function">
 <dt class="sig sig-object py" id="pyrssa.base.ssa">
 <span class="sig-name descname"><span class="pre">ssa</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">L</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">neig</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mask</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wmask</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kind</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'1d-ssa'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">circular</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">column_projector</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'none'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">row_projector</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'none'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">svd_method</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'auto'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrssa/base.html#ssa"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrssa.base.ssa" title="Permalink to this definition"></a></dt>
-<dd><section id="description">
-<h2>Description<a class="headerlink" href="#description" title="Permalink to this heading"></a></h2>
-<p>Set up the SSA object and perform the decomposition, if necessary.</p>
-<dl class="field-list simple">
-<dt class="field-odd">param x<span class="colon">:</span></dt>
-<dd class="field-odd"><p>object to be decomposed.</p>
-</dd>
-<dt class="field-even">type x<span class="colon">:</span></dt>
-<dd class="field-even"><p>Union[class:<cite>pd.DataFrame</cite>, class:<cite>pd.Series</cite>]</p>
-</dd>
-<dt class="field-odd">param L<span class="colon">:</span></dt>
-<dd class="field-odd"><p>window length. Fixed to half of the series length by default.
-Should be vector of length 2 for 2d SSA</p>
-</dd>
-<dt class="field-even">type L<span class="colon">:</span></dt>
-<dd class="field-even"><p>int, optional</p>
-</dd>
-<dt class="field-odd">param neig<span class="colon">:</span></dt>
-<dd class="field-odd"><p>number of desired eigentriples. If None, then sane default value
-will be used.</p>
-</dd>
-<dt class="field-even">type neig<span class="colon">:</span></dt>
-<dd class="field-even"><p>int, optional</p>
-</dd>
-<dt class="field-odd">param mask<span class="colon">:</span></dt>
-<dd class="field-odd"><p>for shaped 2d SSA case only. Logical matrix with same dimension as x.
-Specifies form of decomposed array. If None, then all non-NA elements will be used</p>
-</dd>
-<dt class="field-even">param wmask<span class="colon">:</span></dt>
-<dd class="field-even"><p>for shaped 2d SSA case only. Logical matrix which specifies window form.</p>
-</dd>
-<dt class="field-odd">param kind<span class="colon">:</span></dt>
-<dd class="field-odd"><p>SSA method. This includes ordinary 1d SSA, 2d SSA, Toeplitz variant of 1d SSA, multichannel
-variant of SSA and complex SSA. Defaults to 1d SSA.</p>
-</dd>
-<dt class="field-even">type kind<span class="colon">:</span></dt>
-<dd class="field-even"><p>str, optional</p>
-</dd>
-<dt class="field-odd">param circular<span class="colon">:</span></dt>
-<dd class="field-odd"><p>logical vector of one or two elements, describes series topology for 1d SSA and Toeplitz SSA
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> (<em>pd.DataFrame</em><em>, </em><em>pd.Series</em><em>, </em><em>np.ndarray</em><em>, </em><em>list</em>) – object to be decomposed. If DataFrame passed, the first column will be treated as a series</p></li>
+<li><p><strong>L</strong> (<em>int</em><em>, </em><em>optional</em>) – window length. Fixed to half of the series length by default.
+Should be vector of length 2 for 2d SSA</p></li>
+<li><p><strong>neig</strong> (<em>int</em><em>, </em><em>optional</em>) – number of desired eigentriples. If None, then sane default value
+will be used.</p></li>
+<li><p><strong>mask</strong> – for shaped 2d SSA case only. Logical matrix with same dimension as x.
+Specifies form of decomposed array. If None, then all non-NA elements will be used</p></li>
+<li><p><strong>wmask</strong> – for shaped 2d SSA case only. Logical matrix which specifies window form.</p></li>
+<li><p><strong>kind</strong> (<em>str</em><em>, </em><em>optional</em>) – SSA method. This includes ordinary 1d SSA, 2d SSA, Toeplitz variant of 1d SSA, multichannel
+variant of SSA and complex SSA. Defaults to 1d SSA.</p></li>
+<li><p><strong>circular</strong> – logical vector of one or two elements, describes series topology for 1d SSA and Toeplitz SSA
 or field topology for 2d SSA. ‘TRUE’ means series circularity for 1d case or circularity
-by a corresponding coordinate for 2d case. See Shlemov and Golyandina (2014) for more information.</p>
+by a corresponding coordinate for 2d case. See Shlemov and Golyandina (2014) for more information.</p></li>
+<li><p><strong>row_projector</strong> (<em>int</em><em>, </em><em>optional</em>) – column and row signal subspaces projectors for SSA with projection.</p></li>
+<li><p><strong>svd_method</strong> – singular value decomposition method.</p></li>
+</ul>
 </dd>
-<dt class="field-even">param column_projector, row_projector<span class="colon">:</span></dt>
-<dd class="field-even"><p>column and row signal subspaces projectors for SSA with projection.</p>
-</dd>
-<dt class="field-odd">type column_projector<span class="colon">:</span></dt>
-<dd class="field-odd"><p>int, optional</p>
-</dd>
-<dt class="field-even">type row_projector<span class="colon">:</span></dt>
-<dd class="field-even"><p>int, optional</p>
-</dd>
-<dt class="field-odd">param svd_method<span class="colon">:</span></dt>
-<dd class="field-odd"><p>singular value decomposition method.</p>
-</dd>
-<dt class="field-even">return<span class="colon">:</span></dt>
-<dd class="field-even"><p>SSA Object. The precise layout of the object is mostly meant opaque and subject to
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>SSA object. The precise layout of the object is mostly meant opaque and subject to
 change in different version of the package.</p>
 </dd>
-<dt class="field-odd">rtype<span class="colon">:</span></dt>
-<dd class="field-odd"><p>class:<cite>SSA</cite></p>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="pyrssa.classes.html#pyrssa.classes.SSA.SSA" title="pyrssa.classes.SSA.SSA">SSA</a></p>
 </dd>
 </dl>
+<section id="id1">
+<h2>Description<a class="headerlink" href="#id1" title="Permalink to this heading"></a></h2>
+<p>Set up the SSA object and perform the decomposition, if necessary.</p>
 </section>
-<section id="details">
-<h2>Details<a class="headerlink" href="#details" title="Permalink to this heading"></a></h2>
+<section id="id2">
+<h2>Details<a class="headerlink" href="#id2" title="Permalink to this heading"></a></h2>
 <p>This is the main entry point to the package. This routine constructs the SSA object filling all necessary
 internal structures and performing the decomposition if necessary. For the comprehensive description of SSA
 modifications and their algorithms see Golyandina et al (2018).</p>
-<p>Variants of SSA</p>
-<p>Some details for this SSA.</p>
+<section id="variants-of-ssa">
+<h3>Variants of SSA<a class="headerlink" href="#variants-of-ssa" title="Permalink to this heading"></a></h3>
+<p>The following implementations of the SSA method are supported (corresponds to different values of kind argument):</p>
+<ul>
+<li><p>1d-ssa</p>
+<blockquote>
+<div><p>Basic 1d SSA as described in Chapter 1 of Golyandina et al (2001). This is also known as Broomhead-King
+variant of SSA or BK-SSA, see Broomhead and King (1986).</p>
+</div></blockquote>
+</li>
+<li><p>toeplitz-ssa</p>
+<blockquote>
+<div><p>Toeplitz variant of 1d SSA. See Section 1.7.2 in Golyandina et al (2001). This is also known
+as Vautard-Ghil variant of SSA or VG-SSA for analysis of stationary time series, see Vautard and Ghil (1989).</p>
+</div></blockquote>
+</li>
+<li><p>mssa</p>
+<blockquote>
+<div><p>Multichannel SSA for simultaneous decomposition of several time series (possible of unequal length). See
+Golyandina and Stepanov (2005).</p>
+</div></blockquote>
+</li>
+<li><p>cssa</p>
+<blockquote>
+<div><p>Complex variant of 1d SSA.</p>
+</div></blockquote>
+</li>
+<li><p>2d-ssa</p>
+<blockquote>
+<div><p>2d SSA for decomposition of images and arrays. See Golyandina and Usevich (2009) and Golyandina et.al (2015)
+for more information.</p>
+</div></blockquote>
+</li>
+<li><p>nd-ssa</p>
+<blockquote>
+<div><p>Multidimensional SSA decomposition for arrays (tensors).</p>
+</div></blockquote>
+</li>
+</ul>
+</section>
+<section id="window-shape-selection-for-shaped-2d-ssa">
+<h3>Window shape selection (for shaped 2d SSA)<a class="headerlink" href="#window-shape-selection-for-shaped-2d-ssa" title="Permalink to this heading"></a></h3>
+<p>Window shape may be specified by argument wmask. If wmask is ‘NULL’, then standard rectangular window (specified
+by L) will be used.</p>
+<ul>
+<li><p>circle(R)</p>
+<blockquote>
+<div><p>circular mask of radius R</p>
+</div></blockquote>
+</li>
+<li><p>triangle(side)</p>
+<blockquote>
+<div><p>mask in form of isosceles right-angled triangle with cathetus side. Right angle lay on topleft corner of
+container square matrix</p>
+</div></blockquote>
+</li>
+</ul>
+<p>Also in wmask one may use following functions:</p>
+<p>These functions are not exported, they defined only for wmask expression. If one has objects with the same names
+and wants to use them rather than these functions, one should use special wrapper function I() (see ‘Examples’).</p>
+</section>
+<section id="projectors-specification-for-ssa-with-projection">
+<h3>Projectors specification for SSA with projection<a class="headerlink" href="#projectors-specification-for-ssa-with-projection" title="Permalink to this heading"></a></h3>
+<p>Projectors are specified by means of column.projector and row.projector arguments (see Golyandina and Shlemov (
+2017)). Each may be a matrix of orthonormal (otherwise QR orthonormalization process will be perfomed) basis of
+projection subspace, or single integer, which will be interpreted as dimension of orthogonal polynomial basis (
+note that the dimension equals to degree plus 1, e.g. quadratic basis has dimension 3), or one of following
+character strings (or unique prefix): ‘none’, ‘constant’ (or ‘centering’), ‘linear’, ‘quadratic’ or ‘qubic’ for
+orthonormal bases of the corresponding functions.</p>
+<p>Here is the the list of the most used options</p>
+<ul>
+<li><p>both projectors are ‘none’</p>
+<blockquote>
+<div><p>corresponds to ordinary 1D SSA,</p>
+</div></blockquote>
+</li>
+<li><p>column.projector=’centering’</p>
+<blockquote>
+<div><p>corresponds to 1D SSA with centering,</p>
+</div></blockquote>
+</li>
+<li><p>column.projector=’centering’ and row.projector=’centering’</p>
+<blockquote>
+<div><p>corresponds to 1D SSA with double centering.</p>
+</div></blockquote>
+</li>
+</ul>
+<p>SSA with centering and double centering may improve the separation of linear trend (see Golyandina et.al (2001)
+for more information).</p>
+</section>
+<section id="svd-methods">
+<h3>SVD methods<a class="headerlink" href="#svd-methods" title="Permalink to this heading"></a></h3>
+<p>The main step of the SSA method is the singular decomposition of the so-called series trajectory matrix. Package
+provides several implementations of this procedure (corresponds to different values of svd.method) argument:</p>
+<ul>
+<li><p>auto</p>
+<blockquote>
+<div><p>Automatic method selection depending on the series length, window length, SSA kind and number of eigenvalues
+requested.</p>
+</div></blockquote>
+</li>
+<li><p>nutrlan</p>
+<blockquote>
+<div><p>Thick-restart Lanczos eigensolver which operates on cross-product matrix. This methods exploits the Hankel
+structure of the trajectory matrix efficiently and is really fast. The method allows the truncated SVD (only
+specifid amount of eigentriples to be computed) and the continuation of the decomposition. See Korobeynikov (
+2010) for more information.</p>
+</div></blockquote>
+</li>
+<li><p>propack</p>
+<blockquote>
+<div><p>SVD via implicitly restarted Lanczos bidiagonalization with partial reothogonalization. This methods exploits
+the Hankel structure of the trajectory matrix efficiently and is really fast. This is the ‘proper’ SVD
+implementation (the matrix of factor vectors are calculated), thus the memory requirements of the methods are
+higher than for nu-TRLAN. Usually the method is slightly faster that nu-TRLAN and more numerically stable.
+The method allows the truncated SVD (only specifid amount of eigentriples to be computed). See Korobeynikov (
+2010) for more information.</p>
+</div></blockquote>
+</li>
+<li><p>svd</p>
+<blockquote>
+<div><p>Full SVD as provided by LAPACK DGESDD routine. Neither continuation of the decomposition nor the truncated
+SVD is supported. The method does not assume anything special about the trajectory matrix and thus is slow.</p>
+</div></blockquote>
+</li>
+<li><p>eigen</p>
+<blockquote>
+<div><p>Full SVD via eigendecompsition of the cross-product matrix. In many cases faster than previous method,
+but still really slow for more or less non-trivial matrix sizes.</p>
+</div></blockquote>
+</li>
+<li><p>rspectra</p>
+<blockquote>
+<div><p>SVD via svds function from Rspectra package (if installed)</p>
+</div></blockquote>
+</li>
+<li><p>primme</p>
+<blockquote>
+<div><p>SVD via svds function from PRIMME package (if installed)</p>
+</div></blockquote>
+</li>
+</ul>
+<p>Usually the ssa function tries to provide the best SVD implementation for given series length and the window
+size. In particular, for small series and window sizes it is better to use generic black-box routines (as
+provided by ‘svd’ and ‘eigen’ methods). For long series special-purpose routines are to be used.</p>
+</section>
 </section>
 </dd></dl>
 

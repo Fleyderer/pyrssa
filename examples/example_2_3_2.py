@@ -17,7 +17,7 @@ F0 = 10 * (tt - 0.5) ** r
 F = F0 + np.sin(2 * np.pi * np.arange(1, N + 1) / 10)
 L = 100
 dec = prs.ssa(F, L=L, column_projector=3, row_projector=3)
-rec1 = prs.reconstruct(dec, groups={"Trend": np.arange(1, dec.nspecial() + 1)})
+rec1 = prs.reconstruct(dec, groups={"Trend": np.arange(1, dec._nspecial() + 1)})
 fit1 = rec1.Trend
 p = poly(np.arange(1, N + 1), 5)
 fit1_3b = LinearRegression().fit(p, fit1)
