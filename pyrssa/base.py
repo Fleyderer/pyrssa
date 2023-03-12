@@ -44,7 +44,9 @@ def data(name):
     Function for loading available in pyrssa package datasets. Available datasets are stored in the data directory.
 
     :param name: Name of dataset to load
-    :return:
+    :return: Loaded dataset
+    :rtype: pandas.DataFrame
+
     """
     return read_csv(os.path.join(os.path.join(os.path.dirname(os.path.realpath(__file__)), "data"), f'{name}.csv'))
 
@@ -82,7 +84,7 @@ def ssa(x, L=None, neig=None, mask=None, wmask=None, kind="1d-ssa", circular=Non
     """
 
     :param x: object to be decomposed. If DataFrame passed, the first column will be treated as a series
-    :type x: pd.DataFrame, pd.Series, np.ndarray, list
+    :type x: pandas.DataFrame, pandas.Series, numpy.ndarray, list
     :param L: window length. Fixed to half of the series length by default.
         Should be vector of length 2 for 2d SSA
     :type L: int, optional
@@ -286,7 +288,7 @@ def reconstruct(x, groups, drop_attributes=False, cache=True):
     :type x: SSA
     :param groups: list of numeric vectors, indices of elementary components used for reconstruction,
         the entries of the list can be named, see 'Value' for more information
-    : type groups: list or dict
+    :type groups: list or dict
     :param drop_attributes: if `True` then the attributes of the input objects are not copied to the reconstructed ones.
     :type drop_attributes: bool
     :param cache: if `True` then intermediate results will be cached in the SSA object.

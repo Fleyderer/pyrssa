@@ -6,6 +6,7 @@ Structures
 
    pyrssa.classes
 
+
 Functions
 ------------------
 
@@ -26,14 +27,6 @@ Intstaller
 -----------------------
 
 .. automodule:: pyrssa.installer
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-Module contents
----------------
-
-.. automodule:: pyrssa
    :members:
    :undoc-members:
    :show-inheritance:

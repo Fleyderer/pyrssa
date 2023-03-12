@@ -18,7 +18,7 @@
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="pyrssa" href="modules.html" /> 
+    <link rel="next" title="Structures" href="pyrssa.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -42,7 +42,10 @@
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="modules.html">pyrssa</a></li>
+<li class="toctree-l1"><a class="reference internal" href="pyrssa.html">Structures</a></li>
+<li class="toctree-l1"><a class="reference internal" href="pyrssa.html#module-pyrssa.base">Functions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="pyrssa.html#module-pyrssa.conversion">Conversions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="pyrssa.html#module-pyrssa.installer">Intstaller</a></li>
 </ul>
 
         </div>
@@ -71,15 +74,56 @@
              
   <section id="welcome-to-pyrssa-s-documentation">
 <h1>Welcome to pyrssa’s documentation!<a class="headerlink" href="#welcome-to-pyrssa-s-documentation" title="Permalink to this heading"></a></h1>
+<p>Methods and tools for Singular Spectrum Analysis in Python including decomposition,
+forecasting and gap-filling for univariate and multivariate time series.
+General description of the methods with many examples can be found in the book
+Golyandina (2018, &lt;doi:10.1007/978-3-662-57380-8&gt;).</p>
+<p>Singular Spectrum Analysis (SSA, in short) is a modern non-parametric method for the analysis
+of time series and digital images. This package provides a set of fast and reliable implementations
+of various routines to perform decomposition, reconstruction and forecasting. A comprehensive
+description of the methods and functions from Rssa can be found in Golyandina et al (2018). The
+companion web-site is <a class="reference external" href="https://ssa-with-r-book.github.io/">https://ssa-with-r-book.github.io/</a>.</p>
 <div class="toctree-wrapper compound">
 <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="modules.html">pyrssa</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="pyrssa.html">Structures</a></li>
-<li class="toctree-l2"><a class="reference internal" href="pyrssa.html#module-pyrssa.base">Functions</a></li>
-<li class="toctree-l2"><a class="reference internal" href="pyrssa.html#module-pyrssa.conversion">Conversions</a></li>
-<li class="toctree-l2"><a class="reference internal" href="pyrssa.html#module-pyrssa.installer">Intstaller</a></li>
-<li class="toctree-l2"><a class="reference internal" href="pyrssa.html#module-pyrssa">Module contents</a></li>
+<li class="toctree-l1"><a class="reference internal" href="pyrssa.html">Structures</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="pyrssa.classes.html">Forecast</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pyrssa.classes.html#module-pyrssa.classes.Parestimate">Parestimate</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pyrssa.classes.html#module-pyrssa.classes.Resonstruction">Resonstruction</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pyrssa.classes.html#module-pyrssa.classes.SSA">SSA</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pyrssa.classes.html#module-pyrssa.classes.WCorMatrix">WCorMatrix</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pyrssa.classes.html#module-pyrssa.classes">Module</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="pyrssa.html#module-pyrssa.base">Functions</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="pyrssa.html#pyrssa.base.bforecast"><code class="docutils literal notranslate"><span class="pre">bforecast()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="pyrssa.html#pyrssa.base.data"><code class="docutils literal notranslate"><span class="pre">data()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="pyrssa.html#pyrssa.base.iossa"><code class="docutils literal notranslate"><span class="pre">iossa()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="pyrssa.html#pyrssa.base.parestimate"><code class="docutils literal notranslate"><span class="pre">parestimate()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="pyrssa.html#pyrssa.base.plot"><code class="docutils literal notranslate"><span class="pre">plot()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="pyrssa.html#pyrssa.base.reconstruct"><code class="docutils literal notranslate"><span class="pre">reconstruct()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="pyrssa.html#pyrssa.base.rforecast"><code class="docutils literal notranslate"><span class="pre">rforecast()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="pyrssa.html#pyrssa.base.ssa"><code class="docutils literal notranslate"><span class="pre">ssa()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="pyrssa.html#pyrssa.base.vforecast"><code class="docutils literal notranslate"><span class="pre">vforecast()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="pyrssa.html#pyrssa.base.wcor"><code class="docutils literal notranslate"><span class="pre">wcor()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="pyrssa.html#module-pyrssa.conversion">Conversions</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="pyrssa.html#pyrssa.conversion.FloatVector"><code class="docutils literal notranslate"><span class="pre">FloatVector</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="pyrssa.html#pyrssa.conversion.IntVector"><code class="docutils literal notranslate"><span class="pre">IntVector</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="pyrssa.html#pyrssa.conversion.dict_to_vec"><code class="docutils literal notranslate"><span class="pre">dict_to_vec()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="pyrssa.html#pyrssa.conversion.is_arr_of_type"><code class="docutils literal notranslate"><span class="pre">is_arr_of_type()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="pyrssa.html#pyrssa.conversion.is_int_arr"><code class="docutils literal notranslate"><span class="pre">is_int_arr()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="pyrssa.html#pyrssa.conversion.is_of_int_lists_arr"><code class="docutils literal notranslate"><span class="pre">is_of_int_lists_arr()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="pyrssa.html#pyrssa.conversion.list_to_vec"><code class="docutils literal notranslate"><span class="pre">list_to_vec()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="pyrssa.html#pyrssa.conversion.none_to_null"><code class="docutils literal notranslate"><span class="pre">none_to_null()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="pyrssa.html#pyrssa.conversion.pyrssa_to_rssa"><code class="docutils literal notranslate"><span class="pre">pyrssa_to_rssa()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="pyrssa.html#pyrssa.conversion.r_list"><code class="docutils literal notranslate"><span class="pre">r_list()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="pyrssa.html#pyrssa.conversion.range_to_vec"><code class="docutils literal notranslate"><span class="pre">range_to_vec()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="pyrssa.html#module-pyrssa.installer">Intstaller</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="pyrssa.html#pyrssa.installer.install_required"><code class="docutils literal notranslate"><span class="pre">install_required()</span></code></a></li>
 </ul>
 </li>
 </ul>
@@ -98,7 +142,7 @@
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="modules.html" class="btn btn-neutral float-right" title="pyrssa" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="pyrssa.html" class="btn btn-neutral float-right" title="Structures" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

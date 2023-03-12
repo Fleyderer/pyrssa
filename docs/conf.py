@@ -1,7 +1,6 @@
 from sphinx.ext import autodoc
 import os
 import sys
-
 sys.path.insert(0, os.path.abspath('..'))
 
 # Configuration file for the Sphinx documentation builder.
@@ -36,7 +35,6 @@ exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
 
 html_theme = 'sphinx_rtd_theme'
 html_static_path = ['_static']
-
 add_module_names = False
 
 

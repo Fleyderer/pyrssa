@@ -40,7 +40,10 @@
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../../modules.html">pyrssa</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../pyrssa.html">Structures</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../pyrssa.html#module-pyrssa.base">Functions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../pyrssa.html#module-pyrssa.conversion">Conversions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../pyrssa.html#module-pyrssa.installer">Intstaller</a></li>
 </ul>
 
         </div>
@@ -114,7 +117,9 @@
 <span class="sd">    Function for loading available in pyrssa package datasets. Available datasets are stored in the data directory.</span>
 
 <span class="sd">    :param name: Name of dataset to load</span>
-<span class="sd">    :return:</span>
+<span class="sd">    :return: Loaded dataset</span>
+<span class="sd">    :rtype: pandas.DataFrame</span>
+
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">read_csv</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">realpath</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)),</span> <span class="s2">&quot;data&quot;</span><span class="p">),</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s1">.csv&#39;</span><span class="p">))</span></div>
 
@@ -152,7 +157,7 @@
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 
 <span class="sd">    :param x: object to be decomposed. If DataFrame passed, the first column will be treated as a series</span>
-<span class="sd">    :type x: pd.DataFrame, pd.Series, np.ndarray, list</span>
+<span class="sd">    :type x: pandas.DataFrame, pandas.Series, numpy.ndarray, list</span>
 <span class="sd">    :param L: window length. Fixed to half of the series length by default.</span>
 <span class="sd">        Should be vector of length 2 for 2d SSA</span>
 <span class="sd">    :type L: int, optional</span>
@@ -169,8 +174,8 @@
 <span class="sd">        or field topology for 2d SSA. &#39;TRUE&#39; means series circularity for 1d case or circularity</span>
 <span class="sd">        by a corresponding coordinate for 2d case. See Shlemov and Golyandina (2014) for more information.</span>
 <span class="sd">    :param column_projector, row_projector: column and row signal subspaces projectors for SSA with projection.</span>
-<span class="sd">    :type column_projector: int, optional</span>
-<span class="sd">    :type row_projector: int, optional</span>
+<span class="sd">    :type column_projector: str or int, optional</span>
+<span class="sd">    :type row_projector: str or int, optional</span>
 <span class="sd">    :param svd_method: 	singular value decomposition method.</span>
 <span class="sd">    :return: SSA object. The precise layout of the object is mostly meant opaque and subject to</span>
 <span class="sd">        change in different version of the package.</span>
@@ -317,6 +322,30 @@
 <span class="sd">    size. In particular, for small series and window sizes it is better to use generic black-box routines (as</span>
 <span class="sd">    provided by &#39;svd&#39; and &#39;eigen&#39; methods). For long series special-purpose routines are to be used.</span>
 
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+
+<span class="sd">    .. code-block:: python</span>
+
+<span class="sd">        import pyrssa as prs</span>
+<span class="sd">        import pandas as pd</span>
+<span class="sd">        import numpy as np</span>
+
+<span class="sd">        AustralianWine = prs.data(&quot;AustralianWine&quot;)</span>
+<span class="sd">        fort = AustralianWine[&#39;Fortified&#39;][:174]</span>
+<span class="sd">        fort.index = pd.date_range(start=&#39;1980/01/01&#39;, freq=&#39;M&#39;, periods=len(fort))</span>
+<span class="sd">        s_fort = prs.ssa(fort, L=84, kind=&quot;1d-ssa&quot;)</span>
+
+<span class="sd">        co2 = data(&quot;co2&quot;)</span>
+<span class="sd">        s2 = prs.ssa(co2.value, column_projector=&quot;centering&quot;, row_projector=&quot;centering&quot;)</span>
+<span class="sd">        s4 = prs.ssa(co2.value, column_projector=2, row_projector=2)</span>
+
+<span class="sd">        S = np.exp(a * np.arange(1, n + 1)) * np.sin(2 * np.pi * np.arange(1, n + 1) / 7)</span>
+<span class="sd">        f = S + sigma * np.random.normal(size=n)</span>
+<span class="sd">        f_center = f - np.mean(f)</span>
+<span class="sd">        s = prs.ssa(f, L=L, kind=&quot;1d-ssa&quot;)</span>
+<span class="sd">        st = prs.ssa(f_center, L=L, kind=&#39;toeplitz-ssa&#39;)</span>
+
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">SSA</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">L</span><span class="o">=</span><span class="n">L</span><span class="p">,</span> <span class="n">neig</span><span class="o">=</span><span class="n">neig</span><span class="p">,</span> <span class="n">mask</span><span class="o">=</span><span class="n">mask</span><span class="p">,</span> <span class="n">wmask</span><span class="o">=</span><span class="n">wmask</span><span class="p">,</span> <span class="n">kind</span><span class="o">=</span><span class="n">kind</span><span class="p">,</span>
                <span class="n">column_projector</span><span class="o">=</span><span class="n">column_projector</span><span class="p">,</span>
@@ -332,6 +361,7 @@
 <span class="sd">    :type x: SSA</span>
 <span class="sd">    :param groups: list of numeric vectors, indices of elementary components used for reconstruction,</span>
 <span class="sd">        the entries of the list can be named, see &#39;Value&#39; for more information</span>
+<span class="sd">    :type groups: list or dict</span>
 <span class="sd">    :param drop_attributes: if `True` then the attributes of the input objects are not copied to the reconstructed ones.</span>
 <span class="sd">    :type drop_attributes: bool</span>
 <span class="sd">    :param cache: if `True` then intermediate results will be cached in the SSA object.</span>
@@ -389,6 +419,12 @@
 <span class="sd">        fort.index = pd.date_range(start=&#39;1980/01/01&#39;, freq=&#39;M&#39;, periods=len(fort))</span>
 <span class="sd">        s_fort = prs.ssa(fort, L=84, kind=&quot;1d-ssa&quot;)</span>
 <span class="sd">        r_fort = prs.reconstruct(s_fort, groups={&quot;Trend&quot;: 1, &quot;Seasonality&quot;: range(2, 13)})</span>
+
+<span class="sd">        r_fort_2 = prs.reconstruct(s_fort, groups=[1, range(2, 13)])</span>
+
+<span class="sd">        co2 = data(&quot;co2&quot;)</span>
+<span class="sd">        s2 = prs.ssa(co2.value, column_projector=&quot;centering&quot;, row_projector=&quot;centering&quot;)</span>
+<span class="sd">        rec = prs.reconstruct(s2, groups={&quot;Linear_trend&quot;: range(1, s2.nspecial() + 1)})</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">Reconstruction</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">x</span><span class="p">,</span> <span class="n">groups</span><span class="o">=</span><span class="n">groups</span><span class="p">,</span> <span class="n">drop_attributes</span><span class="o">=</span><span class="n">drop_attributes</span><span class="p">,</span> <span class="n">cache</span><span class="o">=</span><span class="n">cache</span><span class="p">)</span></div>
