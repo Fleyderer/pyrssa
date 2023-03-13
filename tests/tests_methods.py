@@ -24,14 +24,17 @@ def load_df(df_name, kinds: list, file_format="csv"):
     print(filename)
     if kinds is None:
         kinds = os.listdir(filename)
-    data_folders = [[os.path.join(filename, name), name] for name in kinds
+    data_folders = [[os.path.join(filename, name), name]
+                    for name in kinds
                     if os.path.isdir(os.path.join(filename, name))]
 
-    df = {"series": pd.read_csv(os.path.join(filename, f"series.{file_format}")),
+    df = {"series":
+              pd.read_csv(os.path.join(filename, f"series.{file_format}")),
           "pars": None}
 
-    if os.path.exists(os.path.join(filename, "pars.json")):
-        df["pars"] = read_json(os.path.join(filename, "pars.json"))
+    params_path = os.path.join(filename, "pars.json")
+    if os.path.exists(params_path):
+        df["pars"] = read_json(params_path)
 
     for data_folder in data_folders:
         folder_files = [[os.path.join(data_folder[0], file), file] for file in os.listdir(data_folder[0])]

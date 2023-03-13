@@ -1,0 +1,59 @@
+\documentclass[specialist,
+               substylefile = spbu_report.rtx,
+               subf,href,colorlinks=true, 12pt]{disser}
+
+\usepackage[a4paper,
+            mag=1000, includefoot,
+            left=3cm, right=1.5cm, top=2cm, bottom=2cm, headsep=1cm, footskip=1cm]{geometry}
+\usepackage[T2A]{fontenc}
+\usepackage[cp1251]{inputenc}
+\usepackage[english,russian]{babel}
+\ifpdf\usepackage{epstopdf}\fi
+\usepackage{graphicx}
+\graphicspath{ {./images/} }
+
+% Точка с запятой в качестве разделителя между номерами цитирований
+%\setcitestyle{semicolon}
+
+% Использовать полужирное начертание для векторов
+\let\vec=\mathbf
+
+% Включать подсекции в оглавление
+\setcounter{tocdepth}{2}
+
+
+
+%----------------------------------------------------------------
+\begin{document}
+
+%
+% Титульный лист на русском языке
+%
+% Название организации
+\institution{%
+    Санкт-Петербургский государственный университет\\
+    Прикладная математика и информатика
+}
+
+\title{Отчет по \dots}
+
+% Тема
+\topic{О методах ношения жидкостей в решетчатых конструкциях}
+
+% Автор
+\author{Пупкин Василий Васильевич}
+\group{группа 20.Б04-мм}
+    
+% Научный руководитель
+\sa       {Щекочихин-Крестовоздвиженский Константин Сигизмундович\\%
+           Кафедра Статистического Моделирования}
+\sastatus {д.\,ф.-м.\,н., профессор}
+
+% Город и год
+\city{Санкт-Петербург}
+\date{\number\year}
+
+\maketitle
+
+\end{document}
+

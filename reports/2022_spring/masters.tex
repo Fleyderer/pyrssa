@@ -1,0 +1,101 @@
+\documentclass[specialist,
+               substylefile = spbu.rtx,
+               subf,href,colorlinks=true, 12pt]{disser}
+
+\usepackage[a4paper,
+            mag=1000, includefoot,
+            left=3cm, right=1.5cm, top=2cm, bottom=2cm, headsep=1cm, footskip=1cm]{geometry}
+\usepackage[T2A]{fontenc}
+\usepackage[cp1251]{inputenc}
+\usepackage[english,russian]{babel}
+\ifpdf\usepackage{epstopdf}\fi
+
+% Точка с запятой в качестве разделителя между номерами цитирований
+%\setcitestyle{semicolon}
+
+% Использовать полужирное начертание для векторов
+\let\vec=\mathbf
+
+% Включать подсекции в оглавление
+\setcounter{tocdepth}{2}
+
+\graphicspath{{fig/}}
+
+%----------------------------------------------------------------
+\begin{document}
+
+%
+% Титульный лист на русском языке
+%
+
+% Название организации
+\institution{%
+    Санкт-Петербургский государственный университет
+}
+
+\title{Выпускная квалификационная работа}
+
+% Тема
+\topic{О методах ношения жидкостей в решетчатых конструкциях}
+
+% Автор
+\author{\textsc{Пупкин} Василий Васильевич}
+
+\group{%
+    Уровень образования: магистратура\\
+    Направление 01.04.02 <<Прикладная математика и информатика>>\\
+    Основная образовательная программа ВМ.5688.2018 <<Прикладная математика и информатика>> \\
+    Профессиональная траектория <<Статистическое моделирование>>
+}
+
+% Научный руководитель
+\sa       {И.\,И.~Иванов}
+\sastatus {Профессор, кафедра статистического моделирования\,\\
+           д.\,ф.-м.\,н., профессор}
+
+% Рецензент
+\rev      {П.\,П.~Петров}
+\revstatus{Наиглавнейший научный сотрудник, НПО~<<Хорнс энд Хуфс>>\\
+           к.\,ф.-м.\,н., доцент}
+
+% Город и год
+\city{Санкт-Петербург}
+\date{\number\year}
+
+\maketitle
+
+%%
+%% Titlepage in English
+%%
+%
+\institution{%
+    Saint Petersburg State University \\
+    Applied Mathematics and Computer Science \\
+    Statistical Modelling
+}
+%
+\title{Graduation Project}
+%
+%% Topic
+\topic{Dummy Diploma on Random Matter}
+%
+%% Author
+\author{\textsc{Pupkin} Vasiliy Vasilyevich} % Full Name
+\group{}
+
+%% Scientific Advisor
+\sa       {I.\,I.~Ivanov}
+\sastatus {Professor, Department of Statistical Modelling}
+%
+%% Reviewer
+\rev      {P.\,P.~Petrov}
+\revstatus{Associate Professor, NPO <<Horns and Hoofs>>}
+%
+%% City & Year
+\city{Saint Petersburg}
+\date{\number\year}
+
+\maketitle[en]
+
+\end{document}
+
