@@ -1,0 +1,299 @@
+% $ biblatex auxiliary file $
+% $ biblatex bbl format version 3.2 $
+% Do not modify the above lines!
+%
+% This is an auxiliary file used by the 'biblatex' package.
+% This file may safely be deleted. It will be recreated as
+% required.
+%
+\begingroup
+\makeatletter
+\@ifundefined{ver@biblatex.sty}
+  {\@latex@error
+     {Missing 'biblatex' package}
+     {The bibliography requires the 'biblatex' package.}
+      \aftergroup\endinput}
+  {}
+\endgroup
+
+\datalist[entry]{none/global//global/global}
+  \entry{ssa-method}{book}{}
+    \name{author}{1}{}{%
+      {{hash=��}{%
+         family={Н.Э.},
+         familyi={�\bibinitperiod},
+         given={Голяндина},
+         giveni={�\bibinitperiod},
+      }}%
+    }
+    \list{publisher}{1}{%
+      {СПб: Изд-во СПбГУ}%
+    }
+    \strng{namehash}{��1}
+    \strng{fullhash}{��1}
+    \field{labelnamesource}{author}
+    \field{labeltitlesource}{title}
+    \field{title}{Метод «Гусеница»-SSA: анализ
+  временных рядов: Учеб. пособие.}
+    \field{year}{2004}
+  \endentry
+
+  \entry{rssa-book}{book}{}
+    \name{author}{3}{}{%
+      {{hash=GN}{%
+         family={Golyandina},
+         familyi={G\bibinitperiod},
+         given={Nina},
+         giveni={N\bibinitperiod},
+      }}%
+      {{hash=KA}{%
+         family={Korobeynikov},
+         familyi={K\bibinitperiod},
+         given={Anton},
+         giveni={A\bibinitperiod},
+      }}%
+      {{hash=ZA}{%
+         family={Zhigljavsky},
+         familyi={Z\bibinitperiod},
+         given={Anatoly},
+         giveni={A\bibinitperiod},
+      }}%
+    }
+    \list{publisher}{1}{%
+      {Springer}%
+    }
+    \strng{namehash}{GNKAZA1}
+    \strng{fullhash}{GNKAZA1}
+    \field{labelnamesource}{author}
+    \field{labeltitlesource}{title}
+    \field{title}{Singular Spectrum Analysis with R}
+    \field{year}{2018}
+  \endentry
+
+  \entry{rssa-doc}{online}{}
+    \field{labeltitlesource}{title}
+    \field{note}{[Электронный ресурс]}
+    \field{title}{Rssa: A collection of methods for singular spectrum analysis}
+    \verb{url}
+    \verb http://CRAN.R-project.org/package=Rssa
+    \endverb
+    \field{year}{2021}
+    \field{urlday}{07}
+    \field{urlmonth}{01}
+    \field{urlyear}{2022}
+  \endentry
+
+  \entry{pyts-doc}{online}{}
+    \field{labeltitlesource}{title}
+    \field{note}{[Электронный ресурс]}
+    \field{title}{Singular Spectrum Analysis, A Python Package for Time Series
+  Classification Documentation}
+    \verb{url}
+    \verb https://pyts.readthedocs.io/en/stable/auto_examples/decomposition/plo
+    \verb t_ssa.html
+    \endverb
+    \field{urlday}{08}
+    \field{urlmonth}{01}
+    \field{urlyear}{2022}
+  \endentry
+
+  \entry{kaggle-ssa-doc}{online}{}
+    \field{labeltitlesource}{title}
+    \field{note}{[Электронный ресурс]}
+    \field{title}{Introducing SSA for Time Series Decomposition}
+    \verb{url}
+    \verb https://www.kaggle.com/jdarcy/introducing-ssa-for-time-series-decompo
+    \verb sition
+    \endverb
+    \field{urlday}{27}
+    \field{urlmonth}{11}
+    \field{urlyear}{2021}
+  \endentry
+
+  \entry{git-kieferc-doc}{online}{}
+    \field{labeltitlesource}{title}
+    \field{note}{[Электронный ресурс]}
+    \field{title}{Multivariate Singular Spectrum Analysis in Python}
+    \verb{url}
+    \verb https://github.com/kieferk/pymssa
+    \endverb
+    \field{urlday}{27}
+    \field{urlmonth}{11}
+    \field{urlyear}{2021}
+  \endentry
+
+  \entry{r-doc}{online}{}
+    \field{labeltitlesource}{title}
+    \field{note}{[Электронный ресурс]}
+    \field{title}{R documentation}
+    \verb{url}
+    \verb https://www.rdocumentation.org
+    \endverb
+    \field{urlday}{08}
+    \field{urlmonth}{01}
+    \field{urlyear}{2022}
+  \endentry
+
+  \entry{py-doc}{online}{}
+    \field{labeltitlesource}{title}
+    \field{note}{[Электронный ресурс]}
+    \field{title}{Python documentation}
+    \verb{url}
+    \verb https://docs.python.org/3/
+    \endverb
+    \field{urlday}{08}
+    \field{urlmonth}{01}
+    \field{urlyear}{2022}
+  \endentry
+
+  \entry{rpy-doc}{online}{}
+    \field{labeltitlesource}{title}
+    \field{note}{[Электронный ресурс]}
+    \field{title}{Documentation for rpy2}
+    \verb{url}
+    \verb https://rpy2.github.io/doc/latest/html/index.html
+    \endverb
+    \field{urlday}{08}
+    \field{urlmonth}{01}
+    \field{urlyear}{2022}
+  \endentry
+
+  \entry{numpy-doc}{online}{}
+    \field{labeltitlesource}{title}
+    \field{note}{[Электронный ресурс]}
+    \field{title}{Documentation for NumPy}
+    \verb{url}
+    \verb https://numpy.org/doc/
+    \endverb
+    \field{year}{2022}
+    \field{urlday}{25}
+    \field{urlmonth}{09}
+    \field{urlyear}{2022}
+  \endentry
+
+  \entry{pandas-doc}{online}{}
+    \field{labeltitlesource}{title}
+    \field{note}{[Электронный ресурс]}
+    \field{title}{Documentation for pandas}
+    \verb{url}
+    \verb https://pandas.pydata.org/docs/
+    \endverb
+    \field{year}{2022}
+    \field{urlday}{29}
+    \field{urlmonth}{09}
+    \field{urlyear}{2022}
+  \endentry
+
+  \entry{habr-doc}{online}{}
+    \field{labeltitlesource}{title}
+    \field{note}{[Электронный ресурс]}
+    \field{title}{6 способов значительно ускорить
+  pandas с помощью пары строк кода. Часть 1}
+    \verb{url}
+    \verb https://habr.com/ru/post/503726/
+    \endverb
+    \field{urlday}{08}
+    \field{urlmonth}{01}
+    \field{urlyear}{2022}
+  \endentry
+
+  \entry{matplotlib-doc}{online}{}
+    \field{labeltitlesource}{title}
+    \field{note}{[Электронный ресурс]}
+    \field{title}{Documentation for matplotlib}
+    \verb{url}
+    \verb https://devdocs.io/matplotlib~3.1
+    \endverb
+    \field{urlday}{08}
+    \field{urlmonth}{01}
+    \field{urlyear}{2022}
+  \endentry
+
+  \entry{pyrssa-lib}{online}{}
+    \field{labeltitlesource}{title}
+    \field{note}{[Электронный ресурс]}
+    \field{title}{pyrssa package on PyPi}
+    \verb{url}
+    \verb https://pypi.org/project/pyrssa/
+    \endverb
+    \field{year}{2022}
+    \field{urlday}{30}
+    \field{urlmonth}{09}
+    \field{urlyear}{2022}
+  \endentry
+
+  \entry{eop-c04}{online}{}
+    \field{labeltitlesource}{title}
+    \field{note}{[Электронный ресурс]}
+    \field{title}{International Earth rotation and reference systems service
+  Earth orientation parameters EOP (IERS) 14 C04.}
+    \verb{url}
+    \verb https://hpiers.obspm.fr/iers/eop/eopc04/eopc04_IAU2000.62-now
+    \endverb
+    \field{year}{2022}
+    \field{urlday}{29}
+    \field{urlmonth}{09}
+    \field{urlyear}{2022}
+  \endentry
+
+  \entry{eop-с04-guide}{online}{}
+    \field{labeltitlesource}{title}
+    \field{note}{[Электронный ресурс]}
+    \field{title}{SSA EOP Forecast}
+    \verb{url}
+    \verb http://eoppredict.ru/
+    \endverb
+    \field{year}{2022}
+    \field{urlday}{30}
+    \field{urlmonth}{09}
+    \field{urlyear}{2022}
+  \endentry
+
+  \entry{eop-analysis}{book}{}
+    \name{author}{1}{}{%
+      {{hash=����}{%
+         family={Охотников\bibnamedelima Г.И.},
+         familyi={�\bibinitperiod\bibinitdelim �\bibinitperiod},
+         given={Голяндина\bibnamedelima Н.Э.},
+         giveni={�\bibinitperiod\bibinitdelim �\bibinitperiod},
+      }}%
+    }
+    \list{publisher}{1}{%
+      {СПб: Изд-во СПбГУ}%
+    }
+    \strng{namehash}{����1}
+    \strng{fullhash}{����1}
+    \field{labelnamesource}{author}
+    \field{labeltitlesource}{title}
+    \field{title}{Применение метода анализа
+  сингулярного спектра}
+    \field{year}{2017}
+  \endentry
+
+  \entry{eop-pred}{online}{}
+    \field{labeltitlesource}{title}
+    \field{note}{[Электронный ресурс]}
+    \field{title}{SSA EOP Forecast}
+    \verb{url}
+    \verb http://eoppredict.ru/
+    \endverb
+    \field{year}{2022}
+    \field{urlday}{30}
+    \field{urlmonth}{09}
+    \field{urlyear}{2022}
+  \endentry
+
+  \entry{unittest-doc}{online}{}
+    \field{labeltitlesource}{title}
+    \field{note}{[Электронный ресурс]}
+    \field{title}{unittest – Unit testing framework}
+    \verb{url}
+    \verb https://docs.python.org/3/library/unittest.html
+    \endverb
+    \field{year}{2023}
+    \field{urlday}{08}
+    \field{urlmonth}{03}
+    \field{urlyear}{2023}
+  \endentry
+\enddatalist
+\endinput

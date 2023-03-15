@@ -1,0 +1,16 @@
+\boolfalse {citerequest}\boolfalse {citetracker}\boolfalse {pagetracker}\boolfalse {backtracker}\relax 
+\babel@toc {russian}{}
+\defcounter {refsection}{0}\relax 
+\contentsline {chapter}{\chaptername ~1.\hskip 1em Введение}{3}{chapter.1}%
+\defcounter {refsection}{0}\relax 
+\contentsline {chapter}{\chaptername ~2.\hskip 1em Метод SSA}{4}{chapter.2}%
+\defcounter {refsection}{0}\relax 
+\contentsline {chapter}{\chaptername ~3.\hskip 1em Пакет Rssa и его адаптация к Python}{6}{chapter.3}%
+\defcounter {refsection}{0}\relax 
+\contentsline {chapter}{\chaptername ~4.\hskip 1em Анализ временного ряда}{10}{chapter.4}%
+\defcounter {refsection}{0}\relax 
+\contentsline {chapter}{\chaptername ~5.\hskip 1em Сравнение скорости Rssa и pyRssa}{14}{chapter.5}%
+\defcounter {refsection}{0}\relax 
+\contentsline {chapter}{\chaptername ~6.\hskip 1em Заключение}{16}{chapter.6}%
+\defcounter {refsection}{0}\relax 
+\contentsline {chapter}{Список литературы}{17}{chapter*.9}%

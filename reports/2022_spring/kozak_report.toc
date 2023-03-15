@@ -1,0 +1,22 @@
+\babel@toc {russian}{}\relax 
+\contentsline {chapter}{\chaptername ~1.\hskip 1em Введение}{3}{chapter.1}%
+\contentsline {chapter}{\chaptername ~2.\hskip 1em Метод SSA}{5}{chapter.2}%
+\contentsline {section}{\numberline {2.1.\hskip 1em}Алгоритм}{5}{section.2.1}%
+\contentsline {section}{\numberline {2.2.\hskip 1em}Прогнозирование}{7}{section.2.2}%
+\contentsline {chapter}{\chaptername ~3.\hskip 1em Пакет Rssa и его адаптация к Python}{9}{chapter.3}%
+\contentsline {section}{\numberline {3.1.\hskip 1em}Конвертация типов данных}{9}{section.3.1}%
+\contentsline {section}{\numberline {3.2.\hskip 1em}Функции модуля Rssa}{11}{section.3.2}%
+\contentsline {section}{\numberline {3.3.\hskip 1em}Визуализация}{13}{section.3.3}%
+\contentsline {subsection}{\numberline {3.3.1.\hskip 1em}Разложение}{15}{subsection.3.3.1}%
+\contentsline {subsection}{\numberline {3.3.2.\hskip 1em}Восстановление}{18}{subsection.3.3.2}%
+\contentsline {section}{\numberline {3.4.\hskip 1em}Модельный пример}{18}{section.3.4}%
+\contentsline {section}{\numberline {3.5.\hskip 1em}Установка модуля}{24}{section.3.5}%
+\contentsline {chapter}{\chaptername ~4.\hskip 1em Анализ временного ряда}{26}{chapter.4}%
+\contentsline {section}{\numberline {4.1.\hskip 1em}Исходные данные}{26}{section.4.1}%
+\contentsline {section}{\numberline {4.2.\hskip 1em}Предварительный анализ ряда}{26}{section.4.2}%
+\contentsline {section}{\numberline {4.3.\hskip 1em}Подбор параметров для прогноза}{29}{section.4.3}%
+\contentsline {chapter}{\chaptername ~5.\hskip 1em Сравнение скорости Rssa и pyrssa}{32}{chapter.5}%
+\contentsline {chapter}{\chaptername ~6.\hskip 1em Заключение}{35}{chapter.6}%
+\contentsline {chapter}{Список литературы}{37}{chapter*.26}%
+\contentsline {chapter}{\appendixname ~\CYRA .\hskip 1em Реализованные для языка Python функции}{38}{appendix.A}%
+\contentsline {chapter}{\appendixname ~\CYRB .\hskip 1em Таблицы времени работы на R и Python}{39}{appendix.B}%
