@@ -185,7 +185,7 @@ def test_test_data(what: Literal["reconstruct", "rforecast", "vforecast"],
         for i in range(len(Ls_forecast)):
             L = Ls_forecast[i]
             L_name = f"L{L}"
-            for svd_method in svd_methods[i]:
+            for svd_method in svd_methods_forecast[i]:
                 print(f"Data: {name}, Kind: {kind}, SVD-Method: {svd_method}, L: {L}...", end="")
                 rforecast_orig = compute_forecasts(series, [L], groups=forecast_groups, length=length,
                                                    kind=kind, forecast_method="recurrent", base="original",
@@ -197,10 +197,13 @@ def test_test_data(what: Literal["reconstruct", "rforecast", "vforecast"],
                                                   svd_method=svd_method, neig=neig,
                                                   column_projector=column_projector, row_projector=row_projector,
                                                   **kwargs)
-                # print(rforecast_orig[L_name])
-                # print(test_data["rforecast.orig"][L_name])
-                # print(rforecast_rec[L_name])
-                # print(test_data["rforecast.rec"][L_name])
+
+                # if name == "co2" and kind == "1d-ssa" and svd_method == "svd" and L == 17:
+                #     print(rforecast_orig[L_name])
+                #     print(test_data["rforecast.orig"][L_name])
+                #     print(rforecast_rec[L_name])
+                #     print(test_data["rforecast.rec"][L_name])
+                #     print(np.max(rforecast_orig[L_name] - test_data["rforecast.orig"][L_name]))
 
                 pd.testing.assert_frame_equal(rforecast_orig[L_name], test_data["rforecast.orig"][L_name],
                                               rtol=tolerance)
@@ -212,9 +215,7 @@ def test_test_data(what: Literal["reconstruct", "rforecast", "vforecast"],
         for i in range(len(Ls_forecast)):
             L = Ls_forecast[i]
             L_name = f"L{L}"
-            if L == 17:
-                continue
-            for svd_method in svd_methods[i]:
+            for svd_method in svd_methods_forecast[i]:
                 print(f"Data: {name}, Kind: {kind}, SVD-Method: {svd_method}, L: {L}...", end="")
                 vforecast = compute_forecasts(series, [L], groups=forecast_groups, length=length,
                                               kind=kind, forecast_method="vector",

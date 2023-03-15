@@ -27,8 +27,10 @@ SSA
 
 .. automodule:: pyrssa.classes.SSA
    :members:
+   :exclude-members: SSABase
    :undoc-members:
    :show-inheritance:
+   :inherited-members:
 
 WCorMatrix
 --------------------------------

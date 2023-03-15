@@ -3,32 +3,40 @@ import numpy as np
 from typing import Callable
 from rpy2 import robjects
 import rpy2.robjects.packages as rpackages
+import inspect
 
 
 r_ssa = rpackages.importr('Rssa')
 ssa_get = robjects.r('utils::getFromNamespace("$.ssa", "Rssa")')
 
 
-class _SSABase:
+class SSABase:
 
-    def __init__(self, x, ssa_object, call):
+    def __init__(self, x, ssa_object, call: str):
         self.obj = ssa_object
         self.sigma = ssa_get(self.obj, "sigma")
         self.U = ssa_get(self.obj, "U").T
         self.V = ssa_get(self.obj, "V")
-        self.F = pd.DataFrame(x)
+        self.series = pd.DataFrame(x)
         self.call = call
 
-    def _contributions(self, idx=None):
+    @property
+    def F(self):
+        return self.series
+
+    def contributions(self, idx=None):
         if idx is None:
-            idx = range(1, self._nsigma() + 1)
+            idx = range(1, self.nsigma() + 1)
         return r_ssa.contributions(self.obj, idx)
 
-    def _nspecial(self):
+    def nspecial(self):
         return r_ssa.nspecial(self.obj)[0]
 
-    def _nsigma(self):
+    def nsigma(self):
         return r_ssa.nsigma(self.obj)[0]
+
+    def nu(self):
+        return r_ssa.nu(self.obj)[0]
 
     def __str__(self):
         result = str(self.obj).split("\n")
@@ -39,7 +47,7 @@ class _SSABase:
         return self.__str__()
 
 
-class SSA(_SSABase):
+class SSA(SSABase):
 
     def __init__(self, x,
                  L=None,
@@ -47,6 +55,7 @@ class SSA(_SSABase):
                  mask=None,
                  wmask=None,
                  kind="1d-ssa",
+                 circular=False,
                  column_projector="none",
                  row_projector="none",
                  svd_method="auto",
@@ -61,24 +70,10 @@ class SSA(_SSABase):
         self.L = L
         self.kind = kind
         super().__init__(x, r_ssa.ssa(x, L=L, neig=neig, mask=mask, wmask=wmask, kind=kind,
+                                      circular=circular,
                                       column_projector=column_projector,
                                       row_projector=row_projector,
                                       svd_method=svd_method), call=call)
-
-    def contributions(self, idx=None):
-        return self._contributions(idx)
-
-    def nspecial(self):
-        return self._nspecial()
-
-    def nsigma(self):
-        return self._nsigma()
-
-    def __str__(self):
-        return str(self.obj)
-
-    def __repr__(self):
-        return self.__str__()
 
 
 def _norm_conversion(func):
@@ -91,7 +86,7 @@ def _default_norm(x):
     return np.sqrt(np.mean(x ** 2))
 
 
-class IOSSA(_SSABase):
+class IOSSA(SSABase):
 
     def __init__(self, x: SSA,
                  nested_groups,
@@ -109,22 +104,23 @@ class IOSSA(_SSABase):
         self.maxiter = maxiter
         self.kappa_balance = kappa_balance
         self.trace = trace
+        self.groups = nested_groups
         if norm is None:
             norm = _default_norm
         self.norm = robjects.rinterface.rternalize(_norm_conversion(norm))
-        super().__init__(x.F, r_ssa.iossa(x=x, nested_groups=self.nested_groups, tol=self.tol,
-                                          kappa=self.kappa, maxiter=self.maxiter,
+        super().__init__(x.F, r_ssa.iossa(x=x, **{"nested.groups": self.nested_groups}, tol=self.tol,
+                                          kappa=self.kappa, maxiter=self.maxiter, norm=self.norm,
                                           trace=self.trace,
-                                          kappa_balance=self.kappa_balance, **kwargs), call=call)
+                                          **{"kappa.balance": self.kappa_balance}, **kwargs), call=call)
 
-    def contributions(self, idx=None):
-        return self._contributions(idx)
+    @property
+    def iossa_groups(self):
+        return self.groups
 
-    def nspecial(self):
-        return self._nspecial()
-
-    def nsigma(self):
-        return self._nsigma()
+    def summary(self):
+        result = str(self.obj).split("\n")
+        result[result.index("Call:") + 1] = self.call
+        return "\n".join(result)
 
     def __str__(self):
         return str(self.obj)

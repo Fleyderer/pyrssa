@@ -7,6 +7,9 @@ if os.environ.get("R_HOME") is None:
 from pyrssa.classes.SSA import SSA, IOSSA
 from pyrssa.classes.Parestimate import Parestimate
 from pyrssa.classes.Resonstruction import Reconstruction
+from pyrssa.classes.AutoSSA import GroupPgram, GroupWCor
 from pyrssa.classes.Forecast import *
 from pyrssa.classes.WCorMatrix import WCorMatrix
+from pyrssa.classes.HMatrix import HMatrix
 from pyrssa.base import *
+from pyrssa.plot import plot

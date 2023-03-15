@@ -3,7 +3,7 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 
-simul = True
+simul = False
 n = 100
 sigma = 0.5
 np.random.seed(8)
@@ -19,8 +19,8 @@ if simul:
         f_center = f - np.mean(f)
         s = prs.ssa(f, L=L, kind="1d-ssa")
         st = prs.ssa(f_center, L=L, kind='toeplitz-ssa')
-        rec = prs.reconstruct(s, groups={"F1": [1, 2]}).F1
-        rect = prs.reconstruct(st, groups={"F1": [1, 2]}).F1
+        rec = prs.reconstruct(s, groups=[[1, 2]]).F1
+        rect = prs.reconstruct(st, groups=[[1, 2]]).F1
         return {"1d-ssa": np.mean((rec - S) ** 2),
                 "toeplitz": np.mean((rect - S) ** 2)}
 
@@ -34,12 +34,3 @@ ax.set_xticks(toeplitz_sim.index[::2])
 ax.set_xticklabels(alpha[::2])
 
 plt.show()
-
-
-
-
-
-
-
-
-

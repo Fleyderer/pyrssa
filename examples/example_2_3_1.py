@@ -12,7 +12,3 @@ prs.plot(prs.reconstruct(s4, groups={"Linear_trend": range(1, s4.nspecial() + 1)
 prs.plot(s4, kind="vectors", idx=range(1, 13))
 r = prs.reconstruct(s4, groups={"Signal": np.concatenate((range(1, s4.nspecial() + 1), range(5, 9)))})
 prs.plot(r, method="xyplot")
-
-
-
-

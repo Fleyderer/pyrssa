@@ -1,9 +1,13 @@
 from rpy2 import robjects
 import rpy2.robjects.conversion as conversion
 from rpy2.robjects import default_converter
+from rpy2.rinterface_lib import sexp
 from rpy2.robjects.numpy2ri import converter as numpy_converter
 from rpy2.robjects.pandas2ri import converter as pandas_converter
-from pyrssa import SSA
+import numpy as np
+import pandas as pd
+from pyrssa.classes.SSA import SSABase
+from typing import Union
 
 
 class FloatVector(robjects.FloatVector):
@@ -58,14 +62,26 @@ class IntVector(robjects.IntVector):
     __rmul__ = __mul__
 
 
-def is_arr_of_type(arr, check_type):
-    if isinstance(arr, list):
-        return all(isinstance(x, check_type) for x in arr)
-    return False
+def is_arr_of_type(arr, check_type, allow_inf=True, allow_na=True):
+    if isinstance(arr, list) or isinstance(arr, np.ndarray):
+        for x in arr:
+            if not isinstance(x, check_type):
+                if not hasattr(x, '__iter__'):
+                    if allow_na and np.isnan(x) or allow_inf and np.isinf(x):
+                        return False
+                else:
+                    return False
+        return True
+    else:
+        return False
 
 
-def is_int_arr(arg):
-    return is_arr_of_type(arg, int)
+def is_int_arr(arr):
+    return is_arr_of_type(arr, int)
+
+
+def is_float_arr(arr):
+    return is_arr_of_type(arr, float)
 
 
 def is_of_int_lists_arr(arr):
@@ -87,6 +103,8 @@ def range_to_vec(obj):
 def list_to_vec(obj):
     if is_int_arr(obj):
         return IntVector(list(obj))
+    elif is_float_arr(obj):
+        return FloatVector(list(obj))
     elif is_of_int_lists_arr(obj):
         result = robjects.ListVector.from_length(len(obj))
         for i, x in enumerate(obj):
@@ -121,11 +139,29 @@ def pyrssa_to_rssa(obj):
     return obj.obj
 
 
+def get_time_index(series):
+    if isinstance(series, pd.DataFrame) or isinstance(series, pd.Series):
+        if isinstance(series.index, pd.DatetimeIndex):
+            return series.index
+    return None
+
+
+def make_time_index(series: Union[pd.Series, pd.DataFrame], time_index: pd.DatetimeIndex, only_new=False):
+    # if only_new is False, we have to ignore old series, when creating new indices
+    periods = len(series) - (not only_new) * len(time_index) + 1
+    new = pd.date_range(max(time_index), freq=time_index.freqstr, periods=periods,
+                        inclusive="right")
+    if only_new:
+        return new
+    else:
+        return time_index.union(new)
+
+
 pyrssa_converter = conversion.Converter('pyrssa converter')
 pyrssa_converter.py2rpy.register(type(None), none_to_null)
 pyrssa_converter.py2rpy.register(range, range_to_vec)
 pyrssa_converter.py2rpy.register(list, list_to_vec)
 pyrssa_converter.py2rpy.register(dict, dict_to_vec)
-pyrssa_converter.py2rpy.register(SSA, pyrssa_to_rssa)
+pyrssa_converter.py2rpy.register(SSABase, pyrssa_to_rssa)
 
 pyrssa_conversion_rules = default_converter + pyrssa_converter + numpy_converter + pandas_converter

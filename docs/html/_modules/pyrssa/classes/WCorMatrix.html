@@ -40,7 +40,10 @@
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../../../modules.html">pyrssa</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../pyrssa.html">Structures</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../pyrssa.html#functions">Functions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../pyrssa.html#module-pyrssa.conversion">Conversions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../pyrssa.html#module-pyrssa.installer">Intstaller</a></li>
 </ul>
 
         </div>
@@ -75,11 +78,30 @@
 <span class="n">r_ssa</span> <span class="o">=</span> <span class="n">rpackages</span><span class="o">.</span><span class="n">importr</span><span class="p">(</span><span class="s1">&#39;Rssa&#39;</span><span class="p">)</span>
 
 
-<div class="viewcode-block" id="WCorMatrix"><a class="viewcode-back" href="../../../pyrssa.classes.html#pyrssa.classes.WCorMatrix.WCorMatrix">[docs]</a><span class="k">class</span> <span class="nc">WCorMatrix</span><span class="p">:</span>
+<div class="viewcode-block" id="WCorMatrix"><a class="viewcode-back" href="../../../pyrssa.classes.html#pyrssa.classes.WCorMatrix.WCorMatrix">[docs]</a><span class="k">class</span> <span class="nc">WCorMatrix</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">matrix</span><span class="p">):</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ds</span><span class="p">,</span> <span class="n">groups</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">groups</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">groups</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">matrix</span> <span class="o">=</span> <span class="n">robjects</span><span class="o">.</span><span class="n">r</span><span class="o">.</span><span class="n">wcor</span><span class="p">(</span><span class="n">ds</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">groups</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+    <span class="k">def</span> <span class="fm">__new__</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">groups</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+
+        <span class="n">obj</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="k">if</span> <span class="n">groups</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">matrix</span><span class="p">):</span>
+                <span class="n">groups</span> <span class="o">=</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">min</span><span class="p">(</span><span class="o">*</span><span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+                <span class="n">obj</span> <span class="o">=</span> <span class="n">x</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">groups</span> <span class="o">=</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">min</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">nsigma</span><span class="p">(),</span> <span class="n">x</span><span class="o">.</span><span class="n">nu</span><span class="p">())</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">obj</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">obj</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asmatrix</span><span class="p">(</span><span class="n">robjects</span><span class="o">.</span><span class="n">r</span><span class="o">.</span><span class="n">wcor</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">x</span><span class="p">,</span> <span class="n">groups</span><span class="o">=</span><span class="n">groups</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">))</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span>
+
+        <span class="n">obj</span><span class="o">.</span><span class="n">groups</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">groups</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">obj</span>
+
+    <span class="k">def</span> <span class="nf">__array_finalize__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">obj</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">groups</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="s1">&#39;groups&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span></div>
 </pre></div>
 
            </div>

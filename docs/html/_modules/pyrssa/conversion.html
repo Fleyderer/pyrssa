@@ -40,7 +40,10 @@
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../../modules.html">pyrssa</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../pyrssa.html">Structures</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../pyrssa.html#functions">Functions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../pyrssa.html#module-pyrssa.conversion">Conversions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../pyrssa.html#module-pyrssa.installer">Intstaller</a></li>
 </ul>
 
         </div>
@@ -71,9 +74,13 @@
 <span></span><span class="kn">from</span> <span class="nn">rpy2</span> <span class="kn">import</span> <span class="n">robjects</span>
 <span class="kn">import</span> <span class="nn">rpy2.robjects.conversion</span> <span class="k">as</span> <span class="nn">conversion</span>
 <span class="kn">from</span> <span class="nn">rpy2.robjects</span> <span class="kn">import</span> <span class="n">default_converter</span>
+<span class="kn">from</span> <span class="nn">rpy2.rinterface_lib</span> <span class="kn">import</span> <span class="n">sexp</span>
 <span class="kn">from</span> <span class="nn">rpy2.robjects.numpy2ri</span> <span class="kn">import</span> <span class="n">converter</span> <span class="k">as</span> <span class="n">numpy_converter</span>
 <span class="kn">from</span> <span class="nn">rpy2.robjects.pandas2ri</span> <span class="kn">import</span> <span class="n">converter</span> <span class="k">as</span> <span class="n">pandas_converter</span>
-<span class="kn">from</span> <span class="nn">pyrssa</span> <span class="kn">import</span> <span class="n">SSA</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">from</span> <span class="nn">pyrssa.classes.SSA</span> <span class="kn">import</span> <span class="n">SSABase</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Union</span>
 
 
 <div class="viewcode-block" id="FloatVector"><a class="viewcode-back" href="../../pyrssa.html#pyrssa.conversion.FloatVector">[docs]</a><span class="k">class</span> <span class="nc">FloatVector</span><span class="p">(</span><span class="n">robjects</span><span class="o">.</span><span class="n">FloatVector</span><span class="p">):</span>
@@ -128,14 +135,26 @@
     <span class="fm">__rmul__</span> <span class="o">=</span> <span class="fm">__mul__</span></div>
 
 
-<div class="viewcode-block" id="is_arr_of_type"><a class="viewcode-back" href="../../pyrssa.html#pyrssa.conversion.is_arr_of_type">[docs]</a><span class="k">def</span> <span class="nf">is_arr_of_type</span><span class="p">(</span><span class="n">arr</span><span class="p">,</span> <span class="n">check_type</span><span class="p">):</span>
-    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">arr</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
-        <span class="k">return</span> <span class="nb">all</span><span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">check_type</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">arr</span><span class="p">)</span>
-    <span class="k">return</span> <span class="kc">False</span></div>
+<div class="viewcode-block" id="is_arr_of_type"><a class="viewcode-back" href="../../pyrssa.html#pyrssa.conversion.is_arr_of_type">[docs]</a><span class="k">def</span> <span class="nf">is_arr_of_type</span><span class="p">(</span><span class="n">arr</span><span class="p">,</span> <span class="n">check_type</span><span class="p">,</span> <span class="n">allow_inf</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">allow_na</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">arr</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">arr</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">arr</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">check_type</span><span class="p">):</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="s1">&#39;__iter__&#39;</span><span class="p">):</span>
+                    <span class="k">if</span> <span class="n">allow_na</span> <span class="ow">and</span> <span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="ow">or</span> <span class="n">allow_inf</span> <span class="ow">and</span> <span class="n">np</span><span class="o">.</span><span class="n">isinf</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+                        <span class="k">return</span> <span class="kc">False</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">return</span> <span class="kc">False</span>
+        <span class="k">return</span> <span class="kc">True</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">False</span></div>
 
 
-<div class="viewcode-block" id="is_int_arr"><a class="viewcode-back" href="../../pyrssa.html#pyrssa.conversion.is_int_arr">[docs]</a><span class="k">def</span> <span class="nf">is_int_arr</span><span class="p">(</span><span class="n">arg</span><span class="p">):</span>
-    <span class="k">return</span> <span class="n">is_arr_of_type</span><span class="p">(</span><span class="n">arg</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span></div>
+<div class="viewcode-block" id="is_int_arr"><a class="viewcode-back" href="../../pyrssa.html#pyrssa.conversion.is_int_arr">[docs]</a><span class="k">def</span> <span class="nf">is_int_arr</span><span class="p">(</span><span class="n">arr</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">is_arr_of_type</span><span class="p">(</span><span class="n">arr</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="is_float_arr"><a class="viewcode-back" href="../../pyrssa.html#pyrssa.conversion.is_float_arr">[docs]</a><span class="k">def</span> <span class="nf">is_float_arr</span><span class="p">(</span><span class="n">arr</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">is_arr_of_type</span><span class="p">(</span><span class="n">arr</span><span class="p">,</span> <span class="nb">float</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="is_of_int_lists_arr"><a class="viewcode-back" href="../../pyrssa.html#pyrssa.conversion.is_of_int_lists_arr">[docs]</a><span class="k">def</span> <span class="nf">is_of_int_lists_arr</span><span class="p">(</span><span class="n">arr</span><span class="p">):</span>
@@ -157,6 +176,8 @@
 <div class="viewcode-block" id="list_to_vec"><a class="viewcode-back" href="../../pyrssa.html#pyrssa.conversion.list_to_vec">[docs]</a><span class="k">def</span> <span class="nf">list_to_vec</span><span class="p">(</span><span class="n">obj</span><span class="p">):</span>
     <span class="k">if</span> <span class="n">is_int_arr</span><span class="p">(</span><span class="n">obj</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">IntVector</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">obj</span><span class="p">))</span>
+    <span class="k">elif</span> <span class="n">is_float_arr</span><span class="p">(</span><span class="n">obj</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">FloatVector</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">obj</span><span class="p">))</span>
     <span class="k">elif</span> <span class="n">is_of_int_lists_arr</span><span class="p">(</span><span class="n">obj</span><span class="p">):</span>
         <span class="n">result</span> <span class="o">=</span> <span class="n">robjects</span><span class="o">.</span><span class="n">ListVector</span><span class="o">.</span><span class="n">from_length</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">obj</span><span class="p">))</span>
         <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">obj</span><span class="p">):</span>
@@ -191,12 +212,32 @@
     <span class="k">return</span> <span class="n">obj</span><span class="o">.</span><span class="n">obj</span></div>
 
 
+<div class="viewcode-block" id="get_time_index"><a class="viewcode-back" href="../../pyrssa.html#pyrssa.conversion.get_time_index">[docs]</a><span class="k">def</span> <span class="nf">get_time_index</span><span class="p">(</span><span class="n">series</span><span class="p">):</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">series</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">series</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">series</span><span class="o">.</span><span class="n">index</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DatetimeIndex</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">series</span><span class="o">.</span><span class="n">index</span>
+    <span class="k">return</span> <span class="kc">None</span></div>
+
+
+<div class="viewcode-block" id="make_time_index"><a class="viewcode-back" href="../../pyrssa.html#pyrssa.conversion.make_time_index">[docs]</a><span class="k">def</span> <span class="nf">make_time_index</span><span class="p">(</span><span class="n">series</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">],</span> <span class="n">time_index</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DatetimeIndex</span><span class="p">,</span> <span class="n">only_new</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="c1"># if only_new is False, we have to ignore old series, when creating new indices</span>
+    <span class="n">periods</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">series</span><span class="p">)</span> <span class="o">-</span> <span class="p">(</span><span class="ow">not</span> <span class="n">only_new</span><span class="p">)</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">time_index</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
+    <span class="n">new</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">date_range</span><span class="p">(</span><span class="nb">max</span><span class="p">(</span><span class="n">time_index</span><span class="p">),</span> <span class="n">freq</span><span class="o">=</span><span class="n">time_index</span><span class="o">.</span><span class="n">freqstr</span><span class="p">,</span> <span class="n">periods</span><span class="o">=</span><span class="n">periods</span><span class="p">,</span>
+                        <span class="n">inclusive</span><span class="o">=</span><span class="s2">&quot;right&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">only_new</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">new</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">time_index</span><span class="o">.</span><span class="n">union</span><span class="p">(</span><span class="n">new</span><span class="p">)</span></div>
+
+
 <span class="n">pyrssa_converter</span> <span class="o">=</span> <span class="n">conversion</span><span class="o">.</span><span class="n">Converter</span><span class="p">(</span><span class="s1">&#39;pyrssa converter&#39;</span><span class="p">)</span>
 <span class="n">pyrssa_converter</span><span class="o">.</span><span class="n">py2rpy</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="kc">None</span><span class="p">),</span> <span class="n">none_to_null</span><span class="p">)</span>
 <span class="n">pyrssa_converter</span><span class="o">.</span><span class="n">py2rpy</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="nb">range</span><span class="p">,</span> <span class="n">range_to_vec</span><span class="p">)</span>
 <span class="n">pyrssa_converter</span><span class="o">.</span><span class="n">py2rpy</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="n">list_to_vec</span><span class="p">)</span>
 <span class="n">pyrssa_converter</span><span class="o">.</span><span class="n">py2rpy</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="nb">dict</span><span class="p">,</span> <span class="n">dict_to_vec</span><span class="p">)</span>
-<span class="n">pyrssa_converter</span><span class="o">.</span><span class="n">py2rpy</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">SSA</span><span class="p">,</span> <span class="n">pyrssa_to_rssa</span><span class="p">)</span>
+<span class="n">pyrssa_converter</span><span class="o">.</span><span class="n">py2rpy</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">SSABase</span><span class="p">,</span> <span class="n">pyrssa_to_rssa</span><span class="p">)</span>
+
+<span class="n">loc_converter</span> <span class="o">=</span> <span class="n">conversion</span><span class="o">.</span><span class="n">Converter</span><span class="p">(</span><span class="s1">&#39;assymetric.numpy&#39;</span><span class="p">,</span> <span class="n">template</span><span class="o">=</span><span class="n">default_converter</span><span class="p">)</span>
 
 <span class="n">pyrssa_conversion_rules</span> <span class="o">=</span> <span class="n">default_converter</span> <span class="o">+</span> <span class="n">pyrssa_converter</span> <span class="o">+</span> <span class="n">numpy_converter</span> <span class="o">+</span> <span class="n">pandas_converter</span>
 </pre></div>
