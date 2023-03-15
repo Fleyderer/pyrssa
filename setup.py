@@ -7,7 +7,7 @@ setup(
     package_data={
         'data': ['*']
     },
-    version='1.0.6',
+    version='1.0.7',
     description='Rssa for Python',
     author='Fleyderer',
     author_email='fleyderer@gmail.com',
