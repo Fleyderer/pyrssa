@@ -18,7 +18,7 @@ class AutoGroup:
         self.names = list(robjects.r.names(self.obj))
         self.groups = []
         for i, name in enumerate(self.names):
-            group = self.obj.rx(name)[0]
+            group = np.asarray(self.obj.rx(name)[0])
             self.groups.append(group)
             setattr(self, name, group)
 

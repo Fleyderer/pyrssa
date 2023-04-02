@@ -20,8 +20,8 @@ class Parestimate:
             drop = True
 
         self.obj = r_ssa.parestimate(x=x, groups=groups, method=method, subspace=subspace,
-                                     normalize_roots=normalize_roots, dimensions=dimensions, solve_method=solve_method,
-                                     drop=drop)
+                                     normalize_roots=normalize_roots, dimensions=dimensions,
+                                     solve_method=solve_method, drop=drop)
 
     def __str__(self):
         return str(self.obj)

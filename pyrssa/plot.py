@@ -1,3 +1,5 @@
+import pandas as pd
+
 from pyrssa.classes.SSA import SSABase
 from pyrssa import Reconstruction
 from pyrssa import WCorMatrix, HMatrix
@@ -25,7 +27,11 @@ def _should_share_limits(series_arr, max_diff=1):
 class Plot:
 
     @staticmethod
-    def vectors(x: SSABase, idx=None, contrib=True, layout=None):
+    def set_style(style_name="seaborn-v0_8-whitegrid"):
+        plt.style.use(style_name)
+
+    @staticmethod
+    def vectors(x: SSABase, idx=None, contrib=True, layout=None, title=None):
         if idx is None:
             idx = range(1, min(10, len(x.U)) + 1)
         if contrib is True:
@@ -41,10 +47,10 @@ class Plot:
             cols = layout[1]
 
         fig = plt.figure(figsize=(cols + 2, rows + 2))
-        fig.tight_layout(h_pad=1)
-        gs = gridspec.GridSpec(rows, cols, width_ratios=[1] * cols, figure=fig, wspace=0, hspace=0.5)
-        fig.suptitle("Eigenvectors")
+        gs = gridspec.GridSpec(rows, cols, width_ratios=[1] * cols, figure=fig, wspace=0, hspace=0.7)
+        fig.suptitle("Eigenvectors" if title is None else title)
         ax = None
+
         for i in range(len(idx)):
             ax = fig.add_subplot(gs[i], sharey=ax)
             ax.plot(range(len(x.U[idx[i] - 1])), x.U[idx[i] - 1])
@@ -58,7 +64,7 @@ class Plot:
         plt.show()
 
     @staticmethod
-    def paired(x: SSABase, idx=None, contrib=True, layout=None):
+    def paired(x: SSABase, idx=None, contrib=True, layout=None, title=None):
         if idx is None:
             idx = range(len(x.U))
         if contrib is True:
@@ -76,8 +82,8 @@ class Plot:
         fig = plt.figure(figsize=(cols + 2, rows + 2))
         fig.tight_layout(h_pad=1)
         gs = gridspec.GridSpec(rows, cols, width_ratios=[1] * cols, figure=fig, wspace=0, hspace=0.5)
+        fig.suptitle("Pairs of eigenvectors" if title is None else title)
 
-        fig.suptitle("Pairs of eigenvectors")
         for i in range(len(idx) - 1):
             ax = fig.add_subplot(gs[i])
             ax.plot(x.U[idx[i + 1] - 1], x.U[idx[i] - 1])
@@ -94,10 +100,11 @@ class Plot:
         plt.show()
 
     @staticmethod
-    def xyplot(x: Reconstruction, x_labels=None, add_residuals=True, add_original=True, layout=None, superpose=False):
+    def xyplot(x: Reconstruction, x_labels=None, add_residuals=True, add_original=True,
+               layout=None, superpose=False, title=None):
 
         if not isinstance(x, Reconstruction):
-            raise TypeError
+            raise TypeError(f"Only Reconstruction type of object is allowed in xyplot. You've tried to pass {type(x)}.")
 
         if x_labels is None:
             x_labels = x.series.index
@@ -112,7 +119,7 @@ class Plot:
             if add_residuals:
                 ax.plot(x_labels, x.residuals, label='Residuals')
             ax.legend()
-            plt.title(label="Reconstructed series")
+            plt.title(label="Reconstructed series" if title is None else title)
             plt.show()
 
         else:
@@ -166,7 +173,7 @@ class Plot:
             plt.show()
 
     @staticmethod
-    def matplot(x: Reconstruction, x_labels=None, add_residuals=True, add_original=True):
+    def matplot(x: Reconstruction, x_labels=None, add_residuals=True, add_original=True, title=None):
 
         if x_labels is None:
             x_labels = x.series.index
@@ -179,7 +186,7 @@ class Plot:
         if add_residuals:
             ax.plot(x_labels, x.residuals, label='Residuals', linestyle="dashed")
         ax.legend()
-        plt.title(label="Reconstructed series")
+        plt.title(label="Reconstructed series" if title is None else title)
         plt.show()
 
     @staticmethod
@@ -191,9 +198,7 @@ class Plot:
         plt.yscale('log')
         plt.show()
 
-
-
-    @staticmethod@staticmethod
+    @staticmethod
     def _wcor(wcor_matrix: WCorMatrix, scales=None, support_lines=True):
         plt.imshow(wcor_matrix, cmap='gray_r', vmin=0, vmax=1)
         plt.gca().invert_yaxis()
@@ -220,25 +225,70 @@ class Plot:
         plt.tick_params(which='minor', bottom=False, left=False)
 
         plt.show()
+
+    @staticmethod
     def _hmatrix(hmatrix: HMatrix):
         plt.imshow(hmatrix.T, cmap='hot_r', origin='lower', interpolation='nearest')
         plt.title("Heterogeneity matrix")
         plt.show()
 
+    @staticmethod
+    def spectrum(obj, log=False, demean=False, detrend=True, ticks=None, tick_labels=None, limits=None):
+        result = {}
+        if isinstance(obj, Reconstruction):
+            all_series = list(obj.items())
+        else:
+            if isinstance(obj, pd.Series):
+                all_series = [(obj.name, obj)]
+            else:
+                all_series = [("series", obj)]
+
+        fig, ax = plt.subplots()
+        for name, series in all_series:
+            if demean:
+                series = matplotlib.mlab.detrend_mean(series)
+            if detrend:
+                series = matplotlib.mlab.detrend_linear(series)
+            if log:
+                series = np.log(series)
+            result[name] = ax.magnitude_spectrum(series)
+
+        if len(all_series) > 1:
+            plt.title("Spectrum of series")
+            plt.legend([s[0] for s in all_series])
+        else:
+            plt.title(f"Spectrum of {all_series[0][0]}")
+
+        if ticks:
+            ticks = [tick * 2 for tick in ticks]
+            if tick_labels:
+                plt.xticks(ticks, labels=tick_labels)
+            else:
+                plt.xticks(ticks)
+
+        if limits is None:
+            limits = (0, 0.5)
+        limits = (limits[0] * 2, limits[1] * 2)
+        plt.xlim(limits)
+        plt.ylabel("Value")
+        plt.show()
+        return result
+
     def __call__(self, obj, x_labels=None, kind: Literal["vectors", "paired"] = None,
                  add_residuals=True, add_original=True, idx=None, scales=None,
                  contrib=True, layout=None, superpose=False, method: Literal["matplot", "xyplot"] = None,
-                 support_lines=True):
+                 support_lines=True, title=None):
         if kind == "vectors":
-            return self.vectors(obj, idx=idx, contrib=contrib, layout=layout)
+            return self.vectors(obj, idx=idx, contrib=contrib, layout=layout, title=title)
         elif kind == "paired":
-            return self.paired(obj, idx=idx, contrib=contrib, layout=layout)
-        elif type(obj) == Reconstruction:
+            return self.paired(obj, idx=idx, contrib=contrib, layout=layout, title=title)
+        elif isinstance(obj, Reconstruction):
             if method == "matplot":
-                return self.matplot(obj, x_labels=x_labels, add_residuals=add_residuals, add_original=add_original)
+                return self.matplot(obj, x_labels=x_labels, add_residuals=add_residuals, add_original=add_original,
+                                    title=title)
             if method == "xyplot":
                 return self.xyplot(obj, x_labels=x_labels, add_residuals=add_residuals, add_original=add_original,
-                                   layout=layout, superpose=superpose)
+                                   layout=layout, superpose=superpose, title=title)
         elif isinstance(obj, SSABase):
             return self.sigma(obj)
         elif isinstance(obj, WCorMatrix):
@@ -248,3 +298,4 @@ class Plot:
 
 
 plot = Plot()
+plot.set_style()

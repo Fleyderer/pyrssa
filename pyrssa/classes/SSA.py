@@ -3,8 +3,7 @@ import numpy as np
 from typing import Callable
 from rpy2 import robjects
 import rpy2.robjects.packages as rpackages
-import inspect
-
+from functools import cached_property
 
 r_ssa = rpackages.importr('Rssa')
 ssa_get = robjects.r('utils::getFromNamespace("$.ssa", "Rssa")')
@@ -14,15 +13,24 @@ class SSABase:
 
     def __init__(self, x, ssa_object, call: str):
         self.obj = ssa_object
-        self.sigma = ssa_get(self.obj, "sigma")
-        self.U = ssa_get(self.obj, "U").T
-        self.V = ssa_get(self.obj, "V")
-        self.series = pd.DataFrame(x)
-        self.call = call
+        self._x = x
+        self._call = call
 
-    @property
-    def F(self):
-        return self.series
+    @cached_property
+    def sigma(self):
+        return np.asarray(ssa_get(self.obj, "sigma"))
+
+    @cached_property
+    def U(self):
+        return np.asarray(ssa_get(self.obj, "U")).T
+
+    @cached_property
+    def V(self):
+        return np.asarray(ssa_get(self.obj, "V"))
+
+    @cached_property
+    def series(self):
+        return pd.DataFrame(self._x)
 
     def contributions(self, idx=None):
         if idx is None:
@@ -39,8 +47,10 @@ class SSABase:
         return r_ssa.nu(self.obj)[0]
 
     def __str__(self):
+        final_call = self._call[:self._call.find('(') + 1] + "x=" + self._call[self._call.find('(') + 1:]
+
         result = str(self.obj).split("\n")
-        result[result.index("Call:") + 1] = self.call
+        result[result.index("Call:") + 1] = final_call
         return "\n".join(result)
 
     def __repr__(self):
@@ -79,6 +89,7 @@ class SSA(SSABase):
 def _norm_conversion(func):
     def wrapper(x):
         return float(func(np.array(x)))
+
     return wrapper
 
 
@@ -108,10 +119,10 @@ class IOSSA(SSABase):
         if norm is None:
             norm = _default_norm
         self.norm = robjects.rinterface.rternalize(_norm_conversion(norm))
-        super().__init__(x.F, r_ssa.iossa(x=x, **{"nested.groups": self.nested_groups}, tol=self.tol,
-                                          kappa=self.kappa, maxiter=self.maxiter, norm=self.norm,
-                                          trace=self.trace,
-                                          **{"kappa.balance": self.kappa_balance}, **kwargs), call=call)
+        super().__init__(x.series, r_ssa.iossa(x=x, **{"nested.groups": self.nested_groups}, tol=self.tol,
+                                               kappa=self.kappa, maxiter=self.maxiter, norm=self.norm,
+                                               trace=self.trace,
+                                               **{"kappa.balance": self.kappa_balance}, **kwargs), call=call)
 
     @property
     def iossa_groups(self):
@@ -119,7 +130,35 @@ class IOSSA(SSABase):
 
     def summary(self):
         result = str(self.obj).split("\n")
-        result[result.index("Call:") + 1] = self.call
+        result[result.index("Call:") + 1] = self._call
+        return "\n".join(result)
+
+    def __str__(self):
+        return str(self.obj)
+
+    def __repr__(self):
+        return self.__str__()
+
+
+class FOSSA(SSABase):
+
+    def __init__(self, x: SSA,
+                 nested_groups,
+                 filter=(-1, 1),
+                 gamma=np.inf,
+                 normalize=True,
+                 call=None,
+                 **kwargs):
+        self.nested_groups = nested_groups
+        self.filter = filter
+        self.gamma = gamma
+        self.normalize = normalize
+        super().__init__(x.series, r_ssa.fossa(x=x, **{"nested.groups": self.nested_groups}, filter=self.filter,
+                                               gamma=self.gamma, normalize=self.normalize, **kwargs), call=call)
+
+    def summary(self):
+        result = str(self.obj).split("\n")
+        result[result.index("Call:") + 1] = self._call
         return "\n".join(result)
 
     def __str__(self):

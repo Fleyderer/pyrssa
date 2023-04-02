@@ -1,5 +1,5 @@
 import pyrssa.classes.SSA
-from pyrssa import SSA, IOSSA, Parestimate
+from pyrssa import SSA, IOSSA, FOSSA, Parestimate
 from pyrssa import Reconstruction
 from pyrssa import RForecast, VForecast, BForecast
 from pyrssa import WCorMatrix, HMatrix
@@ -362,6 +362,11 @@ def iossa(x: SSA, nested_groups, tol=1e-5, kappa=2, maxiter=100, norm=None, trac
                  kappa_balance=kappa_balance, call=_get_call(inspect.currentframe().f_back), **kwargs)
 
 
+def fossa(x: SSA, nested_groups, filter=(-1, 1), gamma=np.inf, normalize=True, call=None, **kwargs):
+    return FOSSA(x=x, nested_groups=nested_groups, filter=filter,
+                 gamma=gamma, normalize=normalize, **kwargs, call=call)
+
+
 # Weighted correlations
 def wcor(ds, groups=range(1, 51)):
     return WCorMatrix(ds, groups)
@@ -392,7 +397,6 @@ def hmatr(F, B=None, T=None, L=None, neig=10):
 def grouping_auto_pgram(x: SSA, groups=None, base: Literal["series", "eigen", "factor"] = "series",
                         freq_bins=2, threshold=0, method: Literal["constant", "linear"] = "constant",
                         drop=True, **kwargs):
-
     return GroupPgram(x=x, groups=groups, base=base, freq_bins=freq_bins, threshold=threshold,
                       method=method, drop=drop, **kwargs)
 

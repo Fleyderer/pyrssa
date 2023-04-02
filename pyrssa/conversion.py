@@ -63,7 +63,7 @@ class IntVector(robjects.IntVector):
 
 
 def is_arr_of_type(arr, check_type, allow_inf=True, allow_na=True):
-    if isinstance(arr, list) or isinstance(arr, np.ndarray):
+    if isinstance(arr, list) or isinstance(arr, tuple) or isinstance(arr, np.ndarray):
         for x in arr:
             if not isinstance(x, check_type):
                 if not hasattr(x, '__iter__'):
@@ -160,8 +160,10 @@ def make_time_index(series: Union[pd.Series, pd.DataFrame], time_index: pd.Datet
 pyrssa_converter = conversion.Converter('pyrssa converter')
 pyrssa_converter.py2rpy.register(type(None), none_to_null)
 pyrssa_converter.py2rpy.register(range, range_to_vec)
+pyrssa_converter.py2rpy.register(tuple, list_to_vec)
 pyrssa_converter.py2rpy.register(list, list_to_vec)
 pyrssa_converter.py2rpy.register(dict, dict_to_vec)
 pyrssa_converter.py2rpy.register(SSABase, pyrssa_to_rssa)
 
-pyrssa_conversion_rules = default_converter + pyrssa_converter + numpy_converter + pandas_converter
+# pyrssa_conversion_rules = default_converter + pyrssa_converter + numpy_converter + pandas_converter
+pyrssa_conversion_rules = pandas_converter + numpy_converter + default_converter + pyrssa_converter

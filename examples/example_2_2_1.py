@@ -9,7 +9,7 @@ f = np.sin(2 * np.pi * np.arange(1, n + 1) / 7) + sigma * np.random.normal(size=
 f_center = f - np.mean(f)
 st = prs.ssa(f_center, L=50, kind='toeplitz-ssa')
 s = prs.ssa(f, L=50, kind="1d-ssa")
-prs.plot(s, kind="vectors", idx=range(1, 9), layout=[1, 4])
+prs.plot(s, kind="vectors", idx=range(1, 5), layout=[1, 4])
 prs.plot(st, kind="vectors", idx=range(1, 5), layout=[1, 4])
 prs.plot(prs.reconstruct(st, groups=[range(1, 3)]), method="xyplot", layout=[1, 3])
 prs.plot(prs.reconstruct(s, groups=[range(1, 3)]), method="xyplot", layout=[1, 3])
