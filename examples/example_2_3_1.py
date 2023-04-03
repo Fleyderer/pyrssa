@@ -1,8 +1,7 @@
 import numpy as np
-from rdatasets import data
 import pyrssa as prs
 
-co2 = data("co2")
+co2 = prs.data("co2")
 s2 = prs.ssa(co2.value, column_projector="centering", row_projector="centering")
 prs.plot(prs.reconstruct(s2, groups={"Linear_trend": range(1, s2.nspecial() + 1)}),
          add_residuals=False, method="matplot")

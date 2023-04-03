@@ -1,4 +1,4 @@
-import pyrssa.classes.SSA
+from pyrssa.classes.SSA import SSABase
 from pyrssa import SSA, IOSSA, FOSSA, Parestimate
 from pyrssa import Reconstruction
 from pyrssa import RForecast, VForecast, BForecast
@@ -10,7 +10,7 @@ from rpy2 import robjects
 import rpy2.robjects.conversion as conversion
 import rpy2.robjects.packages as rpackages
 from rpy2.rinterface_lib import callbacks
-from pandas import read_csv
+import pandas as pd
 import numpy as np
 import os
 from typing import Literal, Union
@@ -44,7 +44,11 @@ def data(name):
     :rtype: pandas.DataFrame
 
     """
-    return read_csv(os.path.join(os.path.join(os.path.dirname(os.path.realpath(__file__)), "data"), f'{name}.csv'))
+    result = pd.read_csv(os.path.join(os.path.join(os.path.dirname(os.path.realpath(__file__)), "data"), f'{name}.csv'))
+    if len(result.columns) > 1:
+        if "time" in result.columns:
+            result.set_index("time", inplace=True)
+    return result
 
 
 def parestimate(x, groups, method="esprit", subspace="column", normalize_roots=None, dimensions=None,
@@ -278,7 +282,7 @@ def ssa(x, L=None, neig=None, mask=None, wmask=None, kind="1d-ssa", circular=Fal
                call=_get_call(inspect.currentframe().f_back))
 
 
-def reconstruct(x: pyrssa.classes.SSA.SSABase,
+def reconstruct(x: SSABase,
                 groups: Union[list, dict, np.ndarray, GroupPgram],
                 drop_attributes=False,
                 cache=True):

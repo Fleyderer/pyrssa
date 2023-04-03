@@ -16,7 +16,7 @@ class Reconstruction:
     def __init__(self, x: SSABase, groups: Union[list, dict, np.ndarray, GroupPgram, GroupWCor],
                  drop_attributes=False, cache=True):
         if isinstance(groups, GroupPgram) or isinstance(groups, GroupWCor):
-            groups = groups.groups
+            groups = dict(zip(groups.names, groups.groups))
         self.obj = r_ssa.reconstruct(x=x, groups=groups, **{"drop.attributes": drop_attributes}, cache=cache)
         self._x = x
         self.names = list(robjects.r.names(self.obj))

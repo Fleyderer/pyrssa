@@ -1,8 +1,10 @@
 import pandas as pd
 
+from rpy2 import robjects
 from pyrssa.classes.SSA import SSABase
-from pyrssa import Reconstruction
+from pyrssa import Reconstruction, reconstruct
 from pyrssa import WCorMatrix, HMatrix
+from pyrssa import GroupPgram, GroupWCor
 import matplotlib
 import matplotlib.pyplot as plt
 import matplotlib.gridspec as gridspec
@@ -11,17 +13,20 @@ from typing import Literal
 
 # This line solves problem for PyCharm: module 'backend_interagg' has no attribute 'FigureCanvas'...
 matplotlib.use('TkAgg')
+_num_complete = robjects.r('utils::getFromNamespace("num.complete", "Rssa")')
 
 
-def _should_share_limits(series_arr, max_diff=1):
-    range_values = [[min(ser), max(ser)] for ser in series_arr]
-    arr_start, arr_end = list(map(list, zip(*range_values)))
+def _should_share_limits(series_arr, max_diff=1, max_mul=1.5):
+    range_values = [[min(ser), max(ser), max(ser) - min(ser)] for ser in series_arr]
+    arr_start, arr_end, arr_range = list(map(list, zip(*range_values)))
     min_start = min(arr_start)
     max_end = max(arr_end)
     max_start = max(arr_start)
     min_end = min(arr_end)
     max_range = abs(min_start - max_end)
-    return abs(max_start - min_start) / max_range <= max_diff and abs(max_end - min_end) / max_range <= max_diff
+    return abs(max_start - min_start) / max_range <= max_diff \
+        and abs(max_end - min_end) / max_range <= max_diff \
+        and max_range / max(arr_range) <= max_mul
 
 
 class Plot:
@@ -47,20 +52,19 @@ class Plot:
             cols = layout[1]
 
         fig = plt.figure(figsize=(cols + 2, rows + 2))
-        gs = gridspec.GridSpec(rows, cols, width_ratios=[1] * cols, figure=fig, wspace=0, hspace=0.7)
+        gs = gridspec.GridSpec(rows, cols, width_ratios=[1] * cols, figure=fig, wspace=0, hspace=0.5)
         fig.suptitle("Eigenvectors" if title is None else title)
+        fig.tight_layout()
         ax = None
 
         for i in range(len(idx)):
             ax = fig.add_subplot(gs[i], sharey=ax)
-            ax.plot(range(len(x.U[idx[i] - 1])), x.U[idx[i] - 1])
-            if cntrb is None:
-                ax.set_title(idx[i])
-            else:
-                ax.set_title(f'{idx[i]} ({cntrb[i] * 100:.2f} %)')
+            ax.plot(x.U[idx[i] - 1])
+            ax.set_title(f'{idx[i]} ({cntrb[i] * 100:.2f} %)' if cntrb is not None else idx[i])
             ax.set_xticks([])
             ax.set_yticks([])
-            ax.set_aspect(aspect='auto', adjustable='box')
+            ax.set_box_aspect(1)
+
         plt.show()
 
     @staticmethod
@@ -80,7 +84,9 @@ class Plot:
             cols = layout[1]
 
         fig = plt.figure(figsize=(cols + 2, rows + 2))
-        fig.tight_layout(h_pad=1)
+        fig.tight_layout()
+        fig.subplots_adjust(top=0.8)
+
         gs = gridspec.GridSpec(rows, cols, width_ratios=[1] * cols, figure=fig, wspace=0, hspace=0.5)
         fig.suptitle("Pairs of eigenvectors" if title is None else title)
 
@@ -93,11 +99,14 @@ class Plot:
                 ax.set_title(f'{idx[i]} ({cntrb[i] * 100:.2f}%) vs {idx[i + 1]} ({cntrb[i + 1] * 100:.2f}%)')
             ax.set_xticks([])
             ax.set_yticks([])
-            ratio = 1.0
-            x_left, x_right = ax.get_xlim()
-            y_bottom, y_top = ax.get_ylim()
-            ax.set_aspect(abs((x_right - x_left) / (y_bottom - y_top)) * ratio)
+            ax.set_box_aspect(1)
+
         plt.show()
+
+    def series(self, x: SSABase, groups=None, layout=None, **kwargs):
+        return self.xyplot(reconstruct(x, groups=groups),
+                           add_residuals=False, add_original=False,
+                           layout=layout, **kwargs)
 
     @staticmethod
     def xyplot(x: Reconstruction, x_labels=None, add_residuals=True, add_original=True,
@@ -199,20 +208,16 @@ class Plot:
         plt.show()
 
     @staticmethod
-    def _wcor(wcor_matrix: WCorMatrix, scales=None, support_lines=True):
+    def _wcor(wcor_matrix: WCorMatrix, scales=None):
         plt.imshow(wcor_matrix, cmap='gray_r', vmin=0, vmax=1)
         plt.gca().invert_yaxis()
-
+        plt.grid(color='k', alpha=0.2, linestyle='-', linewidth=0.3)
         if scales is None:
             ticks = range(len(wcor_matrix.groups))
             labels = wcor_matrix.groups
         else:
             ticks = np.array(scales) - 1  # fix for indexing of components on the plot
             labels = scales
-            if support_lines:
-                for i in scales:
-                    plt.plot([i - 1, i - 1], [0, len(wcor_matrix.groups) - 1], "k-.", lw=0.5, alpha=0.5)
-                    plt.plot([0, len(wcor_matrix.groups) - 1], [i - 1, i - 1], "k-.", lw=0.5, alpha=0.5)
         plt.title("W-correlation matrix")
         plt.xticks(ticks, labels=labels)
         plt.yticks(ticks, labels=labels)
@@ -230,6 +235,15 @@ class Plot:
     def _hmatrix(hmatrix: HMatrix):
         plt.imshow(hmatrix.T, cmap='hot_r', origin='lower', interpolation='nearest')
         plt.title("Heterogeneity matrix")
+        plt.show()
+
+    @staticmethod
+    def _group_pgram(x: GroupPgram, order=False, **kwargs):
+        contrib = x.contributions
+        if order:
+            contrib = contrib.transform(np.sort)[::-1]
+            contrib.reset_index(drop=True, inplace=True)
+        contrib.plot(xlabel="Component", ylabel="Relative contribution", **kwargs)
         plt.show()
 
     @staticmethod
@@ -277,11 +291,13 @@ class Plot:
     def __call__(self, obj, x_labels=None, kind: Literal["vectors", "paired"] = None,
                  add_residuals=True, add_original=True, idx=None, scales=None,
                  contrib=True, layout=None, superpose=False, method: Literal["matplot", "xyplot"] = None,
-                 support_lines=True, title=None):
+                 title=None, groups=None, order=False, **kwargs):
         if kind == "vectors":
             return self.vectors(obj, idx=idx, contrib=contrib, layout=layout, title=title)
         elif kind == "paired":
             return self.paired(obj, idx=idx, contrib=contrib, layout=layout, title=title)
+        elif kind == "series":
+            return self.series(obj, groups=groups, layout=layout, **kwargs)
         elif isinstance(obj, Reconstruction):
             if method == "matplot":
                 return self.matplot(obj, x_labels=x_labels, add_residuals=add_residuals, add_original=add_original,
@@ -292,10 +308,29 @@ class Plot:
         elif isinstance(obj, SSABase):
             return self.sigma(obj)
         elif isinstance(obj, WCorMatrix):
-            return self._wcor(obj, scales=scales, support_lines=support_lines)
+            return self._wcor(obj, scales=scales)
         elif isinstance(obj, HMatrix):
             return self._hmatrix(obj)
+        elif isinstance(obj, GroupPgram):
+            return self._group_pgram(obj, order=order, **kwargs)
+
+
+def clplot(x, **kwargs):
+    if isinstance(x, pd.DataFrame):
+        x = x[x.columns[0]]
+    if isinstance(x, pd.Series):
+        x = x.values
+    N = len(x)
+    na_idx = np.hstack(np.argwhere(np.isnan(x))) + 1
+    cr = [_num_complete(N, L=L, **{"na.idx": na_idx})[0] / (N - L + 1) * 100 for L in range(2, (N + 1) // 2 + 1)]
+    plt.plot(cr)
+    plt.title("Proportion of complete lag vectors")
+    plt.ylabel("Percents")
+    plt.xlabel("Window length, L")
+    plt.show()
+
 
 
 plot = Plot()
 plot.set_style()
+

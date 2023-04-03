@@ -12,4 +12,4 @@ from pyrssa.classes.Forecast import *
 from pyrssa.classes.WCorMatrix import WCorMatrix
 from pyrssa.classes.HMatrix import HMatrix
 from pyrssa.base import *
-from pyrssa.plot import plot
+from pyrssa.plot import plot, clplot
