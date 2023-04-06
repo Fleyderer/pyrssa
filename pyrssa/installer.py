@@ -9,7 +9,7 @@ utils.chooseCRANmirror(ind=1)  # select the first mirror in the list
 
 
 def install_required():
-    pack_names = ('Rssa',)
+    pack_names = ('Rssa', 'stats', )
     names_to_install = [x for x in pack_names if not rpackages.isinstalled(x)]
     if len(names_to_install) > 0:
         utils.install_packages(

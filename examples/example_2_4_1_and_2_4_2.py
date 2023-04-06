@@ -16,6 +16,7 @@ F = 2 * np.sin(2 * np.pi * omega1 * np.arange(1, N + 1)) \
     + sigma * np.random.normal(size=N)
 s = prs.ssa(F, L)
 plt.plot(F)
+plt.show()
 prs.plot(s, kind="vectors", idx=range(1, 9), layout=[4, 2])
 ios = prs.iossa(s, nested_groups=[range(3, 5), range(5, 7)], maxiter=1000)
 prs.plot(ios, kind="vectors", idx=range(1, 9), layout=[2, 4])

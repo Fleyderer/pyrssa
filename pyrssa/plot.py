@@ -2,14 +2,17 @@ import pandas as pd
 
 from rpy2 import robjects
 from pyrssa.classes.SSA import SSABase
+from pyrssa.classes.Periodogram import Periodogram
+from pyrssa.conversion import is_list
 from pyrssa import Reconstruction, reconstruct
 from pyrssa import WCorMatrix, HMatrix
-from pyrssa import GroupPgram, GroupWCor
+from pyrssa import GroupPgram
+from pyrssa import calc_v
 import matplotlib
 import matplotlib.pyplot as plt
 import matplotlib.gridspec as gridspec
 import numpy as np
-from typing import Literal
+from typing import Literal, Union
 
 # This line solves problem for PyCharm: module 'backend_interagg' has no attribute 'FigureCanvas'...
 matplotlib.use('TkAgg')
@@ -25,24 +28,39 @@ def _should_share_limits(series_arr, max_diff=1, max_mul=1.5):
     min_end = min(arr_end)
     max_range = abs(min_start - max_end)
     return abs(max_start - min_start) / max_range <= max_diff \
-        and abs(max_end - min_end) / max_range <= max_diff \
-        and max_range / max(arr_range) <= max_mul
+           and abs(max_end - min_end) / max_range <= max_diff \
+           and max_range / max(arr_range) <= max_mul
 
 
 class Plot:
+
+    @staticmethod
+    def get_kwargs(kwargs: dict):
+        return {key: value.pop(0) if is_list(value) else value if value else None for key, value in kwargs.items()}
 
     @staticmethod
     def set_style(style_name="seaborn-v0_8-whitegrid"):
         plt.style.use(style_name)
 
     @staticmethod
-    def vectors(x: SSABase, idx=None, contrib=True, layout=None, title=None):
+    def bold(text: str):
+        return r"$\bf{" + text.replace(' ', r'\ ') + "}$"
+
+    @staticmethod
+    def vectors(x: SSABase, vectors: Literal["eigen", "factor"] = "eigen",
+                idx=None, contrib=True, layout=None, title=None, show=True):
+
         if idx is None:
             idx = range(1, min(10, len(x.U)) + 1)
         if contrib is True:
             cntrb = x.contributions(idx)
         else:
             cntrb = None
+
+        if vectors == "eigen":
+            vec, main_title = x.U, "Eigenvectors"
+        else:
+            vec, main_title = calc_v(x, idx=idx), "Factor vectors"
 
         if layout is None:
             cols = 4
@@ -53,28 +71,37 @@ class Plot:
 
         fig = plt.figure(figsize=(cols + 2, rows + 2))
         gs = gridspec.GridSpec(rows, cols, width_ratios=[1] * cols, figure=fig, wspace=0, hspace=0.5)
-        fig.suptitle("Eigenvectors" if title is None else title)
+        fig.suptitle(main_title if title is None else title, fontweight="bold")
         fig.tight_layout()
         ax = None
 
         for i in range(len(idx)):
             ax = fig.add_subplot(gs[i], sharey=ax)
-            ax.plot(x.U[idx[i] - 1])
+            ax.plot(vec[idx[i] - 1], linewidth=0.5)
             ax.set_title(f'{idx[i]} ({cntrb[i] * 100:.2f} %)' if cntrb is not None else idx[i])
             ax.set_xticks([])
             ax.set_yticks([])
             ax.set_box_aspect(1)
 
-        plt.show()
+        if show:
+            plt.show()
+        return plt
 
     @staticmethod
-    def paired(x: SSABase, idx=None, contrib=True, layout=None, title=None):
+    def paired(x: SSABase, vectors: Literal["eigen", "factor"] = "eigen",
+               idx=None, contrib=True, layout=None, title=None, show=True):
+
         if idx is None:
             idx = range(len(x.U))
         if contrib is True:
             cntrb = x.contributions(idx)
         else:
             cntrb = None
+
+        if vectors == "eigen":
+            vec, main_title = x.U, "Pairs of eigenvectors"
+        else:
+            vec, main_title = calc_v(x, idx=idx), "Pairs of factor vectors"
 
         if layout is None:
             cols = 4
@@ -84,33 +111,45 @@ class Plot:
             cols = layout[1]
 
         fig = plt.figure(figsize=(cols + 2, rows + 2))
-        fig.tight_layout()
-        fig.subplots_adjust(top=0.8)
-
         gs = gridspec.GridSpec(rows, cols, width_ratios=[1] * cols, figure=fig, wspace=0, hspace=0.5)
-        fig.suptitle("Pairs of eigenvectors" if title is None else title)
+        fig.suptitle(main_title if title is None else title, fontweight="bold")
+        fig.tight_layout()
+        # fig.subplots_adjust(top=0.8) --> maybe remove after 2 month (from 07.04.23)
 
         for i in range(len(idx) - 1):
             ax = fig.add_subplot(gs[i])
-            ax.plot(x.U[idx[i + 1] - 1], x.U[idx[i] - 1])
+            ax.plot(vec[idx[i + 1] - 1], vec[idx[i] - 1], linewidth=0.25)
             if cntrb is None:
                 ax.set_title(f'{idx[i]} vs {idx[i + 1]}')
             else:
                 ax.set_title(f'{idx[i]} ({cntrb[i] * 100:.2f}%) vs {idx[i + 1]} ({cntrb[i + 1] * 100:.2f}%)')
+            # lim = np.min(vec[idx[i] - 1:idx[i + 1]]), np.max(vec[idx[i] - 1:idx[i + 1]])
+
+            xlim = np.min(vec[idx[i + 1] - 1]), np.max(vec[idx[i + 1] - 1])
+            ylim = np.min(vec[idx[i] - 1]), np.max(vec[idx[i] - 1])
+            if i == 0:
+                print(xlim, ylim)
+            x_shift = abs(xlim[1] - xlim[0]) * 0.05
+            y_shift = abs(ylim[1] - ylim[0]) * 0.05
+            xlim = xlim[0] - x_shift, xlim[1] + x_shift
+            ylim = ylim[0] - y_shift, ylim[1] + y_shift
             ax.set_xticks([])
             ax.set_yticks([])
+            ax.set_xlim(xlim)
+            ax.set_ylim(ylim)
             ax.set_box_aspect(1)
 
-        plt.show()
+        if show:
+            plt.show()
+        return plt
 
     def series(self, x: SSABase, groups=None, layout=None, **kwargs):
         return self.xyplot(reconstruct(x, groups=groups),
                            add_residuals=False, add_original=False,
                            layout=layout, **kwargs)
 
-    @staticmethod
-    def xyplot(x: Reconstruction, x_labels=None, add_residuals=True, add_original=True,
-               layout=None, superpose=False, title=None):
+    def xyplot(self, x: Reconstruction, x_labels=None, add_residuals=True, add_original=True,
+               layout=None, superpose=False, title=None, show=True, **kwargs):
 
         if not isinstance(x, Reconstruction):
             raise TypeError(f"Only Reconstruction type of object is allowed in xyplot. You've tried to pass {type(x)}.")
@@ -118,18 +157,20 @@ class Plot:
         if x_labels is None:
             x_labels = x.series.index
 
+        kwargs.setdefault("linewidth", 0.75)
+
         if superpose:
             fig, ax = plt.subplots()
-            fig.tight_layout()
+
             if add_original:
-                ax.plot(x_labels, x.series, label="Original")
+                ax.plot(x_labels, x.series, label="Original", **self.get_kwargs(kwargs))
             for name in x.names:
-                ax.plot(x_labels, getattr(x, name), label=name)
+                ax.plot(x_labels, getattr(x, name), label=name, **self.get_kwargs(kwargs))
             if add_residuals:
-                ax.plot(x_labels, x.residuals, label='Residuals')
+                ax.plot(x_labels, x.residuals, label='Residuals', **self.get_kwargs(kwargs))
             ax.legend()
-            plt.title(label="Reconstructed series" if title is None else title)
-            plt.show()
+            plt.title(label=self.bold("Reconstructed Series" if title is None else title))
+            fig.tight_layout()
 
         else:
 
@@ -164,7 +205,7 @@ class Plot:
                 gs = gridspec.GridSpec(rows, cols, width_ratios=[1] * cols, figure=fig, wspace=0.1, hspace=0.5)
             else:
                 gs = gridspec.GridSpec(rows, cols, width_ratios=[1] * cols, figure=fig, hspace=0.7)
-            fig.suptitle("Reconstructed series")
+            fig.suptitle("Reconstructed Series", fontweight="bold")
             ax = None
 
             for i in range(len(plotting_series)):
@@ -176,39 +217,45 @@ class Plot:
                 else:
                     ax = fig.add_subplot(gs[i], sharex=ax)
 
-                ax.plot(x_labels, plotting_series[i]['series'])
-                ax.set_title(plotting_series[i]['name'])
+                ax.plot(x_labels, plotting_series[i]['series'], **self.get_kwargs(kwargs))
+                if len(plotting_series) > 1:
+                    ax.set_title(plotting_series[i]['name'])
 
+        if show:
             plt.show()
+        return plt
 
-    @staticmethod
-    def matplot(x: Reconstruction, x_labels=None, add_residuals=True, add_original=True, title=None):
+    def matplot(self, x: Reconstruction, x_labels=None, add_residuals=True,
+                add_original=True, title=None, show=True, **kwargs):
 
         if x_labels is None:
             x_labels = x.series.index
 
         fig, ax = plt.subplots()
         if add_original:
-            ax.plot(x_labels, x.series, label="Original", color="black", linewidth=0.5)
+            ax.plot(x_labels, x.series, label="Original", color="black", linewidth=0.5, **self.get_kwargs(kwargs))
         for name in x.names:
-            ax.plot(x_labels, getattr(x, name), label=name, linestyle="dashed")
+            ax.plot(x_labels, getattr(x, name), label=name, linestyle="dashed", **self.get_kwargs(kwargs))
         if add_residuals:
-            ax.plot(x_labels, x.residuals, label='Residuals', linestyle="dashed")
+            ax.plot(x_labels, x.residuals, label='Residuals', linestyle="dashed", **self.get_kwargs(kwargs))
         ax.legend()
-        plt.title(label="Reconstructed series" if title is None else title)
-        plt.show()
+        plt.title(label=self.bold("Reconstructed Series" if title is None else title))
+        if show:
+            plt.show()
+        return plt
 
     @staticmethod
-    def sigma(ts: SSABase):
-        plt.suptitle('Component norms')
+    def sigma(ts: SSABase, show=True):
+        plt.suptitle('Component norms', fontweight="bold")
         plt.plot(ts.sigma, marker='o')
         plt.xlabel('Index')
         plt.ylabel('Norms')
         plt.yscale('log')
-        plt.show()
+        if show:
+            plt.show()
+        return plt
 
-    @staticmethod
-    def _wcor(wcor_matrix: WCorMatrix, scales=None):
+    def _wcor(self, wcor_matrix: WCorMatrix, scales=None, show=True):
         plt.imshow(wcor_matrix, cmap='gray_r', vmin=0, vmax=1)
         plt.gca().invert_yaxis()
         plt.grid(color='k', alpha=0.2, linestyle='-', linewidth=0.3)
@@ -218,7 +265,7 @@ class Plot:
         else:
             ticks = np.array(scales) - 1  # fix for indexing of components on the plot
             labels = scales
-        plt.title("W-correlation matrix")
+        plt.title(self.bold("W-correlation matrix"))
         plt.xticks(ticks, labels=labels)
         plt.yticks(ticks, labels=labels)
 
@@ -229,49 +276,55 @@ class Plot:
         plt.grid(which='minor', color='w', linestyle='-', linewidth=0.2)
         plt.tick_params(which='minor', bottom=False, left=False)
 
-        plt.show()
+        if show:
+            plt.show()
+        return plt
 
-    @staticmethod
-    def _hmatrix(hmatrix: HMatrix):
+    def _hmatrix(self, hmatrix: HMatrix, show=True):
         plt.imshow(hmatrix.T, cmap='hot_r', origin='lower', interpolation='nearest')
-        plt.title("Heterogeneity matrix")
-        plt.show()
+        plt.title(self.bold("Heterogeneity matrix"))
+        if show:
+            plt.show()
+        return plt
 
-    @staticmethod
-    def _group_pgram(x: GroupPgram, order=False, **kwargs):
+    def _group_pgram(self, x: GroupPgram, order=False, legend_params: dict = None, show=True, **kwargs):
         contrib = x.contributions
         if order:
             contrib = contrib.transform(np.sort)[::-1]
             contrib.reset_index(drop=True, inplace=True)
-        contrib.plot(xlabel="Component", ylabel="Relative contribution", **kwargs)
-        plt.show()
+        for column in contrib:
+            plt.plot(contrib[column], label=column, **self.get_kwargs(kwargs))
+        if legend_params is None:
+            legend_params = {}
+        legend_params.setdefault("loc", "lower center")
+        legend_params.setdefault("bbox_to_anchor", (0.5, 1.05))
+        plt.xlabel("Component")
+        plt.ylabel("Relative contribution")
+        plt.legend(**legend_params)
+        plt.tight_layout()
+        if show:
+            plt.show()
+        return plt
 
-    @staticmethod
-    def spectrum(obj, log=False, demean=False, detrend=True, ticks=None, tick_labels=None, limits=None):
-        result = {}
-        if isinstance(obj, Reconstruction):
-            all_series = list(obj.items())
+    def pgram(self, objs: Union[Periodogram, list], ticks=None, tick_labels=None, limits=None, show=True, **kwargs):
+        if is_list(objs) and all([isinstance(obj, Periodogram) for obj in objs]):
+            all_series = objs
+        elif isinstance(objs, Periodogram):
+            all_series = [objs]
         else:
-            if isinstance(obj, pd.Series):
-                all_series = [(obj.name, obj)]
-            else:
-                all_series = [("series", obj)]
+            raise TypeError(f"Only Periodogram or list of periodograms are available as plotting objects,"
+                            f" not {type(objs)}")
 
+        kwargs.setdefault("linewidth", 0.75)
         fig, ax = plt.subplots()
-        for name, series in all_series:
-            if demean:
-                series = matplotlib.mlab.detrend_mean(series)
-            if detrend:
-                series = matplotlib.mlab.detrend_linear(series)
-            if log:
-                series = np.log(series)
-            result[name] = ax.magnitude_spectrum(series)
-
+        for i, pgram in enumerate(all_series):
+            name = pgram.series.name if pgram.series.name is not None else f"Series {i + 1}"
+            ax.plot(pgram.freq, pgram.spec, label=name, **self.get_kwargs(kwargs))
         if len(all_series) > 1:
-            plt.title("Spectrum of series")
-            plt.legend([s[0] for s in all_series])
+            plt.title(self.bold("Spectrum of series"))
+            plt.legend()
         else:
-            plt.title(f"Spectrum of {all_series[0][0]}")
+            plt.title(self.bold(f"Spectrum of {all_series[0].series.name}"))
 
         if ticks:
             ticks = [tick * 2 for tick in ticks]
@@ -282,40 +335,45 @@ class Plot:
 
         if limits is None:
             limits = (0, 0.5)
-        limits = (limits[0] * 2, limits[1] * 2)
+        shift = abs(limits[1] - limits[0]) * 0.05
+        limits = (limits[0] - shift, limits[1] + shift)
         plt.xlim(limits)
         plt.ylabel("Value")
-        plt.show()
-        return result
+        if show:
+            plt.show()
+        return plt
 
     def __call__(self, obj, x_labels=None, kind: Literal["vectors", "paired"] = None,
                  add_residuals=True, add_original=True, idx=None, scales=None,
-                 contrib=True, layout=None, superpose=False, method: Literal["matplot", "xyplot"] = None,
-                 title=None, groups=None, order=False, **kwargs):
+                 vectors: Literal["eigen", "factor"] = "eigen", contrib=True, layout=None, superpose=False,
+                 method: Literal["matplot", "xyplot"] = "xyplot", title=None, groups=None, order=False,
+                 legend_params: dict = None, ticks=None, tick_labels=None, limits=None, show=True, **kwargs):
         if kind == "vectors":
-            return self.vectors(obj, idx=idx, contrib=contrib, layout=layout, title=title)
+            return self.vectors(obj, vectors=vectors, idx=idx, contrib=contrib, layout=layout, title=title, show=show)
         elif kind == "paired":
-            return self.paired(obj, idx=idx, contrib=contrib, layout=layout, title=title)
+            return self.paired(obj, vectors=vectors, idx=idx, contrib=contrib, layout=layout, title=title, show=show)
         elif kind == "series":
-            return self.series(obj, groups=groups, layout=layout, **kwargs)
+            return self.series(obj, groups=groups, layout=layout, show=show, **kwargs)
         elif isinstance(obj, Reconstruction):
             if method == "matplot":
                 return self.matplot(obj, x_labels=x_labels, add_residuals=add_residuals, add_original=add_original,
-                                    title=title)
+                                    title=title, show=show, **kwargs)
             if method == "xyplot":
                 return self.xyplot(obj, x_labels=x_labels, add_residuals=add_residuals, add_original=add_original,
-                                   layout=layout, superpose=superpose, title=title)
+                                   layout=layout, superpose=superpose, title=title, show=show, **kwargs)
         elif isinstance(obj, SSABase):
-            return self.sigma(obj)
+            return self.sigma(obj, show=show)
         elif isinstance(obj, WCorMatrix):
-            return self._wcor(obj, scales=scales)
+            return self._wcor(obj, scales=scales, show=show)
         elif isinstance(obj, HMatrix):
-            return self._hmatrix(obj)
+            return self._hmatrix(obj, show=show)
         elif isinstance(obj, GroupPgram):
-            return self._group_pgram(obj, order=order, **kwargs)
+            return self._group_pgram(obj, order=order, legend_params=legend_params, show=show, **kwargs)
+        elif isinstance(obj, Periodogram) or isinstance(obj, list) and all([isinstance(x, Periodogram) for x in obj]):
+            return self.pgram(obj, ticks=ticks, tick_labels=tick_labels, limits=limits, show=show, **kwargs)
 
 
-def clplot(x, **kwargs):
+def clplot(x, show=True):
     if isinstance(x, pd.DataFrame):
         x = x[x.columns[0]]
     if isinstance(x, pd.Series):
@@ -324,13 +382,13 @@ def clplot(x, **kwargs):
     na_idx = np.hstack(np.argwhere(np.isnan(x))) + 1
     cr = [_num_complete(N, L=L, **{"na.idx": na_idx})[0] / (N - L + 1) * 100 for L in range(2, (N + 1) // 2 + 1)]
     plt.plot(cr)
-    plt.title("Proportion of complete lag vectors")
+    plt.title(plot.bold("Proportion of complete lag vectors"))
     plt.ylabel("Percents")
     plt.xlabel("Window length, L")
-    plt.show()
-
+    if show:
+        plt.show()
+    return plt
 
 
 plot = Plot()
 plot.set_style()
-

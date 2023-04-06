@@ -20,8 +20,10 @@ dec = prs.ssa(F, L=L, column_projector=3, row_projector=3)
 rec1 = prs.reconstruct(dec, groups={"Trend": np.arange(1, dec.nspecial() + 1)})
 fit1 = rec1.Trend
 p = poly(np.arange(1, N + 1), 5)
-fit1_3b = LinearRegression().fit(p, fit1)
-fit3b = LinearRegression().fit(p, F)
+fit1_3b = LinearRegression()
+fit1_3b.fit(p, fit1)
+fit3b = LinearRegression()
+fit3b.fit(p, F)
 li = np.arange(199)
 df = pd.DataFrame({"Initial": F[li],
                    "dproj": fit1[li],

@@ -1,4 +1,6 @@
 from pyrssa.classes.SSA import SSABase
+from pyrssa.classes.Parestimate import BaseParestimate
+from pyrssa.classes.Periodogram import Periodogram
 from pyrssa import SSA, IOSSA, FOSSA, Parestimate
 from pyrssa import Reconstruction
 from pyrssa import RForecast, VForecast, BForecast
@@ -13,7 +15,7 @@ from rpy2.rinterface_lib import callbacks
 import pandas as pd
 import numpy as np
 import os
-from typing import Literal, Union
+from typing import overload, Literal, Union
 import inspect
 
 # Set conversion rules
@@ -34,21 +36,41 @@ def _get_call(frame):
     return call[call.find('=') + 1:].strip().rstrip()
 
 
+def _set_datetime_index(dataframe, name):
+    dataframe[name] = pd.DatetimeIndex(dataframe[name])
+    dataframe.set_index(name, inplace=True, drop=True)
+    dataframe.index.freq = dataframe.index.inferred_freq
+
+
 # Read pyrssa dataframes
-def data(name):
+def data(name, datetime_index=None):
     """
     Function for loading available in pyrssa package datasets. Available datasets are stored in the data directory.
 
     :param name: Name of dataset to load
+    :param datetime_index: Name of column, where date or time index is stored
     :return: Loaded dataset
-    :rtype: pandas.DataFrame
+    :rtype: pandas.DataFrame or pandas.Series
 
     """
     result = pd.read_csv(os.path.join(os.path.join(os.path.dirname(os.path.realpath(__file__)), "data"), f'{name}.csv'))
-    if len(result.columns) > 1:
-        if "time" in result.columns:
-            result.set_index("time", inplace=True)
-    return result
+    if datetime_index is not None:
+        _set_datetime_index(result, datetime_index)
+    elif len(result.columns) > 1:
+        # Search for datetime index and set it
+        col_idx = next((i for i, v in enumerate(result.columns) if v.lower() in ['time', 'date', 'datetime']), None)
+        if col_idx is not None:
+            _set_datetime_index(result, result.columns[col_idx])
+
+    # If there is only one column in dataframe, return it as series
+    if len(result.columns) == 1:
+        return result[result.columns[0]]
+    else:
+        return result
+
+
+def calc_v(x: SSABase, idx, **kwargs):
+    return np.asarray(r_ssa.calc_v(x=x, idx=idx, **kwargs)).T
 
 
 def parestimate(x, groups, method="esprit", subspace="column", normalize_roots=None, dimensions=None,
@@ -75,8 +97,14 @@ def parestimate(x, groups, method="esprit", subspace="column", normalize_roots=N
     :return:
 
     """
-    return Parestimate(x=x, groups=groups, method=method, subspace=subspace, normalize_roots=normalize_roots,
-                       dimensions=dimensions, solve_method=solve_method, drop=drop)
+    if len(groups) == 1:
+        return BaseParestimate(x=x, groups=groups, method=method, subspace=subspace,
+                               normalize_roots=normalize_roots, dimensions=dimensions,
+                               solve_method=solve_method, drop=drop)
+    else:
+        return Parestimate(x=x, groups=groups, method=method, subspace=subspace,
+                           normalize_roots=normalize_roots, dimensions=dimensions,
+                           solve_method=solve_method, drop=drop)
 
 
 def ssa(x, L=None, neig=None, mask=None, wmask=None, kind="1d-ssa", circular=False,
@@ -283,7 +311,7 @@ def ssa(x, L=None, neig=None, mask=None, wmask=None, kind="1d-ssa", circular=Fal
 
 
 def reconstruct(x: SSABase,
-                groups: Union[list, dict, np.ndarray, GroupPgram],
+                groups: Union[list, dict, np.ndarray, GroupPgram, GroupWCor],
                 drop_attributes=False,
                 cache=True):
     """
@@ -398,21 +426,47 @@ def hmatr(F, B=None, T=None, L=None, neig=10):
     return HMatrix(F, B=B, T=T, L=L, neig=neig)
 
 
-def grouping_auto_pgram(x: SSA, groups=None, base: Literal["series", "eigen", "factor"] = "series",
+def grouping_auto_pgram(x: SSABase, groups=None, base: Literal["series", "eigen", "factor"] = "series",
                         freq_bins=2, threshold=0, method: Literal["constant", "linear"] = "constant",
                         drop=True, **kwargs):
     return GroupPgram(x=x, groups=groups, base=base, freq_bins=freq_bins, threshold=threshold,
                       method=method, drop=drop, **kwargs)
 
 
-def grouping_auto_wcor(x: SSA, groups=None, nclust=None, **kwargs):
+def grouping_auto_wcor(x: SSABase, groups=None, nclust=None, **kwargs):
     return GroupWCor(x=x, groups=groups, nclust=nclust, **kwargs)
 
 
-def grouping_auto(x: SSA, grouping_method: Literal["pgram", "wcor"] = "pgram", **kwargs):
+@overload
+def grouping_auto(x: SSABase, grouping_method: Literal["pgram"] = "pgram", groups=None, nclust=None,
+                  base: Literal["series", "eigen", "factor"] = "series", freq_bins=2, threshold=0,
+                  method: Literal["constant", "linear"] = "constant", drop=True, **kwargs) -> GroupPgram:
+    ...
+
+
+@overload
+def grouping_auto(x: SSABase, grouping_method: Literal["wcor"] = "wcor", groups=None, nclust=None,
+                  base: Literal["series", "eigen", "factor"] = "series",
+                  freq_bins=2, threshold=0,
+                  method: Literal["ward.D", "ward.D2", "single", "complete",
+                                  "average", "mcquitty", "median", "centroid"] = "complete",
+                  drop=True, **kwargs) -> GroupWCor:
+    ...
+
+
+def grouping_auto(x: SSABase, grouping_method: str = "pgram", groups=None, nclust=None,
+                  base: Literal["series", "eigen", "factor"] = "series", freq_bins=2, threshold=0,
+                  method: Literal["constant", "linear"] = "constant", drop=True, **kwargs):
     if grouping_method == "pgram":
-        return grouping_auto_pgram(x, **kwargs)
+        return grouping_auto_pgram(x, groups=groups, base=base, freq_bins=freq_bins, threshold=threshold,
+                                   method=method, drop=drop, **kwargs)
     elif grouping_method == "wcor":
-        return grouping_auto_wcor(x, **kwargs)
+        return grouping_auto_wcor(x, groups=groups, nclust=nclust, method=method, **kwargs)
     else:
         raise ValueError(f"Grouping method {grouping_method} is not in available methods: 'pgram', 'wcor'")
+
+
+def spectrum(x, spans=None, kernel=None, taper=0.1,
+             pad=0, fast=True, demean=False, detrend=True, **kwargs):
+    return Periodogram(x, spans=spans, kernel=kernel, taper=taper,
+                       pad=pad, fast=fast, demean=demean, detrend=detrend, **kwargs)

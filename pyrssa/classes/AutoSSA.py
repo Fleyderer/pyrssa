@@ -3,7 +3,7 @@ import numpy as np
 from typing import Literal
 from rpy2 import robjects
 import rpy2.robjects.packages as rpackages
-from pyrssa.classes.SSA import SSA
+from pyrssa.classes.SSA import SSABase
 from pyrssa.classes.WCorMatrix import WCorMatrix
 from rpy2.robjects import conversion
 
@@ -49,9 +49,8 @@ class AutoGroup:
 
 class GroupPgram(AutoGroup):
 
-    def __init__(self, x: SSA, groups=None, base: Literal["series", "eigen", "factor"] = "series", freq_bins=2,
+    def __init__(self, x: SSABase, groups=None, base: Literal["series", "eigen", "factor"] = "series", freq_bins=2,
                  threshold=0, method: Literal["constant", "linear"] = "constant", drop=True, **kwargs):
-
         if groups is None:
             groups = range(1, min(x.nsigma(), x.nu()) + 1)
 
@@ -67,7 +66,7 @@ class GroupPgram(AutoGroup):
 
 class GroupWCor(AutoGroup):
 
-    def __init__(self, x: SSA, groups=None, nclust=None, **kwargs):
+    def __init__(self, x: SSABase, groups=None, nclust=None, **kwargs):
         if groups is None:
             groups = range(1, min(x.nsigma(), x.nu()) + 1)
         if nclust is None:

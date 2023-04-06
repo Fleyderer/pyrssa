@@ -28,7 +28,7 @@ class Reconstruction:
 
     @cached_property
     def residuals(self):
-        return robjects.r.attr(self.obj, "residuals")
+        return np.asarray(robjects.r.attr(self.obj, "residuals"))
 
     def __getattribute__(self, item):
         try:
@@ -36,6 +36,7 @@ class Reconstruction:
         except AttributeError:
             if item in self.names:
                 series = pd.Series(self.obj.rx(item)[0])
+                series.name = item
                 if self._datetime_index is not None:
                     series.index = self._datetime_index
                 setattr(self, item, series)

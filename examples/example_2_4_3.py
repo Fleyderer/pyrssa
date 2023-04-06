@@ -35,4 +35,3 @@ plt.plot(lseq, err2)
 plt.xlabel(r"$\omega_1$")
 plt.ylabel(r"$RMSE$")
 plt.show()
-

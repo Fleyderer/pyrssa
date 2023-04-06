@@ -2,10 +2,10 @@ import numpy as np
 import pyrssa as prs
 
 co2 = prs.data("co2")
-s2 = prs.ssa(co2.value, column_projector="centering", row_projector="centering")
+s2 = prs.ssa(co2, column_projector="centering", row_projector="centering")
 prs.plot(prs.reconstruct(s2, groups={"Linear_trend": range(1, s2.nspecial() + 1)}),
          add_residuals=False, method="matplot")
-s4 = prs.ssa(co2.value, column_projector=2, row_projector=2)
+s4 = prs.ssa(co2, column_projector=2, row_projector=2)
 prs.plot(prs.reconstruct(s4, groups={"Linear_trend": range(1, s4.nspecial() + 1)}),
          add_residuals=False, method="matplot")
 prs.plot(s4, kind="vectors", idx=range(1, 13))
