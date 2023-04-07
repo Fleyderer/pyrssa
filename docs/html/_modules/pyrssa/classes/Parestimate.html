@@ -81,7 +81,7 @@
 
 <div class="viewcode-block" id="Parestimate"><a class="viewcode-back" href="../../../pyrssa.classes.html#pyrssa.classes.Parestimate.Parestimate">[docs]</a><span class="k">class</span> <span class="nc">Parestimate</span><span class="p">:</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">groups</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s2">&quot;esprit&quot;</span><span class="p">,</span> <span class="n">subspace</span><span class="o">=</span><span class="s2">&quot;column&quot;</span><span class="p">,</span> <span class="n">normalize_roots</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">groups</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s2">&quot;esprit&quot;</span><span class="p">,</span> <span class="n">subspace</span><span class="o">=</span><span class="s2">&quot;column&quot;</span><span class="p">,</span> <span class="n">normalize_roots</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                  <span class="n">dimensions</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">solve_method</span><span class="o">=</span><span class="s2">&quot;ls&quot;</span><span class="p">,</span> <span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
 
         <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">==</span> <span class="n">SSA</span><span class="p">:</span>
@@ -92,15 +92,15 @@
             <span class="n">solve_method</span> <span class="o">=</span> <span class="s2">&quot;ls&quot;</span>
             <span class="n">drop</span> <span class="o">=</span> <span class="kc">True</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">obj</span> <span class="o">=</span> <span class="n">r_ssa</span><span class="o">.</span><span class="n">parestimate</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">x</span><span class="p">,</span> <span class="n">groups</span><span class="o">=</span><span class="n">groups</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="n">method</span><span class="p">,</span> <span class="n">subspace</span><span class="o">=</span><span class="n">subspace</span><span class="p">,</span>
+        <span class="bp">cls</span><span class="o">.</span><span class="n">obj</span> <span class="o">=</span> <span class="n">r_ssa</span><span class="o">.</span><span class="n">parestimate</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">x</span><span class="p">,</span> <span class="n">groups</span><span class="o">=</span><span class="n">groups</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="n">method</span><span class="p">,</span> <span class="n">subspace</span><span class="o">=</span><span class="n">subspace</span><span class="p">,</span>
                                      <span class="n">normalize_roots</span><span class="o">=</span><span class="n">normalize_roots</span><span class="p">,</span> <span class="n">dimensions</span><span class="o">=</span><span class="n">dimensions</span><span class="p">,</span> <span class="n">solve_method</span><span class="o">=</span><span class="n">solve_method</span><span class="p">,</span>
                                      <span class="n">drop</span><span class="o">=</span><span class="n">drop</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">obj</span><span class="p">)</span>
+    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">obj</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="fm">__str__</span><span class="p">()</span></div>
+    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="fm">__str__</span><span class="p">()</span></div>
 </pre></div>
 
            </div>

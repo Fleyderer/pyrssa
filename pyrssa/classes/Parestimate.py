@@ -52,6 +52,7 @@ class BaseParestimate:
 
 
 class Parestimate:
+    """@DynamicAttrs"""
 
     def __init__(self, x, groups, method="esprit", subspace="column", normalize_roots=None,
                  dimensions=None, solve_method="ls", drop=True):

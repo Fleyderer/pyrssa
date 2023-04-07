@@ -12,6 +12,7 @@ ssa_get = robjects.r('utils::getFromNamespace("$.ssa", "Rssa")')
 
 
 class AutoGroup:
+    """@DynamicAttrs"""
 
     def __init__(self, obj):
         self.obj = obj

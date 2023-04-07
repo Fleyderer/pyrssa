@@ -173,26 +173,26 @@ conversion.set_conversion(conversion_rules)
 
 \begin{lstlisting}[language=Python, caption=Наследование для FloatVector.]
 class FloatVector(robjects.FloatVector):
-	def __init__(self, obj):
+	def __init__(cls, obj):
 	super().__init__(obj)
 	
-	def __mul__(self, other):
+	def __mul__(cls, other):
 		if isinstance(other, float):
-			return r.sapply(self, "*", other)
+			return r.sapply(cls, "*", other)
 		elif isinstance(other, int):
-			return r.sapply(self, "*", other)
+			return r.sapply(cls, "*", other)
 	
-	def __truediv__(self, other):
+	def __truediv__(cls, other):
 		if isinstance(other, float):
-			return r.sapply(self, "/", other)
+			return r.sapply(cls, "/", other)
 		elif isinstance(other, int):
-			return r.sapply(self, "/", other)
+			return r.sapply(cls, "/", other)
 	
-	def __add__(self, other):
+	def __add__(cls, other):
 		if isinstance(other, float):
-			return r.sapply(self, "+", other)
+			return r.sapply(cls, "+", other)
 		elif isinstance(other, int):
-			return r.sapply(self, "+", other)
+			return r.sapply(cls, "+", other)
 	
 	__rmul__ = __mul__
 	

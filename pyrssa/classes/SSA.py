@@ -30,7 +30,7 @@ class SSABase:
 
     @cached_property
     def series(self):
-        return pd.DataFrame(self._x)
+        return pd.Series(self._x)
 
     def contributions(self, idx=None):
         if idx is None:

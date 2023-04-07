@@ -406,14 +406,15 @@ def wcor(ds, groups=range(1, 51)):
 
 # Forecasting functions
 
-def rforecast(ds, groups, length=1, base="reconstructed", only_new=True, reverse=False,
-              drop=False, drop_attributes=False, cache=True, **kwargs):
-    return RForecast(ds, groups, length=length, base=base, only_new=only_new, reverse=reverse,
+def rforecast(x, groups, length=1, base="reconstructed", only_new=True, reverse=False,
+              drop=True, drop_attributes=False, cache=True, **kwargs):
+    return RForecast(x=x, groups=groups, length=length, base=base, only_new=only_new, reverse=reverse,
                      drop=drop, drop_attributes=drop_attributes, cache=cache, **kwargs)
 
 
-def vforecast(ds, groups, length=1, only_new=True, drop=False, drop_attributes=False, **kwargs):
-    return VForecast(ds, groups, length=length, only_new=only_new, drop=drop, drop_attributes=drop_attributes, **kwargs)
+def vforecast(x, groups, length=1, only_new=True, drop=True, drop_attributes=False, **kwargs):
+    return VForecast(x=x, groups=groups, length=length, only_new=only_new,
+                     drop=drop, drop_attributes=drop_attributes, **kwargs)
 
 
 def bforecast(x, groups, length=1, R=100, level=0.95, kind="recurrent", interval="confidence",

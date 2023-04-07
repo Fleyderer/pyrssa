@@ -12,6 +12,7 @@ r_ssa = rpackages.importr('Rssa')
 
 
 class Reconstruction:
+    """@DynamicAttrs"""
 
     def __init__(self, x: SSABase, groups: Union[list, dict, np.ndarray, GroupPgram, GroupWCor],
                  drop_attributes=False, cache=True):

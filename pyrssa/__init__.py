@@ -8,7 +8,7 @@ from pyrssa.classes.SSA import SSA, IOSSA, FOSSA
 from pyrssa.classes.Parestimate import Parestimate
 from pyrssa.classes.Resonstruction import Reconstruction
 from pyrssa.classes.AutoSSA import GroupPgram, GroupWCor
-from pyrssa.classes.Forecast import *
+from pyrssa.classes.Forecast import RForecast, VForecast, BForecast
 from pyrssa.classes.WCorMatrix import WCorMatrix
 from pyrssa.classes.HMatrix import HMatrix
 from pyrssa.base import *
