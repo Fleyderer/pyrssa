@@ -1,7 +1,8 @@
 from pyrssa.classes.SSA import SSABase
 from pyrssa.classes.Parestimate import BaseParestimate
+from pyrssa.classes.LRR import BaseLRR
 from pyrssa.classes.Periodogram import Periodogram
-from pyrssa import SSA, IOSSA, FOSSA, Parestimate
+from pyrssa import SSA, IOSSA, FOSSA, Parestimate, LRR
 from pyrssa import Reconstruction
 from pyrssa import RForecast, VForecast, BForecast
 from pyrssa import WCorMatrix, HMatrix
@@ -465,6 +466,25 @@ def grouping_auto(x: SSABase, grouping_method: str = "pgram", groups=None, nclus
         return grouping_auto_wcor(x, groups=groups, nclust=nclust, method=method, **kwargs)
     else:
         raise ValueError(f"Grouping method {grouping_method} is not in available methods: 'pgram', 'wcor'")
+
+
+@overload
+def lrr(x: SSABase, groups=None, reverse=False, drop=True):
+
+    if len(groups) == 1 and drop:
+        return BaseLRR(x=x, groups=groups, reverse=reverse, drop=drop)
+    else:
+        return LRR(x=x, groups=groups, reverse=reverse, drop=drop)
+
+
+def lrr(x, groups=None, reverse=False, drop=True, eps=np.sqrt(np.finfo(float).eps),
+        raw=False, orthonormalize=True):
+    if len(groups) == 1 and drop:
+        return BaseLRR(x=x, groups=groups, reverse=reverse, drop=drop,
+                       eps=eps, raw=raw, orthonormalize=orthonormalize)
+    else:
+        return LRR(x=x, groups=groups, reverse=reverse, drop=drop,
+                   eps=eps, raw=raw, orthonormalize=orthonormalize)
 
 
 def spectrum(x, spans=None, kernel=None, taper=0.1,

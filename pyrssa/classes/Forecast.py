@@ -4,7 +4,9 @@ from pyrssa.classes.SSA import SSA
 import rpy2.robjects.packages as rpackages
 from rpy2.robjects import conversion
 from pyrssa.conversion import get_time_index, make_time_index
+from functools import cached_property
 import numpy as np
+
 
 r_ssa = rpackages.importr('Rssa')
 
@@ -13,9 +15,10 @@ class Forecast:
     """@DynamicAttrs"""
 
     def __new__(cls, series, f_obj, groups,
-                only_new, drop, drop_attributes):
+                only_new, reverse, drop, drop_attributes):
         cls.obj = f_obj
         cls._only_new = only_new
+        cls._reverse = reverse
         cls._drop = drop
         cls._drop_attributes = drop_attributes
         cls._datetime_index = get_time_index(series)
@@ -45,9 +48,14 @@ class Forecast:
         if self._datetime_index is not None and not self._drop_attributes:
             if self._forecast_datetime_index is None:
                 self._forecast_datetime_index = make_time_index(f_series, self._datetime_index,
-                                                                only_new=self._only_new)
+                                                                only_new=self._only_new,
+                                                                reverse=self._reverse)
             f_series.index = self._forecast_datetime_index
         return f_series
+
+    @cached_property
+    def df(self):
+        return pd.DataFrame({name: getattr(self, name) for name in self.names})
 
     def __getattribute__(self, item):
         try:
@@ -63,12 +71,13 @@ class Forecast:
     def __getitem__(self, item):
         if isinstance(item, str):
             return getattr(self, item)
+        elif isinstance(item, int):
+            return getattr(self, self.names[item])
 
     def __str__(self):
         with pd.option_context('display.float_format', '{:.3f}'.format):
             return "\n".join([self.__class__.__name__] +
-                             [pd.DataFrame({name: getattr(self, name)
-                                            for name in self.names}).__str__()])
+                             [self.df.__str__()])
 
     def __repr__(self):
         return self.__str__()
@@ -79,7 +88,7 @@ class RForecast(Forecast):
     def __new__(cls, x: SSA, groups, length, base, only_new, reverse, drop, drop_attributes, cache, **kwargs):
         rf_obj = r_ssa.rforecast(x, groups, **{"len": length}, base=base, **{"only.new": only_new}, reverse=reverse,
                                  drop=drop, **{"drop.attributes": drop_attributes}, cache=cache, **kwargs)
-        return super().__new__(cls, series=x.series, f_obj=rf_obj, groups=groups, only_new=only_new,
+        return super().__new__(cls, series=x.series, f_obj=rf_obj, groups=groups, only_new=only_new, reverse=reverse,
                                drop=drop, drop_attributes=drop_attributes)
 
 

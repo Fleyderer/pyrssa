@@ -1,6 +1,6 @@
 import numpy as np
 from rpy2 import robjects
-from pyrssa.classes.SSA import SSA
+from pyrssa.classes.SSA import SSABase
 import rpy2.robjects.packages as rpackages
 from functools import cached_property
 
@@ -9,8 +9,8 @@ r_ssa = rpackages.importr('Rssa')
 
 class BaseParestimate:
 
-    def __init__(self, par_obj=None, x=None, groups=None, method="esprit", subspace="column", normalize_roots=None,
-                 dimensions=None, solve_method="ls", drop=True):
+    def __init__(self, par_obj=None, x: SSABase = None, groups=None, method="esprit", subspace="column",
+                 normalize_roots=None, dimensions=None, solve_method="ls", drop=True):
         if par_obj is not None:
             self.obj = par_obj
         else:
@@ -54,15 +54,8 @@ class BaseParestimate:
 class Parestimate:
     """@DynamicAttrs"""
 
-    def __init__(self, x, groups, method="esprit", subspace="column", normalize_roots=None,
+    def __init__(self, x: SSABase, groups, method="esprit", subspace="column", normalize_roots=None,
                  dimensions=None, solve_method="ls", drop=True):
-        if type(x) == SSA:
-            method = "esprit"
-            subspace = "column"
-            normalize_roots = None
-            dimensions = None
-            solve_method = "ls"
-            drop = True
 
         self.obj = r_ssa.parestimate(x=x, groups=groups, method=method, subspace=subspace,
                                      normalize_roots=normalize_roots, dimensions=dimensions,

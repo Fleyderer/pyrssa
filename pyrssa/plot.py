@@ -2,14 +2,17 @@ import pandas as pd
 
 from rpy2 import robjects
 from pyrssa.classes.SSA import SSABase
+from pyrssa.classes.LRR import BaseLRR
 from pyrssa.classes.Periodogram import Periodogram
 from pyrssa.conversion import is_list
+from pyrssa.classes.Parestimate import BaseParestimate
 from pyrssa import Reconstruction, reconstruct
 from pyrssa import WCorMatrix, HMatrix
 from pyrssa import GroupPgram
 from pyrssa import calc_v
 import matplotlib
 import matplotlib.pyplot as plt
+import matplotlib.ticker as ticker
 import matplotlib.gridspec as gridspec
 import numpy as np
 from typing import Literal, Union
@@ -28,8 +31,8 @@ def _should_share_limits(series_arr, max_diff=1, max_mul=1.5):
     min_end = min(arr_end)
     max_range = abs(min_start - max_end)
     return abs(max_start - min_start) / max_range <= max_diff \
-           and abs(max_end - min_end) / max_range <= max_diff \
-           and max_range / max(arr_range) <= max_mul
+        and abs(max_end - min_end) / max_range <= max_diff \
+        and max_range / max(arr_range) <= max_mul
 
 
 class Plot:
@@ -127,8 +130,6 @@ class Plot:
 
             xlim = np.min(vec[idx[i + 1] - 1]), np.max(vec[idx[i + 1] - 1])
             ylim = np.min(vec[idx[i] - 1]), np.max(vec[idx[i] - 1])
-            if i == 0:
-                print(xlim, ylim)
             x_shift = abs(xlim[1] - xlim[0]) * 0.05
             y_shift = abs(ylim[1] - ylim[0]) * 0.05
             xlim = xlim[0] - x_shift, xlim[1] + x_shift
@@ -339,9 +340,33 @@ class Plot:
         limits = (limits[0] - shift, limits[1] + shift)
         plt.xlim(limits)
         plt.ylabel("Value")
+
         if show:
             plt.show()
         return plt
+
+    def _roots(self, roots, title: str = "Roots", show=True):
+        real, im = zip(*[[val.real, val.imag] for val in roots])
+        fig, ax = plt.subplots()
+        ax.set_xlim([-1.1, 1.1])
+        ax.set_ylim([-1.1, 1.1])
+        ax.scatter(real, im)
+        ax.set_xlabel("Real part")
+        ax.set_ylabel("Imaginary part")
+        ax.add_artist(plt.Circle((0, 0), 1, fill=False, color="gray"))
+        ax.set_box_aspect(1)
+        ax.xaxis.set_major_locator(ticker.MultipleLocator(0.5))
+        ax.yaxis.set_major_locator(ticker.MultipleLocator(0.5))
+        plt.suptitle(self.bold(title))
+        if show:
+            plt.show()
+        return plt
+
+    def roots_lrr(self, x: BaseLRR, show=True):
+        return self._roots(x.roots(), title="Roots of Linear Recurrence Relation", show=show)
+
+    def roots_par(self, x: BaseParestimate, show=True):
+        return self._roots(x.roots, show=show)
 
     def __call__(self, obj, x_labels=None, kind: Literal["vectors", "paired"] = None,
                  add_residuals=True, add_original=True, idx=None, scales=None,
@@ -371,6 +396,10 @@ class Plot:
             return self._group_pgram(obj, order=order, legend_params=legend_params, show=show, **kwargs)
         elif isinstance(obj, Periodogram) or isinstance(obj, list) and all([isinstance(x, Periodogram) for x in obj]):
             return self.pgram(obj, ticks=ticks, tick_labels=tick_labels, limits=limits, show=show, **kwargs)
+        elif isinstance(obj, BaseLRR):
+            return self.roots_lrr(obj, show=show)
+        elif isinstance(obj, BaseParestimate):
+            return self.roots_par(obj, show=show)
 
 
 def clplot(x, show=True):

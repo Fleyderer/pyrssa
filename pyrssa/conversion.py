@@ -1,3 +1,4 @@
+import pandas
 from rpy2 import robjects
 import rpy2.robjects.conversion as conversion
 from rpy2.robjects import default_converter
@@ -7,58 +8,6 @@ import numpy as np
 import pandas as pd
 from pyrssa.classes.SSA import SSABase
 from typing import Union
-
-
-class FloatVector(robjects.FloatVector):
-    def __init__(self, obj):
-        super().__init__(obj)
-
-    def __mul__(self, other):
-        if isinstance(other, float):
-            return robjects.r.sapply(self, "*", other)
-        elif isinstance(other, int):
-            return robjects.r.sapply(self, "*", other)
-
-    def __truediv__(self, other):
-        if isinstance(other, float):
-            return robjects.r.sapply(self, "/", other)
-        elif isinstance(other, int):
-            return robjects.r.sapply(self, "/", other)
-
-    def __add__(self, other):
-        if isinstance(other, float):
-            return robjects.r.sapply(self, "+", other)
-        elif isinstance(other, int):
-            return robjects.r.sapply(self, "+", other)
-
-    def __pow__(self, power, modulo=None):
-        if isinstance(power, float) or isinstance(power, int):
-            return robjects.r.sapply(self, "^", power)
-
-    __rmul__ = __mul__
-
-    __radd__ = __add__
-
-
-class IntVector(robjects.IntVector):
-    def __init__(self, obj):
-        super().__init__(obj)
-
-    def __mul__(self, other):
-        if isinstance(other, float):
-            return FloatVector([i * other for i in self])
-
-    def __truediv__(self, other):
-        if isinstance(other, float):
-            return robjects.r.sapply(self, "*", other)
-        elif isinstance(other, int):
-            return robjects.r.sapply(self, "*", other)
-
-    def __pow__(self, power, modulo=None):
-        if isinstance(power, float) or isinstance(power, int):
-            return robjects.r.sapply(self, "^", power)
-
-    __rmul__ = __mul__
 
 
 def is_iterable(obj):
@@ -108,32 +57,15 @@ def none_to_null(_):
 
 
 def range_to_vec(obj):
-    return IntVector(list(obj))
-
-
-def list_to_vec(obj):
-    if is_int_arr(obj):
-        return IntVector(list(obj))
-    elif is_float_arr(obj):
-        return FloatVector(list(obj))
-    # elif is_of_int_lists_arr(obj):
-    #     result = robjects.ListVector.from_length(len(obj))
-    #     for i, x in enumerate(obj):
-    #         if isinstance(x, int):
-    #             result[i] = robjects.IntVector([x])
-    #         else:
-    #             result[i] = robjects.IntVector(list(x))
-    #     return result
-    else:
-        return robjects.ListVector(list(obj))
+    return robjects.IntVector(list(obj))
 
 
 def collection_conversion(obj):
     if is_list(obj):
         if is_int_arr(obj):
-            return IntVector(list(obj))
+            return robjects.IntVector(list(obj))
         elif is_float_arr(obj):
-            return FloatVector(list(obj))
+            return robjects.FloatVector(list(obj))
         else:
             result = robjects.ListVector.from_length(len(obj))
             for i, x in enumerate(obj):
@@ -143,24 +75,6 @@ def collection_conversion(obj):
         return robjects.vectors.ListVector({str(k): collection_conversion(obj[k]) for k in obj})
     else:
         return obj
-
-
-def r_list(*args, **kwargs):
-    if kwargs:
-        for k in kwargs:
-            if is_int_arr(kwargs[k]):
-                kwargs[k] = list_to_vec(kwargs[k])
-        return robjects.vectors.ListVector(kwargs)
-    else:
-        res = robjects.ListVector.from_length(len(args))
-        for i in range(len(args)):
-            res[i] = IntVector(args[i])
-        return res
-
-
-def dict_to_vec(obj):
-    obj = {str(k): obj[k] for k in obj}
-    return r_list(**obj)
 
 
 def convert(obj):
@@ -179,11 +93,15 @@ def get_time_index(series):
     return None
 
 
-def make_time_index(series: Union[pd.Series, pd.DataFrame], time_index: pd.DatetimeIndex, only_new=False):
+def make_time_index(series: Union[pd.Series, pd.DataFrame], time_index: pd.DatetimeIndex,
+                    only_new=False, reverse=False):
     # if only_new is False, we have to ignore old series, when creating new indices
     periods = len(series) - (not only_new) * len(time_index) + 1
-    new = pd.date_range(max(time_index), freq=time_index.freqstr, periods=periods,
-                        inclusive="right")
+    if reverse:
+        new = pd.date_range(end=min(time_index), freq=time_index.freqstr, periods=periods, inclusive="left")
+    else:
+        new = pd.date_range(max(time_index), freq=time_index.freqstr, periods=periods,
+                            inclusive="right")
     if only_new:
         return new
     else:
