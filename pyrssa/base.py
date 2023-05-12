@@ -4,7 +4,8 @@ from pyrssa.classes.LRR import BaseLRR
 from pyrssa.classes.Periodogram import Periodogram
 from pyrssa import SSA, IOSSA, FOSSA, Parestimate, LRR
 from pyrssa import Reconstruction
-from pyrssa import RForecast, VForecast, BForecast
+from pyrssa import RForecast, VForecast, BForecast, Forecast
+from pyrssa import Gapfill
 from pyrssa import WCorMatrix, HMatrix
 from pyrssa import GroupPgram, GroupWCor
 from pyrssa import installer
@@ -16,7 +17,7 @@ from rpy2.rinterface_lib import callbacks
 import pandas as pd
 import numpy as np
 import os
-from typing import overload, Literal, Union
+from typing import overload, Literal, Union, Callable
 import inspect
 
 # Set conversion rules
@@ -424,6 +425,26 @@ def bforecast(x, groups, length=1, R=100, level=0.95, kind="recurrent", interval
                      only_intervals=only_intervals, drop=drop, drop_attributes=drop_attributes, cache=cache, **kwargs)
 
 
+def forecast(x: SSA, groups, length=1, method: Literal["recurrent", "vector"] = "recurrent",
+             interval: Literal["none", "confidence", "prediction"] = "none",
+             only_intervals=True, direction: Literal["column", "row"] = "column",
+             drop=True, drop_attributes=False, cache=True, **kwargs):
+    return Forecast(x=x, groups=groups, length=length, method=method, interval=interval,
+                    only_intervals=only_intervals, direction=direction, drop=drop,
+                    drop_attributes=drop_attributes, cache=cache, **kwargs)
+
+
+def gapfill(x: SSA, groups, base: Literal["original", "reconstructed"] = "original",
+            method: Literal["sequential", "simultaneous"] = "sequential", alpha: Union[int, float, Callable] = None,
+            drop=True, drop_attributes=False, cache=True, **kwargs):
+    return Gapfill(x=x, groups=groups, base=base, method=method, alpha=alpha,
+                   drop=drop, drop_attributes=drop_attributes, cache=cache, **kwargs)
+
+
+def seed(value: int):
+    r('set.seed')(value)
+
+
 def hmatr(F, B=None, T=None, L=None, neig=10):
     return HMatrix(F, B=B, T=T, L=L, neig=neig)
 
@@ -451,7 +472,7 @@ def grouping_auto(x: SSABase, grouping_method: Literal["wcor"] = "wcor", groups=
                   base: Literal["series", "eigen", "factor"] = "series",
                   freq_bins=2, threshold=0,
                   method: Literal["ward.D", "ward.D2", "single", "complete",
-                                  "average", "mcquitty", "median", "centroid"] = "complete",
+                  "average", "mcquitty", "median", "centroid"] = "complete",
                   drop=True, **kwargs) -> GroupWCor:
     ...
 
@@ -470,7 +491,6 @@ def grouping_auto(x: SSABase, grouping_method: str = "pgram", groups=None, nclus
 
 @overload
 def lrr(x: SSABase, groups=None, reverse=False, drop=True):
-
     if len(groups) == 1 and drop:
         return BaseLRR(x=x, groups=groups, reverse=reverse, drop=drop)
     else:

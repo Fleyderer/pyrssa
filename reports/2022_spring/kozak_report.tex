@@ -282,26 +282,26 @@ pyrssa_conversion_rules = default_converter + pyrssa_converter +\
 
 \begin{lstlisting}[language=Python, caption=Наследование для FloatVector.]
 class FloatVector(robjects.FloatVector):
-	def __init__(self, obj):
+	def __init__(cls, obj):
 	super().__init__(obj)
 	
-	def __mul__(self, other):
+	def __mul__(cls, other):
 		if isinstance(other, float):
-			return r.sapply(self, "*", other)
+			return r.sapply(cls, "*", other)
 		elif isinstance(other, int):
-			return r.sapply(self, "*", other)
+			return r.sapply(cls, "*", other)
 	
-	def __truediv__(self, other):
+	def __truediv__(cls, other):
 		if isinstance(other, float):
-			return r.sapply(self, "/", other)
+			return r.sapply(cls, "/", other)
 		elif isinstance(other, int):
-			return r.sapply(self, "/", other)
+			return r.sapply(cls, "/", other)
 	
-	def __add__(self, other):
+	def __add__(cls, other):
 		if isinstance(other, float):
-			return r.sapply(self, "+", other)
+			return r.sapply(cls, "+", other)
 		elif isinstance(other, int):
-			return r.sapply(self, "+", other)
+			return r.sapply(cls, "+", other)
 	
 	__rmul__ = __mul__
 	
@@ -326,22 +326,22 @@ ssa_contributions = robjects.r(
 
 class SSA:
 
-def __init__(self, ds, L, kind="1d-ssa"):
-	self.L = L
-	self.kind = kind
-	self.obj = r_ssa.ssa(ds, L=L, kind=kind)
-	self.sigma = ssa_get(self.obj, "sigma")
-	self.U = ssa_get(self.obj, "U").T
-	self.V = ssa_get(self.obj, "V")
+def __init__(cls, ds, L, kind="1d-ssa"):
+	cls.L = L
+	cls.kind = kind
+	cls.obj = r_ssa.ssa(ds, L=L, kind=kind)
+	cls.sigma = ssa_get(cls.obj, "sigma")
+	cls.U = ssa_get(cls.obj, "U").T
+	cls.V = ssa_get(cls.obj, "V")
 
-def contributions(self, idx):
-	return ssa_contributions(self.obj, idx)
+def contributions(cls, idx):
+	return ssa_contributions(cls.obj, idx)
 
-def __str__(self):
-	return str(self.obj)
+def __str__(cls):
+	return str(cls.obj)
 
-def __repr__(self):
-	return self.__str__()
+def __repr__(cls):
+	return cls.__str__()
 \end{lstlisting}
 
 Описанный выше класс выделен в отдельный файл, а получение необходимых скрытых полей и методов производится с помощью функции \verb|ssa_get|, получающей доступ к скрытому методу для доступа к данным, реализованному в Rssa. Как для SSA, так и для других классов, реализованных для пакета pyrssa, были определены функции вывода полученного объекта. Помимо самих классов, в основном файле пакета pyrssa находятся функции, обращающиеся к соответствующим классам. Данная обертка позволит отделить в будущем различные виды схожих объектов на основе передаваемых параметров, а также сократить объем программного кода и упростить работу для пользователя. Список реализованных на данный момент функций пакета Rssa приведен в Приложении А. Далее представлен текущий код функции обращения к классу SSA, позволяющей построить необходимый вид разложения.

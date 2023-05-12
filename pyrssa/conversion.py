@@ -93,10 +93,10 @@ def get_time_index(series):
     return None
 
 
-def make_time_index(series: Union[pd.Series, pd.DataFrame], time_index: pd.DatetimeIndex,
+def make_time_index(length: int, time_index: pd.DatetimeIndex,
                     only_new=False, reverse=False):
     # if only_new is False, we have to ignore old series, when creating new indices
-    periods = len(series) - (not only_new) * len(time_index) + 1
+    periods = length - (not only_new) * len(time_index) + 1
     if reverse:
         new = pd.date_range(end=min(time_index), freq=time_index.freqstr, periods=periods, inclusive="left")
     else:

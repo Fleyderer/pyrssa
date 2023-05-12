@@ -7,6 +7,7 @@ from pyrssa.classes.Periodogram import Periodogram
 from pyrssa.conversion import is_list
 from pyrssa.classes.Parestimate import BaseParestimate
 from pyrssa import Reconstruction, reconstruct
+from pyrssa import Forecast
 from pyrssa import WCorMatrix, HMatrix
 from pyrssa import GroupPgram
 from pyrssa import calc_v
@@ -350,10 +351,10 @@ class Plot:
         fig, ax = plt.subplots()
         ax.set_xlim([-1.1, 1.1])
         ax.set_ylim([-1.1, 1.1])
+        ax.add_artist(plt.Circle((0, 0), 1, fill=False, color="gray"))
         ax.scatter(real, im)
         ax.set_xlabel("Real part")
         ax.set_ylabel("Imaginary part")
-        ax.add_artist(plt.Circle((0, 0), 1, fill=False, color="gray"))
         ax.set_box_aspect(1)
         ax.xaxis.set_major_locator(ticker.MultipleLocator(0.5))
         ax.yaxis.set_major_locator(ticker.MultipleLocator(0.5))
@@ -368,11 +369,26 @@ class Plot:
     def roots_par(self, x: BaseParestimate, show=True):
         return self._roots(x.roots, show=show)
 
+    def forecast(self, x: Forecast, include: int, pi: bool = True,
+                 shadecols: str = None, title: str = None, show=True):
+        if include is None:
+            include = 12
+        plt.plot(x.series[-include:], color="black", linewidth=0.5)
+        if pi:
+            plt.fill_between(x.mean.index, x.lower, x.upper, color=shadecols)
+        plt.plot(x.mean, color="black", linewidth=0.5)
+        plt.title(self.bold(title))
+        if show:
+            plt.show()
+        return plt
+
+
     def __call__(self, obj, x_labels=None, kind: Literal["vectors", "paired"] = None,
                  add_residuals=True, add_original=True, idx=None, scales=None,
                  vectors: Literal["eigen", "factor"] = "eigen", contrib=True, layout=None, superpose=False,
                  method: Literal["matplot", "xyplot"] = "xyplot", title=None, groups=None, order=False,
-                 legend_params: dict = None, ticks=None, tick_labels=None, limits=None, show=True, **kwargs):
+                 legend_params: dict = None, ticks=None, tick_labels=None, limits=None, show=True,
+                 include=None, pi=True, shadecols=None, **kwargs):
         if kind == "vectors":
             return self.vectors(obj, vectors=vectors, idx=idx, contrib=contrib, layout=layout, title=title, show=show)
         elif kind == "paired":
@@ -400,6 +416,8 @@ class Plot:
             return self.roots_lrr(obj, show=show)
         elif isinstance(obj, BaseParestimate):
             return self.roots_par(obj, show=show)
+        elif isinstance(obj, Forecast):
+            return self.forecast(obj, include=include, pi=pi, shadecols=shadecols, title=title, **kwargs)
 
 
 def clplot(x, show=True):

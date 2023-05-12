@@ -20,3 +20,12 @@ plt.plot(co2, color="black", linewidth=0.75)
 plt.plot(for2, color="red", linewidth=0.75)
 plt.show()
 
+prs.seed(3)
+for3 = prs.forecast(s, groups=[range(1, 7)], method="recurrent", interval="confidence",
+                    only_intervals=False, length=24, R=100, level=0.99)
+prs.plot(for3, include=36, shadecols="lightgreen", title="Confidence intervals")
+
+prs.seed(3)
+for4 = prs.forecast(s, groups=[range(1, 7)], method="recurrent", interval="prediction",
+                    only_intervals=False, length=24, R=100, level=0.99)
+prs.plot(for4, include=36, shadecols="lightgreen", title="Prediction intervals")

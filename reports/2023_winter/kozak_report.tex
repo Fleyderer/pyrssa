@@ -285,31 +285,31 @@ pyrssa_conversion_rules = default_converter + pyrssa_converter +\
 
 \begin{lstlisting}[language=Python, caption=Наследование для FloatVector.]
 class FloatVector(robjects.FloatVector):
-	def __init__(self, obj):
+	def __init__(cls, obj):
 	super().__init__(obj)
 	
-	def __mul__(self, other):
+	def __mul__(cls, other):
 		if isinstance(other, float):
-			return r.sapply(self, "*", other)
+			return r.sapply(cls, "*", other)
 		elif isinstance(other, int):
-			return r.sapply(self, "*", other)
+			return r.sapply(cls, "*", other)
 	
-	def __truediv__(self, other):
+	def __truediv__(cls, other):
 		if isinstance(other, float):
-			return r.sapply(self, "/", other)
+			return r.sapply(cls, "/", other)
 		elif isinstance(other, int):
-			return r.sapply(self, "/", other)
+			return r.sapply(cls, "/", other)
 	
-	def __add__(self, other):
+	def __add__(cls, other):
 		if isinstance(other, float):
-			return r.sapply(self, "+", other)
+			return r.sapply(cls, "+", other)
 		elif isinstance(other, int):
-			return r.sapply(self, "+", other)
+			return r.sapply(cls, "+", other)
 	
- 	def __pow__(self, power, modulo=None):
+ 	def __pow__(cls, power, modulo=None):
 		if isinstance(power, float) 
 		   or isinstance(power, int):
-			return robjects.r.sapply(self, "^", power)
+			return robjects.r.sapply(cls, "^", power)
 	
 	__rmul__ = __mul__
 	
@@ -356,44 +356,44 @@ ssa_get = robjects.r('utils::getFromNamespace("$.ssa", "Rssa")')
 
 class SSABase:
 
-    def __init__(self, x, ssa_object, call):
-        self.obj = ssa_object
-        self.sigma = ssa_get(self.obj, "sigma")
-        self.U = ssa_get(self.obj, "U").T
-        self.V = ssa_get(self.obj, "V")
-        self.series = pd.DataFrame(x)
-        self.call = call
+    def __init__(cls, x, ssa_object, call):
+        cls.obj = ssa_object
+        cls.sigma = ssa_get(cls.obj, "sigma")
+        cls.U = ssa_get(cls.obj, "U").T
+        cls.V = ssa_get(cls.obj, "V")
+        cls.series = pd.DataFrame(x)
+        cls.call = call
         
     @property
-    def F(self):
-        return self.series
+    def F(cls):
+        return cls.series
         
-    def contributions(self, idx=None)
+    def contributions(cls, idx=None)
         if idx is None:
-            idx = range(1, self.nsigma() + 1)
-        return r_ssa.contributions(self.obj, idx)
+            idx = range(1, cls.nsigma() + 1)
+        return r_ssa.contributions(cls.obj, idx)
 
-    def nspecial(self):
-        return r_ssa.nspecial(self.obj)[0]
+    def nspecial(cls):
+        return r_ssa.nspecial(cls.obj)[0]
     
-    def nsigma(self):
-        return r_ssa.nsigma(self.obj)[0]
+    def nsigma(cls):
+        return r_ssa.nsigma(cls.obj)[0]
     
-    def nu(self):
-        return r_ssa.nu(self.obj)[0]
+    def nu(cls):
+        return r_ssa.nu(cls.obj)[0]
 
-    def __str__(self):
-        result = str(self.obj).split("\n")
-        result[result.index("Call:") + 1] = self.call
+    def __str__(cls):
+        result = str(cls.obj).split("\n")
+        result[result.index("Call:") + 1] = cls.call
         return "\n".join(result)
 
-    def __repr__(self):
-        return self.__str__()
+    def __repr__(cls):
+        return cls.__str__()
 
 
 class SSA(SSABase):
 
-    def __init__(self, x,
+    def __init__(cls, x,
                  L=None,
                  neig=None,
                  mask=None,
@@ -411,8 +411,8 @@ class SSA(SSABase):
         if isinstance(x, pd.DataFrame):
             x = x.iloc[:, 0]
 
-        self.L = L
-        self.kind = kind
+        cls.L = L
+        cls.kind = kind
         super().__init__(x, 
                 r_ssa.ssa(x, L=L, neig=neig,
                           mask=mask, wmask=wmask,
@@ -539,7 +539,7 @@ class Plot:
         
     ...
     
-    def __call__(self, obj, x_labels=None,
+    def __call__(cls, obj, x_labels=None,
                  kind: Literal["vectors", "paired"] = None,
                  add_residuals=True, add_original=True,
                  idx=None, scales=None, contrib=True,
@@ -548,10 +548,10 @@ class Plot:
                  support_lines=True):
                  
         if kind == "vectors":
-            return self.vectors(obj, idx=idx, 
+            return cls.vectors(obj, idx=idx,
                                 contrib=contrib, layout=layout)
         elif kind == "paired":
-            return self.paired(obj, idx=idx, 
+            return cls.paired(obj, idx=idx,
                                contrib=contrib, layout=layout)
         ...
         
@@ -1096,14 +1096,14 @@ from tests.tests_methods import test_test_data, all_test_data
 
 class Test1DSSA(unittest.TestCase):
 
-    def test_reconstruct(self):
+    def test_reconstruct(cls):
         what = "reconstruct"
         names = ["co2", "fr1k.nz", "fr1k", "fr50", "fr50.nz"]
         for name in names:
             try:
                 test_test_data(what, all_test_data[name])
             except:
-                self.fail("Wrong result")
+                cls.fail("Wrong result")
 	
 \end{lstlisting}
 
@@ -1217,14 +1217,14 @@ from tests.tests_methods import test_test_data, all_test_data
 
 
 class Test1DSSA(unittest.TestCase):
-    def test_rforecast(self):
+    def test_rforecast(cls):
         what = "rforecast"
         names = ["co2", "fr1k.nz", "fr1k", "fr50", "fr50.nz"]
         for name in names:
             try:
                 test_test_data(what, all_test_data[name])
             except:
-                self.fail("Wrong result")
+                cls.fail("Wrong result")
 	
 \end{lstlisting}
 

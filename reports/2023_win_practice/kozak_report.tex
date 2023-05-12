@@ -136,7 +136,7 @@ Singular spectrum analysis (SSA) \cite{ssa-method} – метод для ана�
 	add_module_names = False
 	
 	class MockedClassDocumenter(autodoc.ClassDocumenter):
-	def add_line(self,
+	def add_line(cls,
 	             line: str, 
 	             source: str, *lineno: int) -> None:
 	if line == "   Bases: :py:class:`object`":
