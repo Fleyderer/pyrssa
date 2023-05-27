@@ -1,28 +1,10 @@
 import pandas as pd
-
-import os
-import platform
-
-if os.environ.get("R_HOME") is None:
-
-    if platform.system() == "Windows":
-        path = r"C:\Program Files\R"
-        if os.path.exists(path):
-            os.environ["R_HOME"] = os.path.join(path, os.listdir(path)[-1])
-        else:
-            raise FileNotFoundError("R_HOME variable does not exist")
-    else:
-        raise FileNotFoundError("R_HOME variable does not exist")
-
-
 from rpy2 import robjects
 from pyrssa.classes.SSA import SSA
 import rpy2.robjects.packages as rpackages
-from rpy2.robjects import conversion
-from pyrssa.conversion import get_time_index, make_time_index
+from pyrssa.indexing import get_time_index
 from functools import cached_property
 import numpy as np
-from typing import Literal
 
 r_ssa = rpackages.importr('Rssa')
 frc = rpackages.importr("forecast")
@@ -116,5 +98,26 @@ class Gapfill(BaseGapfill):
                                drop=drop, drop_attributes=drop_attributes)
 
 
+def _norm_conversion(func):
+    def wrapper(x):
+        return float(func(np.array(x)))
+
+    return wrapper
 
 
+def _default_norm(x):
+    return np.sqrt(np.max(x ** 2))
+
+
+class IGapfill(BaseGapfill):
+
+    def __new__(cls, x: SSA, groups, fill, tol, maxiter, norm, base, trace, drop, drop_attributes, cache, **kwargs):
+
+        if norm is None:
+            norm = _default_norm
+        norm = robjects.rinterface.rternalize(_norm_conversion(norm))
+
+        ig_obj = r_ssa.igapfill(x=x, groups=groups, fill=fill, tol=tol, maxiter=maxiter, norm=norm, base=base, **kwargs,
+                                trace=trace, drop=drop, **{"drop.attributes": drop_attributes}, cache=cache)
+        return super().__new__(cls, series=x.series, g_obj=ig_obj, groups=groups,
+                               drop=drop, drop_attributes=drop_attributes)

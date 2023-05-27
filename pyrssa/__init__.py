@@ -25,8 +25,9 @@ from pyrssa.classes.LRR import LRR
 from pyrssa.classes.Parestimate import Parestimate
 from pyrssa.classes.Resonstruction import Reconstruction
 from pyrssa.classes.AutoSSA import GroupPgram, GroupWCor
+from pyrssa.classes.Cadzow import Cadzow
 from pyrssa.classes.Forecast import RForecast, VForecast, BForecast, Forecast
-from pyrssa.classes.Gapfill import Gapfill
+from pyrssa.classes.Gapfill import Gapfill, IGapfill
 from pyrssa.classes.WCorMatrix import WCorMatrix
 from pyrssa.classes.HMatrix import HMatrix
 from pyrssa.base import *

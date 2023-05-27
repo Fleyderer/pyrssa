@@ -3,7 +3,7 @@ import numpy as np
 from rpy2 import robjects
 from pyrssa.classes.SSA import SSABase
 from pyrssa.classes.AutoSSA import GroupPgram, GroupWCor
-from pyrssa.conversion import get_time_index
+from pyrssa.indexing import get_time_index
 import rpy2.robjects.packages as rpackages
 from typing import Union
 from functools import cached_property

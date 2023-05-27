@@ -3,9 +3,10 @@ from pyrssa.classes.Parestimate import BaseParestimate
 from pyrssa.classes.LRR import BaseLRR
 from pyrssa.classes.Periodogram import Periodogram
 from pyrssa import SSA, IOSSA, FOSSA, Parestimate, LRR
+from pyrssa import Cadzow
 from pyrssa import Reconstruction
 from pyrssa import RForecast, VForecast, BForecast, Forecast
-from pyrssa import Gapfill
+from pyrssa import Gapfill, IGapfill
 from pyrssa import WCorMatrix, HMatrix
 from pyrssa import GroupPgram, GroupWCor
 from pyrssa import installer
@@ -109,8 +110,11 @@ def parestimate(x, groups, method="esprit", subspace="column", normalize_roots=N
                            solve_method=solve_method, drop=drop)
 
 
-def ssa(x, L=None, neig=None, mask=None, wmask=None, kind="1d-ssa", circular=False,
-        column_projector="none", row_projector="none", svd_method="auto"):
+def ssa(x, L: int = None, neig: int = None, mask=None, wmask=None,
+        kind: Literal["1d-ssa", "2d-ssa", "nd-ssa", "toeplitz-ssa", "mssa", "cssa"] = "1d-ssa", circular=False,
+        svd_method: Literal["auto", "nutrlan", "propack", "svd", "eigen", "rspectra", "primme"] = "auto",
+        column_projector="none", row_projector="none", column_oblique="identity",
+        row_oblique="identity",  force_decompose: bool = True, **kwargs) -> SSA:
     """
 
     :param x: object to be decomposed. If DataFrame passed, the first column will be treated as a series
@@ -304,12 +308,10 @@ def ssa(x, L=None, neig=None, mask=None, wmask=None, kind="1d-ssa", circular=Fal
         st = prs.ssa(f_center, L=L, kind='toeplitz-ssa')
 
     """
-    return SSA(x, L=L, neig=neig, mask=mask, wmask=wmask, kind=kind,
-               circular=circular,
-               column_projector=column_projector,
-               row_projector=row_projector,
-               svd_method=svd_method,
-               call=_get_call(inspect.currentframe().f_back))
+    return SSA(x, L=L, neig=neig, mask=mask, wmask=wmask, kind=kind, circular=circular,
+               svd_method=svd_method, column_projector=column_projector, row_projector=row_projector,
+               column_oblique=column_oblique, row_oblique=row_oblique, force_decompose=force_decompose,
+               call=_get_call(inspect.currentframe().f_back), **kwargs)
 
 
 def reconstruct(x: SSABase,
@@ -391,6 +393,13 @@ def reconstruct(x: SSABase,
     return Reconstruction(x=x, groups=groups, drop_attributes=drop_attributes, cache=cache)
 
 
+def cadzow(x: SSA, rank: int, correct: bool = True, tol: float = 1e-6, maxiter: int = 0,
+           norm: Callable = None, trace: bool = False, cache: bool = True, **kwargs):
+
+    return Cadzow(x=x, rank=rank, correct=correct, tol=tol, maxiter=maxiter,
+                  norm=norm, trace=trace, cache=cache, **kwargs)
+
+
 def iossa(x: SSA, nested_groups, tol=1e-5, kappa=2, maxiter=100, norm=None, trace=False, kappa_balance=0.5, **kwargs):
     return IOSSA(x=x, nested_groups=nested_groups, tol=tol, kappa=kappa, maxiter=maxiter, norm=norm, trace=trace,
                  kappa_balance=kappa_balance, call=_get_call(inspect.currentframe().f_back), **kwargs)
@@ -439,6 +448,13 @@ def gapfill(x: SSA, groups, base: Literal["original", "reconstructed"] = "origin
             drop=True, drop_attributes=False, cache=True, **kwargs):
     return Gapfill(x=x, groups=groups, base=base, method=method, alpha=alpha,
                    drop=drop, drop_attributes=drop_attributes, cache=cache, **kwargs)
+
+
+def igapfill(x: SSA, groups, fill=None, tol: float = 1e-6, maxiter=0, norm=None,
+             base: Literal["original", "reconstructed"] = "original", trace=False,
+             drop=True, drop_attributes=False, cache=True, **kwargs):
+    return IGapfill(x=x, groups=groups, fill=fill, tol=tol, maxiter=maxiter, norm=norm, base=base,
+                   trace=trace, drop=drop, drop_attributes=drop_attributes, cache=cache, **kwargs)
 
 
 def seed(value: int):

@@ -4,6 +4,7 @@ from typing import Callable
 from rpy2 import robjects
 import rpy2.robjects.packages as rpackages
 from functools import cached_property
+from typing import Literal
 
 r_ssa = rpackages.importr('Rssa')
 ssa_get = robjects.r('utils::getFromNamespace("$.ssa", "Rssa")')
@@ -59,17 +60,11 @@ class SSABase:
 
 class SSA(SSABase):
 
-    def __init__(self, x,
-                 L=None,
-                 neig=None,
-                 mask=None,
-                 wmask=None,
-                 kind="1d-ssa",
-                 circular=False,
-                 column_projector="none",
-                 row_projector="none",
-                 svd_method="auto",
-                 call=None):
+    def __init__(self, x, L: int = None, neig: int = None, mask=None, wmask=None,
+                 kind: Literal["1d-ssa", "2d-ssa", "nd-ssa", "toeplitz-ssa", "mssa", "cssa"] = "1d-ssa", circular=False,
+                 svd_method: Literal["auto", "nutrlan", "propack", "svd", "eigen", "rspectra", "primme"] = "auto",
+                 column_projector="none", row_projector="none", column_oblique="identity",
+                 row_oblique="identity", force_decompose: bool = True, call: str = None, **kwargs):
 
         if L is None:
             L = (len(x) + 1) // 2
@@ -77,13 +72,19 @@ class SSA(SSABase):
         if isinstance(x, pd.DataFrame):
             x = x.iloc[:, 0]
 
+        if row_oblique is not None and not (isinstance(row_oblique, str) and row_oblique == "identity"):
+            row_oblique = robjects.FloatVector(row_oblique)
+        if column_oblique is not None and not (isinstance(column_oblique, str) and column_oblique == "identity"):
+            column_oblique = robjects.FloatVector(column_oblique)
+
         self.L = L
         self.kind = kind
-        super().__init__(x, r_ssa.ssa(x, L=L, neig=neig, mask=mask, wmask=wmask, kind=kind,
-                                      circular=circular,
-                                      column_projector=column_projector,
-                                      row_projector=row_projector,
-                                      svd_method=svd_method), call=call)
+
+        super().__init__(x, r_ssa.ssa(x, L=L, neig=neig, mask=mask, wmask=wmask, **kwargs, kind=kind, circular=circular,
+                                      **{"svd.method": svd_method, "column.projector": column_projector,
+                                         "row.projector": row_projector, "column.oblique": column_oblique,
+                                         "row.oblique": row_oblique, "force.decompose": force_decompose}),
+                         call=call)
 
 
 def _norm_conversion(func):

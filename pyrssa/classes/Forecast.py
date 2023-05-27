@@ -3,7 +3,7 @@ from rpy2 import robjects
 from pyrssa.classes.SSA import SSA
 import rpy2.robjects.packages as rpackages
 from rpy2.robjects import conversion
-from pyrssa.conversion import get_time_index, make_time_index
+from pyrssa.indexing import get_time_index, make_time_index
 from functools import cached_property
 import numpy as np
 from typing import Literal
