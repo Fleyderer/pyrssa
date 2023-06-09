@@ -18,6 +18,7 @@ pip install pyrssa
 ```
 
 Install requires rpy2, numpy, pandas and matplotlib packages of any version (preferable newest ones).
+These packages will be installed automatically during the default installation.
 
 ## Documentation
 
