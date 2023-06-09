@@ -82,7 +82,7 @@
 
 
 <div class="viewcode-block" id="install_required"><a class="viewcode-back" href="../../pyrssa.html#pyrssa.installer.install_required">[docs]</a><span class="k">def</span> <span class="nf">install_required</span><span class="p">():</span>
-    <span class="n">pack_names</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;Rssa&#39;</span><span class="p">,)</span>
+    <span class="n">pack_names</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;Rssa&#39;</span><span class="p">,</span> <span class="s1">&#39;stats&#39;</span><span class="p">,</span> <span class="p">)</span>
     <span class="n">names_to_install</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">pack_names</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">rpackages</span><span class="o">.</span><span class="n">isinstalled</span><span class="p">(</span><span class="n">x</span><span class="p">)]</span>
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">names_to_install</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
         <span class="n">utils</span><span class="o">.</span><span class="n">install_packages</span><span class="p">(</span>

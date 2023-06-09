@@ -6,11 +6,13 @@
   <title>pyrssa.base &mdash; pyrssa 1.0.6 documentation</title>
       <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/css/funcsigs.css" type="text/css" />
   <!--[if lt IE 9]>
     <script src="../../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
         <script src="../../_static/doctools.js"></script>
         <script src="../../_static/sphinx_highlight.js"></script>
@@ -71,10 +73,16 @@
            <div itemprop="articleBody">
              
   <h1>Source code for pyrssa.base</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">pyrssa.classes.SSA</span>
-<span class="kn">from</span> <span class="nn">pyrssa</span> <span class="kn">import</span> <span class="n">SSA</span><span class="p">,</span> <span class="n">IOSSA</span><span class="p">,</span> <span class="n">Parestimate</span>
+<span></span><span class="kn">from</span> <span class="nn">pyrssa.classes.SSA</span> <span class="kn">import</span> <span class="n">SSABase</span>
+<span class="kn">from</span> <span class="nn">pyrssa.classes.Parestimate</span> <span class="kn">import</span> <span class="n">BaseParestimate</span>
+<span class="kn">from</span> <span class="nn">pyrssa.classes.LRR</span> <span class="kn">import</span> <span class="n">BaseLRR</span>
+<span class="kn">from</span> <span class="nn">pyrssa.classes.Periodogram</span> <span class="kn">import</span> <span class="n">Periodogram</span>
+<span class="kn">from</span> <span class="nn">pyrssa.docs</span> <span class="kn">import</span> <span class="n">add_doc</span>
+<span class="kn">from</span> <span class="nn">pyrssa</span> <span class="kn">import</span> <span class="n">SSA</span><span class="p">,</span> <span class="n">IOSSA</span><span class="p">,</span> <span class="n">FOSSA</span><span class="p">,</span> <span class="n">Parestimate</span><span class="p">,</span> <span class="n">LRR</span>
+<span class="kn">from</span> <span class="nn">pyrssa</span> <span class="kn">import</span> <span class="n">Cadzow</span>
 <span class="kn">from</span> <span class="nn">pyrssa</span> <span class="kn">import</span> <span class="n">Reconstruction</span>
-<span class="kn">from</span> <span class="nn">pyrssa</span> <span class="kn">import</span> <span class="n">RForecast</span><span class="p">,</span> <span class="n">VForecast</span><span class="p">,</span> <span class="n">BForecast</span>
+<span class="kn">from</span> <span class="nn">pyrssa</span> <span class="kn">import</span> <span class="n">RForecast</span><span class="p">,</span> <span class="n">VForecast</span><span class="p">,</span> <span class="n">BForecast</span><span class="p">,</span> <span class="n">Forecast</span>
+<span class="kn">from</span> <span class="nn">pyrssa</span> <span class="kn">import</span> <span class="n">Gapfill</span><span class="p">,</span> <span class="n">IGapfill</span>
 <span class="kn">from</span> <span class="nn">pyrssa</span> <span class="kn">import</span> <span class="n">WCorMatrix</span><span class="p">,</span> <span class="n">HMatrix</span>
 <span class="kn">from</span> <span class="nn">pyrssa</span> <span class="kn">import</span> <span class="n">GroupPgram</span><span class="p">,</span> <span class="n">GroupWCor</span>
 <span class="kn">from</span> <span class="nn">pyrssa</span> <span class="kn">import</span> <span class="n">installer</span>
@@ -83,10 +91,11 @@
 <span class="kn">import</span> <span class="nn">rpy2.robjects.conversion</span> <span class="k">as</span> <span class="nn">conversion</span>
 <span class="kn">import</span> <span class="nn">rpy2.robjects.packages</span> <span class="k">as</span> <span class="nn">rpackages</span>
 <span class="kn">from</span> <span class="nn">rpy2.rinterface_lib</span> <span class="kn">import</span> <span class="n">callbacks</span>
-<span class="kn">from</span> <span class="nn">pandas</span> <span class="kn">import</span> <span class="n">read_csv</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">numpy</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">os</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Literal</span><span class="p">,</span> <span class="n">Union</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">overload</span><span class="p">,</span> <span class="n">Literal</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Callable</span>
 <span class="kn">import</span> <span class="nn">inspect</span>
 
 <span class="c1"># Set conversion rules</span>
@@ -107,216 +116,173 @@
     <span class="k">return</span> <span class="n">call</span><span class="p">[</span><span class="n">call</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s1">&#39;=&#39;</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">:]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">rstrip</span><span class="p">()</span>
 
 
-<span class="c1"># Read pyrssa dataframes</span>
-<div class="viewcode-block" id="data"><a class="viewcode-back" href="../../pyrssa.html#pyrssa.base.data">[docs]</a><span class="k">def</span> <span class="nf">data</span><span class="p">(</span><span class="n">name</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">_set_datetime_index</span><span class="p">(</span><span class="n">dataframe</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+    <span class="n">dataframe</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DatetimeIndex</span><span class="p">(</span><span class="n">dataframe</span><span class="p">[</span><span class="n">name</span><span class="p">])</span>
+    <span class="n">dataframe</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">dataframe</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">freq</span> <span class="o">=</span> <span class="n">dataframe</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">inferred_freq</span>
+
+
+<div class="viewcode-block" id="data"><a class="viewcode-back" href="../../pyrssa.html#pyrssa.base.data">[docs]</a><span class="k">def</span> <span class="nf">data</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">datetime_index</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Function for loading available in pyrssa package datasets. Available datasets are stored in the data directory.</span>
 
 <span class="sd">    :param name: Name of dataset to load</span>
+<span class="sd">    :param datetime_index: Name of column, where date or time index is stored</span>
 <span class="sd">    :return: Loaded dataset</span>
-<span class="sd">    :rtype: pandas.DataFrame</span>
+<span class="sd">    :rtype: pandas.DataFrame or pandas.Series</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="n">read_csv</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">realpath</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)),</span> <span class="s2">&quot;data&quot;</span><span class="p">),</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s1">.csv&#39;</span><span class="p">))</span></div>
+    <span class="n">result</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">realpath</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)),</span> <span class="s2">&quot;data&quot;</span><span class="p">),</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s1">.csv&#39;</span><span class="p">))</span>
+    <span class="k">if</span> <span class="n">datetime_index</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">_set_datetime_index</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="n">datetime_index</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="c1"># Search for datetime index and set it</span>
+        <span class="n">col_idx</span> <span class="o">=</span> <span class="nb">next</span><span class="p">((</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span> <span class="k">if</span> <span class="n">v</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;time&#39;</span><span class="p">,</span> <span class="s1">&#39;date&#39;</span><span class="p">,</span> <span class="s1">&#39;datetime&#39;</span><span class="p">]),</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">col_idx</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">_set_datetime_index</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="n">result</span><span class="o">.</span><span class="n">columns</span><span class="p">[</span><span class="n">col_idx</span><span class="p">])</span>
+
+    <span class="c1"># If there is only one column in dataframe, return it as series</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">result</span><span class="p">[</span><span class="n">result</span><span class="o">.</span><span class="n">columns</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">result</span></div>
 
 
-<div class="viewcode-block" id="parestimate"><a class="viewcode-back" href="../../pyrssa.html#pyrssa.base.parestimate">[docs]</a><span class="k">def</span> <span class="nf">parestimate</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">groups</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s2">&quot;esprit&quot;</span><span class="p">,</span> <span class="n">subspace</span><span class="o">=</span><span class="s2">&quot;column&quot;</span><span class="p">,</span> <span class="n">normalize_roots</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">dimensions</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-                <span class="n">solve_method</span><span class="o">=</span><span class="s2">&quot;ls&quot;</span><span class="p">,</span> <span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<div class="viewcode-block" id="calc_v"><a class="viewcode-back" href="../../pyrssa.html#pyrssa.base.calc_v">[docs]</a><span class="nd">@add_doc</span>
+<span class="k">def</span> <span class="nf">calc_v</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="n">SSABase</span><span class="p">,</span> <span class="n">idx</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">list</span><span class="p">,</span> <span class="nb">range</span><span class="p">,</span> <span class="n">numpy</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">numpy</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Generic function for the factor vector calculation given the SSA decomposition.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    x</span>
+<span class="sd">        SSA object holding the decomposition.</span>
+<span class="sd">    idx</span>
+<span class="sd">        indices of the factor vectors to compute.</span>
+<span class="sd">    kwargs</span>
+<span class="sd">        additional arguments.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">        numpy array of suitable length (usually depends on SSA method and window length).</span>
+
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+
+<span class="sd">    .. code-block:: python</span>
+
+<span class="sd">        co2 = prs.data(&quot;co2&quot;)</span>
+<span class="sd">        # Decompose &#39;co2&#39; series with default parameters</span>
+<span class="sd">        s = prs.ssa(co2)</span>
+<span class="sd">        # Calculate the 5th factor vector</span>
+<span class="sd">        v = prs.calc_v(s, 5)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">r_ssa</span><span class="o">.</span><span class="n">calc_v</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">x</span><span class="p">,</span> <span class="n">idx</span><span class="o">=</span><span class="n">idx</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">))</span><span class="o">.</span><span class="n">T</span></div>
+
+
+<div class="viewcode-block" id="parestimate"><a class="viewcode-back" href="../../pyrssa.html#pyrssa.base.parestimate">[docs]</a><span class="nd">@add_doc</span>
+<span class="k">def</span> <span class="nf">parestimate</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="n">SSA</span><span class="p">,</span> <span class="n">groups</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span> <span class="n">method</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;esprit&quot;</span><span class="p">,</span> <span class="s2">&quot;pairs&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;esprit&quot;</span><span class="p">,</span>
+                <span class="n">dimensions</span><span class="p">:</span> <span class="nb">list</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">subspace</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;column&quot;</span><span class="p">,</span> <span class="s2">&quot;row&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;column&quot;</span><span class="p">,</span>
+                <span class="n">normalize_roots</span><span class="p">:</span> <span class="nb">list</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">solve_method</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;ls&quot;</span><span class="p">,</span> <span class="s2">&quot;tls&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;ls&quot;</span><span class="p">,</span>
+                <span class="n">drop</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">BaseParestimate</span> <span class="o">|</span> <span class="n">Parestimate</span><span class="p">:</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Function to estimate the parameters (frequencies and rates) given a set of SSA eigenvectors.</span>
 
-<span class="sd">    :param x: SSA object</span>
-<span class="sd">    :param groups: list of indices of eigenvectors to estimate from</span>
-<span class="sd">    :param method: For 1D-SSA,</span>
-<span class="sd">        Toeplitz SSA, and MSSA: parameter estimation method, &#39;esprit&#39; for 1D-ESPRIT (Algorithm 3.3 in Golyandina et al (</span>
-<span class="sd">        2018)), &#39;pairs&#39; for rough estimation based on pair of eigenvectors (Algorithm 3.4 in Golyandina et al (2018)).</span>
-<span class="sd">        For nD-SSA: parameter estimation method. For now only &#39;esprit&#39; is supported (Algorithm 5.6 in Golyandina et al (</span>
-<span class="sd">        2018)). lowest dimension, when possible (length of groups is one)</span>
-<span class="sd">    :param subspace: which subspace will be used for parameter estimation</span>
-<span class="sd">    :param normalize_roots: logical vector or None, force signal roots to lie on unit circle.</span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    x:</span>
+<span class="sd">        SSA object</span>
+<span class="sd">    groups:</span>
+<span class="sd">        list of indices of eigenvectors to estimate from</span>
+<span class="sd">    method:</span>
+<span class="sd">        for 1D-SSA, Toeplitz SSA, and MSSA: parameter estimation method, &#39;esprit&#39; for 1D-ESPRIT (Algorithm 3.3 in</span>
+<span class="sd">        Golyandina et al. (2018)), &#39;pairs&#39; for rough estimation based on pair of eigenvectors (Algorithm 3.4 in</span>
+<span class="sd">        Golyandina et al (2018)). For nD-SSA: parameter estimation method. For now only &#39;esprit&#39; is supported</span>
+<span class="sd">        (Algorithm 5.6 in Golyandina et al. (2018)). lowest dimension, when possible (length of groups is one)</span>
+<span class="sd">    dimensions:</span>
+<span class="sd">        a vector of dimension indices to perform ESPRIT along. None means all dimensions.</span>
+<span class="sd">    subspace:</span>
+<span class="sd">        which subspace will be used for parameter estimation</span>
+<span class="sd">    normalize_roots:</span>
+<span class="sd">        force signal roots to lie on unit circle.</span>
 <span class="sd">        None means automatic selection: normalize iff circular topology OR Toeplitz SSA used</span>
-<span class="sd">    :param dimensions: a vector of dimension indices to perform ESPRIT along. None means all dimensions.</span>
-<span class="sd">    :param solve_method: approximate matrix equation solving method, &#39;ls&#39; for least-squares,</span>
+<span class="sd">    solve_method:</span>
+<span class="sd">        approximate matrix equation solving method, &#39;ls&#39; for least-squares,</span>
 <span class="sd">        &#39;tls&#39; for total-least-squares.</span>
-<span class="sd">    :param drop: logical, if &#39;TRUE&#39; then the result is coerced to lowest dimension,</span>
-<span class="sd">        when possible (length of groups is one)</span>
+<span class="sd">    drop:</span>
+<span class="sd">        if True then the result is coerced to the lowest dimension,</span>
+<span class="sd">        when possible (length of groups is one).</span>
+<span class="sd">    **kwargs:</span>
+<span class="sd">        further arguments passed to &#39;decompose&#39; routine, if necessary</span>
 
-<span class="sd">    :return:</span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
 
+<span class="sd">        |Parestimate| For 1D-SSA (and Toeplitz) - a list of |BaseParestimate| objects. For &#39;method&#39; = &#39;pairs&#39;</span>
+<span class="sd">        all moduli are set equal to 1 and all rates equal to 0. In all cases elements of the list have the same names</span>
+<span class="sd">        as elements of groups. If group is unnamed, corresponding component gets name ‘Fn’, where ‘n’ is its index in</span>
+<span class="sd">        groups list. If &#39;drop = TRUE&#39; and length of &#39;groups&#39; is one, then |BaseParestimate| is returned.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+
+<span class="sd">    .. code-block:: python</span>
+
+<span class="sd">        co2 = prs.data(&quot;co2&quot;)</span>
+<span class="sd">        # Decompose &#39;co2&#39; series with default parameters</span>
+<span class="sd">        s = prs.ssa(co2, neig=20)</span>
+<span class="sd">        # Estimate the periods from 2nd and 3rd eigenvectors using &#39;pairs&#39; method</span>
+<span class="sd">        print(prs.parestimate(s, groups=[[2, 3]], method = &quot;pairs&quot;))</span>
+<span class="sd">        # Estimate the peroids from 2nd, 3rd, 5th and 6th eigenvectors using ESPRIT</span>
+<span class="sd">        pe = prs.parestimate(s, groups=[[2, 3, 5, 6]], method=&quot;esprit&quot;)</span>
+<span class="sd">        print(pe)</span>
+<span class="sd">        prs.plot(pe)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="n">Parestimate</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">x</span><span class="p">,</span> <span class="n">groups</span><span class="o">=</span><span class="n">groups</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="n">method</span><span class="p">,</span> <span class="n">subspace</span><span class="o">=</span><span class="n">subspace</span><span class="p">,</span> <span class="n">normalize_roots</span><span class="o">=</span><span class="n">normalize_roots</span><span class="p">,</span>
-                       <span class="n">dimensions</span><span class="o">=</span><span class="n">dimensions</span><span class="p">,</span> <span class="n">solve_method</span><span class="o">=</span><span class="n">solve_method</span><span class="p">,</span> <span class="n">drop</span><span class="o">=</span><span class="n">drop</span><span class="p">)</span></div>
+    <span class="k">return</span> <span class="n">Parestimate</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">x</span><span class="p">,</span> <span class="n">groups</span><span class="o">=</span><span class="n">groups</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="n">method</span><span class="p">,</span> <span class="n">dimensions</span><span class="o">=</span><span class="n">dimensions</span><span class="p">,</span>
+                       <span class="n">subspace</span><span class="o">=</span><span class="n">subspace</span><span class="p">,</span> <span class="n">normalize_roots</span><span class="o">=</span><span class="n">normalize_roots</span><span class="p">,</span>
+                       <span class="n">solve_method</span><span class="o">=</span><span class="n">solve_method</span><span class="p">,</span> <span class="n">drop</span><span class="o">=</span><span class="n">drop</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="ssa"><a class="viewcode-back" href="../../pyrssa.html#pyrssa.base.ssa">[docs]</a><span class="k">def</span> <span class="nf">ssa</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">L</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">neig</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">mask</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">wmask</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">kind</span><span class="o">=</span><span class="s2">&quot;1d-ssa&quot;</span><span class="p">,</span> <span class="n">circular</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-        <span class="n">column_projector</span><span class="o">=</span><span class="s2">&quot;none&quot;</span><span class="p">,</span> <span class="n">row_projector</span><span class="o">=</span><span class="s2">&quot;none&quot;</span><span class="p">,</span> <span class="n">svd_method</span><span class="o">=</span><span class="s2">&quot;auto&quot;</span><span class="p">):</span>
+<div class="viewcode-block" id="ssa"><a class="viewcode-back" href="../../pyrssa.html#pyrssa.base.ssa">[docs]</a><span class="nd">@add_doc</span>
+<span class="k">def</span> <span class="nf">ssa</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">L</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">neig</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">mask</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">wmask</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">kind</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;1d-ssa&quot;</span><span class="p">,</span> <span class="s2">&quot;2d-ssa&quot;</span><span class="p">,</span> <span class="s2">&quot;nd-ssa&quot;</span><span class="p">,</span> <span class="s2">&quot;toeplitz-ssa&quot;</span><span class="p">,</span> <span class="s2">&quot;mssa&quot;</span><span class="p">,</span> <span class="s2">&quot;cssa&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;1d-ssa&quot;</span><span class="p">,</span> <span class="n">circular</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">svd_method</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;auto&quot;</span><span class="p">,</span> <span class="s2">&quot;nutrlan&quot;</span><span class="p">,</span> <span class="s2">&quot;propack&quot;</span><span class="p">,</span> <span class="s2">&quot;svd&quot;</span><span class="p">,</span> <span class="s2">&quot;eigen&quot;</span><span class="p">,</span> <span class="s2">&quot;rspectra&quot;</span><span class="p">,</span> <span class="s2">&quot;primme&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;auto&quot;</span><span class="p">,</span>
+        <span class="n">column_projector</span><span class="o">=</span><span class="s2">&quot;none&quot;</span><span class="p">,</span> <span class="n">row_projector</span><span class="o">=</span><span class="s2">&quot;none&quot;</span><span class="p">,</span> <span class="n">column_oblique</span><span class="o">=</span><span class="s2">&quot;identity&quot;</span><span class="p">,</span>
+        <span class="n">row_oblique</span><span class="o">=</span><span class="s2">&quot;identity&quot;</span><span class="p">,</span>  <span class="n">force_decompose</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">SSA</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-
-<span class="sd">    :param x: object to be decomposed. If DataFrame passed, the first column will be treated as a series</span>
-<span class="sd">    :type x: pandas.DataFrame, pandas.Series, numpy.ndarray, list</span>
-<span class="sd">    :param L: window length. Fixed to half of the series length by default.</span>
-<span class="sd">        Should be vector of length 2 for 2d SSA</span>
-<span class="sd">    :type L: int, optional</span>
-<span class="sd">    :param neig: number of desired eigentriples. If None, then sane default value</span>
-<span class="sd">        will be used.</span>
-<span class="sd">    :type neig: int, optional</span>
-<span class="sd">    :param mask: for shaped 2d SSA case only. Logical matrix with same dimension as x.</span>
-<span class="sd">        Specifies form of decomposed array. If None, then all non-NA elements will be used</span>
-<span class="sd">    :param wmask: for shaped 2d SSA case only. Logical matrix which specifies window form.</span>
-<span class="sd">    :param kind: SSA method. This includes ordinary 1d SSA, 2d SSA, Toeplitz variant of 1d SSA, multichannel</span>
-<span class="sd">        variant of SSA and complex SSA. Defaults to 1d SSA.</span>
-<span class="sd">    :type kind: str, optional</span>
-<span class="sd">    :param circular: logical vector of one or two elements, describes series topology for 1d SSA and Toeplitz SSA</span>
-<span class="sd">        or field topology for 2d SSA. &#39;TRUE&#39; means series circularity for 1d case or circularity</span>
-<span class="sd">        by a corresponding coordinate for 2d case. See Shlemov and Golyandina (2014) for more information.</span>
-<span class="sd">    :param column_projector, row_projector: column and row signal subspaces projectors for SSA with projection.</span>
-<span class="sd">    :type column_projector: str or int, optional</span>
-<span class="sd">    :type row_projector: str or int, optional</span>
-<span class="sd">    :param svd_method: 	singular value decomposition method.</span>
-<span class="sd">    :return: SSA object. The precise layout of the object is mostly meant opaque and subject to</span>
-<span class="sd">        change in different version of the package.</span>
-<span class="sd">    :rtype: SSA</span>
-
-<span class="sd">    Description</span>
-<span class="sd">    ===========</span>
-
 <span class="sd">    Set up the SSA object and perform the decomposition, if necessary.</span>
 
-<span class="sd">    Details</span>
-<span class="sd">    ===========</span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    x:</span>
+<span class="sd">        object to be decomposed. If DataFrame passed, the first column will be treated as a series.</span>
+<span class="sd">    L:</span>
+<span class="sd">        window length. Fixed to half of the series length by default. Should be a vector of length 2 for 2d SSA.</span>
+<span class="sd">    neig:</span>
+<span class="sd">        number of desired eigentriples. If None, then sane default value will be used.</span>
+<span class="sd">    mask:</span>
+<span class="sd">        for shaped 2d SSA case only. Logical matrix with same dimension as x. Specifies form of decomposed array.</span>
+<span class="sd">         If None, then all non-NA elements will be used</span>
+<span class="sd">    wmask:</span>
+<span class="sd">        for shaped 2d SSA case only. Logical matrix which specifies window form.</span>
+<span class="sd">    kind:</span>
+<span class="sd">        SSA method. This includes ordinary 1d SSA, 2d SSA, Toeplitz variant of 1d SSA, multichannel</span>
+<span class="sd">        variant of SSA and complex SSA. Defaults to 1d SSA.</span>
+<span class="sd">    circular:</span>
+<span class="sd">        logical vector of one or two elements, describes series topology for 1d SSA and Toeplitz SSA</span>
+<span class="sd">        or field topology for 2d SSA. &#39;TRUE&#39; means series circularity for 1d case or circularity</span>
+<span class="sd">        by a corresponding coordinate for 2d case. See Shlemov and Golyandina (2014) for more information.</span>
+<span class="sd">    column_projector, row_projector:</span>
+<span class="sd">        column and row signal subspaces projectors for SSA with projection.</span>
+<span class="sd">    svd_method:</span>
+<span class="sd">        singular value decomposition method.</span>
 
-<span class="sd">    This is the main entry point to the package. This routine constructs the SSA object filling all necessary</span>
-<span class="sd">    internal structures and performing the decomposition if necessary. For the comprehensive description of SSA</span>
-<span class="sd">    modifications and their algorithms see Golyandina et al (2018).</span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
 
-<span class="sd">    Variants of SSA</span>
-<span class="sd">    ---------------</span>
-
-<span class="sd">    The following implementations of the SSA method are supported (corresponds to different values of kind argument):</span>
-
-<span class="sd">    * 1d-ssa</span>
-
-<span class="sd">        Basic 1d SSA as described in Chapter 1 of Golyandina et al (2001). This is also known as Broomhead-King</span>
-<span class="sd">        variant of SSA or BK-SSA, see Broomhead and King (1986).</span>
-
-<span class="sd">    * toeplitz-ssa</span>
-
-<span class="sd">        Toeplitz variant of 1d SSA. See Section 1.7.2 in Golyandina et al (2001). This is also known</span>
-<span class="sd">        as Vautard-Ghil variant of SSA or VG-SSA for analysis of stationary time series, see Vautard and Ghil (1989).</span>
-
-<span class="sd">    * mssa</span>
-
-<span class="sd">        Multichannel SSA for simultaneous decomposition of several time series (possible of unequal length). See</span>
-<span class="sd">        Golyandina and Stepanov (2005).</span>
-
-<span class="sd">    * cssa</span>
-
-<span class="sd">        Complex variant of 1d SSA.</span>
-
-<span class="sd">    * 2d-ssa</span>
-
-<span class="sd">        2d SSA for decomposition of images and arrays. See Golyandina and Usevich (2009) and Golyandina et.al (2015)</span>
-<span class="sd">        for more information.</span>
-
-<span class="sd">    * nd-ssa</span>
-
-<span class="sd">        Multidimensional SSA decomposition for arrays (tensors).</span>
-
-<span class="sd">    Window shape selection (for shaped 2d SSA)</span>
-<span class="sd">    ------------------------------------------</span>
-
-<span class="sd">    Window shape may be specified by argument wmask. If wmask is &#39;NULL&#39;, then standard rectangular window (specified</span>
-<span class="sd">    by L) will be used.</span>
-
-<span class="sd">    * circle(R)</span>
-
-<span class="sd">        circular mask of radius R</span>
-
-<span class="sd">    * triangle(side)</span>
-
-<span class="sd">        mask in form of isosceles right-angled triangle with cathetus side. Right angle lay on topleft corner of</span>
-<span class="sd">        container square matrix</span>
-
-<span class="sd">    Also in wmask one may use following functions:</span>
-
-<span class="sd">    These functions are not exported, they defined only for wmask expression. If one has objects with the same names</span>
-<span class="sd">    and wants to use them rather than these functions, one should use special wrapper function I() (see &#39;Examples&#39;).</span>
-
-<span class="sd">    Projectors specification for SSA with projection</span>
-<span class="sd">    ------------------------------------------------</span>
-
-<span class="sd">    Projectors are specified by means of column.projector and row.projector arguments (see Golyandina and Shlemov (</span>
-<span class="sd">    2017)). Each may be a matrix of orthonormal (otherwise QR orthonormalization process will be perfomed) basis of</span>
-<span class="sd">    projection subspace, or single integer, which will be interpreted as dimension of orthogonal polynomial basis (</span>
-<span class="sd">    note that the dimension equals to degree plus 1, e.g. quadratic basis has dimension 3), or one of following</span>
-<span class="sd">    character strings (or unique prefix): &#39;none&#39;, &#39;constant&#39; (or &#39;centering&#39;), &#39;linear&#39;, &#39;quadratic&#39; or &#39;qubic&#39; for</span>
-<span class="sd">    orthonormal bases of the corresponding functions.</span>
-
-<span class="sd">    Here is the the list of the most used options</span>
-
-<span class="sd">    * both projectors are &#39;none&#39;</span>
-
-<span class="sd">        corresponds to ordinary 1D SSA,</span>
-
-<span class="sd">    * column.projector=&#39;centering&#39;</span>
-
-<span class="sd">        corresponds to 1D SSA with centering,</span>
-
-<span class="sd">    * column.projector=&#39;centering&#39; and row.projector=&#39;centering&#39;</span>
-
-<span class="sd">        corresponds to 1D SSA with double centering.</span>
-
-<span class="sd">    SSA with centering and double centering may improve the separation of linear trend (see Golyandina et.al (2001)</span>
-<span class="sd">    for more information).</span>
-
-<span class="sd">    SVD methods</span>
-<span class="sd">    -----------</span>
-
-<span class="sd">    The main step of the SSA method is the singular decomposition of the so-called series trajectory matrix. Package</span>
-<span class="sd">    provides several implementations of this procedure (corresponds to different values of svd.method) argument:</span>
-
-<span class="sd">    * auto</span>
-
-<span class="sd">        Automatic method selection depending on the series length, window length, SSA kind and number of eigenvalues</span>
-<span class="sd">        requested.</span>
-
-<span class="sd">    * nutrlan</span>
-
-<span class="sd">        Thick-restart Lanczos eigensolver which operates on cross-product matrix. This methods exploits the Hankel</span>
-<span class="sd">        structure of the trajectory matrix efficiently and is really fast. The method allows the truncated SVD (only</span>
-<span class="sd">        specifid amount of eigentriples to be computed) and the continuation of the decomposition. See Korobeynikov (</span>
-<span class="sd">        2010) for more information.</span>
-
-<span class="sd">    * propack</span>
-
-<span class="sd">        SVD via implicitly restarted Lanczos bidiagonalization with partial reothogonalization. This methods exploits</span>
-<span class="sd">        the Hankel structure of the trajectory matrix efficiently and is really fast. This is the &#39;proper&#39; SVD</span>
-<span class="sd">        implementation (the matrix of factor vectors are calculated), thus the memory requirements of the methods are</span>
-<span class="sd">        higher than for nu-TRLAN. Usually the method is slightly faster that nu-TRLAN and more numerically stable.</span>
-<span class="sd">        The method allows the truncated SVD (only specifid amount of eigentriples to be computed). See Korobeynikov (</span>
-<span class="sd">        2010) for more information.</span>
-
-<span class="sd">    * svd</span>
-
-<span class="sd">        Full SVD as provided by LAPACK DGESDD routine. Neither continuation of the decomposition nor the truncated</span>
-<span class="sd">        SVD is supported. The method does not assume anything special about the trajectory matrix and thus is slow.</span>
-
-<span class="sd">    * eigen</span>
-
-<span class="sd">        Full SVD via eigendecompsition of the cross-product matrix. In many cases faster than previous method,</span>
-<span class="sd">        but still really slow for more or less non-trivial matrix sizes.</span>
-
-<span class="sd">    * rspectra</span>
-
-<span class="sd">        SVD via svds function from Rspectra package (if installed)</span>
-
-<span class="sd">    * primme</span>
-
-<span class="sd">        SVD via svds function from PRIMME package (if installed)</span>
-
-<span class="sd">    Usually the ssa function tries to provide the best SVD implementation for given series length and the window</span>
-<span class="sd">    size. In particular, for small series and window sizes it is better to use generic black-box routines (as</span>
-<span class="sd">    provided by &#39;svd&#39; and &#39;eigen&#39; methods). For long series special-purpose routines are to be used.</span>
+<span class="sd">        SSA object. The precise layout of the object is mostly meant opaque and subject to</span>
+<span class="sd">        change in different version of the package.</span>
 
 <span class="sd">    Examples</span>
 <span class="sd">    --------</span>
@@ -343,16 +309,14 @@
 <span class="sd">        st = prs.ssa(f_center, L=L, kind=&#39;toeplitz-ssa&#39;)</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="n">SSA</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">L</span><span class="o">=</span><span class="n">L</span><span class="p">,</span> <span class="n">neig</span><span class="o">=</span><span class="n">neig</span><span class="p">,</span> <span class="n">mask</span><span class="o">=</span><span class="n">mask</span><span class="p">,</span> <span class="n">wmask</span><span class="o">=</span><span class="n">wmask</span><span class="p">,</span> <span class="n">kind</span><span class="o">=</span><span class="n">kind</span><span class="p">,</span>
-               <span class="n">circular</span><span class="o">=</span><span class="n">circular</span><span class="p">,</span>
-               <span class="n">column_projector</span><span class="o">=</span><span class="n">column_projector</span><span class="p">,</span>
-               <span class="n">row_projector</span><span class="o">=</span><span class="n">row_projector</span><span class="p">,</span>
-               <span class="n">svd_method</span><span class="o">=</span><span class="n">svd_method</span><span class="p">,</span>
-               <span class="n">call</span><span class="o">=</span><span class="n">_get_call</span><span class="p">(</span><span class="n">inspect</span><span class="o">.</span><span class="n">currentframe</span><span class="p">()</span><span class="o">.</span><span class="n">f_back</span><span class="p">))</span></div>
+    <span class="k">return</span> <span class="n">SSA</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">L</span><span class="o">=</span><span class="n">L</span><span class="p">,</span> <span class="n">neig</span><span class="o">=</span><span class="n">neig</span><span class="p">,</span> <span class="n">mask</span><span class="o">=</span><span class="n">mask</span><span class="p">,</span> <span class="n">wmask</span><span class="o">=</span><span class="n">wmask</span><span class="p">,</span> <span class="n">kind</span><span class="o">=</span><span class="n">kind</span><span class="p">,</span> <span class="n">circular</span><span class="o">=</span><span class="n">circular</span><span class="p">,</span>
+               <span class="n">svd_method</span><span class="o">=</span><span class="n">svd_method</span><span class="p">,</span> <span class="n">column_projector</span><span class="o">=</span><span class="n">column_projector</span><span class="p">,</span> <span class="n">row_projector</span><span class="o">=</span><span class="n">row_projector</span><span class="p">,</span>
+               <span class="n">column_oblique</span><span class="o">=</span><span class="n">column_oblique</span><span class="p">,</span> <span class="n">row_oblique</span><span class="o">=</span><span class="n">row_oblique</span><span class="p">,</span> <span class="n">force_decompose</span><span class="o">=</span><span class="n">force_decompose</span><span class="p">,</span>
+               <span class="n">call</span><span class="o">=</span><span class="n">_get_call</span><span class="p">(</span><span class="n">inspect</span><span class="o">.</span><span class="n">currentframe</span><span class="p">()</span><span class="o">.</span><span class="n">f_back</span><span class="p">),</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="reconstruct"><a class="viewcode-back" href="../../pyrssa.html#pyrssa.base.reconstruct">[docs]</a><span class="k">def</span> <span class="nf">reconstruct</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="n">pyrssa</span><span class="o">.</span><span class="n">classes</span><span class="o">.</span><span class="n">SSA</span><span class="o">.</span><span class="n">SSABase</span><span class="p">,</span>
-                <span class="n">groups</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">list</span><span class="p">,</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">GroupPgram</span><span class="p">],</span>
+<div class="viewcode-block" id="reconstruct"><a class="viewcode-back" href="../../pyrssa.html#pyrssa.base.reconstruct">[docs]</a><span class="k">def</span> <span class="nf">reconstruct</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="n">SSABase</span><span class="p">,</span>
+                <span class="n">groups</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">list</span><span class="p">,</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">GroupPgram</span><span class="p">,</span> <span class="n">GroupWCor</span><span class="p">],</span>
                 <span class="n">drop_attributes</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
                 <span class="n">cache</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
@@ -379,11 +343,11 @@
 <span class="sd">    =======</span>
 
 <span class="sd">    Reconstruction is performed in a common form for different types of input objects. See Section 1.1.2.6 in</span>
-<span class="sd">    Golyandina et al (2018) for the explanation. Formal algorithms are described in this book in Algorithm 2.2 for</span>
+<span class="sd">    Golyandina et al. (2018) for the explanation. Formal algorithms are described in this book in Algorithm 2.2 for</span>
 <span class="sd">    1D-SSA, Algorithm 4.3 for MSSA, Algorithm 5.2 for 2D-SSA and Algorithm 5.6 for Shaped 2D-SSA.</span>
 
 <span class="sd">    Fast implementation of reconstruction with the help of FFT is described in Korobeynikov (2010) for the 1D case</span>
-<span class="sd">    and in Section 6.2 (Rank-one quasi-hankelization) of Golyandina et al (2015) for the general case.</span>
+<span class="sd">    and in Section 6.2 (Rank-one quasi-hankelization) of Golyandina et al. (2015) for the general case.</span>
 
 
 <span class="sd">    Note</span>
@@ -430,9 +394,21 @@
     <span class="k">return</span> <span class="n">Reconstruction</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">x</span><span class="p">,</span> <span class="n">groups</span><span class="o">=</span><span class="n">groups</span><span class="p">,</span> <span class="n">drop_attributes</span><span class="o">=</span><span class="n">drop_attributes</span><span class="p">,</span> <span class="n">cache</span><span class="o">=</span><span class="n">cache</span><span class="p">)</span></div>
 
 
+<div class="viewcode-block" id="cadzow"><a class="viewcode-back" href="../../pyrssa.html#pyrssa.base.cadzow">[docs]</a><span class="k">def</span> <span class="nf">cadzow</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="n">SSA</span><span class="p">,</span> <span class="n">rank</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">correct</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">tol</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1e-6</span><span class="p">,</span> <span class="n">maxiter</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+           <span class="n">norm</span><span class="p">:</span> <span class="n">Callable</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">trace</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">cache</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+
+    <span class="k">return</span> <span class="n">Cadzow</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">x</span><span class="p">,</span> <span class="n">rank</span><span class="o">=</span><span class="n">rank</span><span class="p">,</span> <span class="n">correct</span><span class="o">=</span><span class="n">correct</span><span class="p">,</span> <span class="n">tol</span><span class="o">=</span><span class="n">tol</span><span class="p">,</span> <span class="n">maxiter</span><span class="o">=</span><span class="n">maxiter</span><span class="p">,</span>
+                  <span class="n">norm</span><span class="o">=</span><span class="n">norm</span><span class="p">,</span> <span class="n">trace</span><span class="o">=</span><span class="n">trace</span><span class="p">,</span> <span class="n">cache</span><span class="o">=</span><span class="n">cache</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+
+
 <div class="viewcode-block" id="iossa"><a class="viewcode-back" href="../../pyrssa.html#pyrssa.base.iossa">[docs]</a><span class="k">def</span> <span class="nf">iossa</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="n">SSA</span><span class="p">,</span> <span class="n">nested_groups</span><span class="p">,</span> <span class="n">tol</span><span class="o">=</span><span class="mf">1e-5</span><span class="p">,</span> <span class="n">kappa</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">maxiter</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">norm</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">trace</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">kappa_balance</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
     <span class="k">return</span> <span class="n">IOSSA</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">x</span><span class="p">,</span> <span class="n">nested_groups</span><span class="o">=</span><span class="n">nested_groups</span><span class="p">,</span> <span class="n">tol</span><span class="o">=</span><span class="n">tol</span><span class="p">,</span> <span class="n">kappa</span><span class="o">=</span><span class="n">kappa</span><span class="p">,</span> <span class="n">maxiter</span><span class="o">=</span><span class="n">maxiter</span><span class="p">,</span> <span class="n">norm</span><span class="o">=</span><span class="n">norm</span><span class="p">,</span> <span class="n">trace</span><span class="o">=</span><span class="n">trace</span><span class="p">,</span>
                  <span class="n">kappa_balance</span><span class="o">=</span><span class="n">kappa_balance</span><span class="p">,</span> <span class="n">call</span><span class="o">=</span><span class="n">_get_call</span><span class="p">(</span><span class="n">inspect</span><span class="o">.</span><span class="n">currentframe</span><span class="p">()</span><span class="o">.</span><span class="n">f_back</span><span class="p">),</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="fossa"><a class="viewcode-back" href="../../pyrssa.html#pyrssa.base.fossa">[docs]</a><span class="k">def</span> <span class="nf">fossa</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="n">SSA</span><span class="p">,</span> <span class="n">nested_groups</span><span class="p">,</span> <span class="nb">filter</span><span class="o">=</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="n">gamma</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">,</span> <span class="n">normalize</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">call</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">FOSSA</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">x</span><span class="p">,</span> <span class="n">nested_groups</span><span class="o">=</span><span class="n">nested_groups</span><span class="p">,</span> <span class="nb">filter</span><span class="o">=</span><span class="nb">filter</span><span class="p">,</span>
+                 <span class="n">gamma</span><span class="o">=</span><span class="n">gamma</span><span class="p">,</span> <span class="n">normalize</span><span class="o">=</span><span class="n">normalize</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span> <span class="n">call</span><span class="o">=</span><span class="n">call</span><span class="p">)</span></div>
 
 
 <span class="c1"># Weighted correlations</span>
@@ -442,14 +418,15 @@
 
 <span class="c1"># Forecasting functions</span>
 
-<div class="viewcode-block" id="rforecast"><a class="viewcode-back" href="../../pyrssa.html#pyrssa.base.rforecast">[docs]</a><span class="k">def</span> <span class="nf">rforecast</span><span class="p">(</span><span class="n">ds</span><span class="p">,</span> <span class="n">groups</span><span class="p">,</span> <span class="n">length</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">base</span><span class="o">=</span><span class="s2">&quot;reconstructed&quot;</span><span class="p">,</span> <span class="n">only_new</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">reverse</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-              <span class="n">drop</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">drop_attributes</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">cache</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-    <span class="k">return</span> <span class="n">RForecast</span><span class="p">(</span><span class="n">ds</span><span class="p">,</span> <span class="n">groups</span><span class="p">,</span> <span class="n">length</span><span class="o">=</span><span class="n">length</span><span class="p">,</span> <span class="n">base</span><span class="o">=</span><span class="n">base</span><span class="p">,</span> <span class="n">only_new</span><span class="o">=</span><span class="n">only_new</span><span class="p">,</span> <span class="n">reverse</span><span class="o">=</span><span class="n">reverse</span><span class="p">,</span>
+<div class="viewcode-block" id="rforecast"><a class="viewcode-back" href="../../pyrssa.html#pyrssa.base.rforecast">[docs]</a><span class="k">def</span> <span class="nf">rforecast</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">groups</span><span class="p">,</span> <span class="n">length</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">base</span><span class="o">=</span><span class="s2">&quot;reconstructed&quot;</span><span class="p">,</span> <span class="n">only_new</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">reverse</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+              <span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">drop_attributes</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">cache</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">RForecast</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">x</span><span class="p">,</span> <span class="n">groups</span><span class="o">=</span><span class="n">groups</span><span class="p">,</span> <span class="n">length</span><span class="o">=</span><span class="n">length</span><span class="p">,</span> <span class="n">base</span><span class="o">=</span><span class="n">base</span><span class="p">,</span> <span class="n">only_new</span><span class="o">=</span><span class="n">only_new</span><span class="p">,</span> <span class="n">reverse</span><span class="o">=</span><span class="n">reverse</span><span class="p">,</span>
                      <span class="n">drop</span><span class="o">=</span><span class="n">drop</span><span class="p">,</span> <span class="n">drop_attributes</span><span class="o">=</span><span class="n">drop_attributes</span><span class="p">,</span> <span class="n">cache</span><span class="o">=</span><span class="n">cache</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="vforecast"><a class="viewcode-back" href="../../pyrssa.html#pyrssa.base.vforecast">[docs]</a><span class="k">def</span> <span class="nf">vforecast</span><span class="p">(</span><span class="n">ds</span><span class="p">,</span> <span class="n">groups</span><span class="p">,</span> <span class="n">length</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">only_new</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">drop</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">drop_attributes</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-    <span class="k">return</span> <span class="n">VForecast</span><span class="p">(</span><span class="n">ds</span><span class="p">,</span> <span class="n">groups</span><span class="p">,</span> <span class="n">length</span><span class="o">=</span><span class="n">length</span><span class="p">,</span> <span class="n">only_new</span><span class="o">=</span><span class="n">only_new</span><span class="p">,</span> <span class="n">drop</span><span class="o">=</span><span class="n">drop</span><span class="p">,</span> <span class="n">drop_attributes</span><span class="o">=</span><span class="n">drop_attributes</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+<div class="viewcode-block" id="vforecast"><a class="viewcode-back" href="../../pyrssa.html#pyrssa.base.vforecast">[docs]</a><span class="k">def</span> <span class="nf">vforecast</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">groups</span><span class="p">,</span> <span class="n">length</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">only_new</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">drop_attributes</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">VForecast</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">x</span><span class="p">,</span> <span class="n">groups</span><span class="o">=</span><span class="n">groups</span><span class="p">,</span> <span class="n">length</span><span class="o">=</span><span class="n">length</span><span class="p">,</span> <span class="n">only_new</span><span class="o">=</span><span class="n">only_new</span><span class="p">,</span>
+                     <span class="n">drop</span><span class="o">=</span><span class="n">drop</span><span class="p">,</span> <span class="n">drop_attributes</span><span class="o">=</span><span class="n">drop_attributes</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="bforecast"><a class="viewcode-back" href="../../pyrssa.html#pyrssa.base.bforecast">[docs]</a><span class="k">def</span> <span class="nf">bforecast</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">groups</span><span class="p">,</span> <span class="n">length</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">R</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">level</span><span class="o">=</span><span class="mf">0.95</span><span class="p">,</span> <span class="n">kind</span><span class="o">=</span><span class="s2">&quot;recurrent&quot;</span><span class="p">,</span> <span class="n">interval</span><span class="o">=</span><span class="s2">&quot;confidence&quot;</span><span class="p">,</span>
@@ -458,29 +435,99 @@
                      <span class="n">only_intervals</span><span class="o">=</span><span class="n">only_intervals</span><span class="p">,</span> <span class="n">drop</span><span class="o">=</span><span class="n">drop</span><span class="p">,</span> <span class="n">drop_attributes</span><span class="o">=</span><span class="n">drop_attributes</span><span class="p">,</span> <span class="n">cache</span><span class="o">=</span><span class="n">cache</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
 
 
+<div class="viewcode-block" id="forecast"><a class="viewcode-back" href="../../pyrssa.html#pyrssa.base.forecast">[docs]</a><span class="k">def</span> <span class="nf">forecast</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="n">SSA</span><span class="p">,</span> <span class="n">groups</span><span class="p">,</span> <span class="n">length</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">method</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;recurrent&quot;</span><span class="p">,</span> <span class="s2">&quot;vector&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;recurrent&quot;</span><span class="p">,</span>
+             <span class="n">interval</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;none&quot;</span><span class="p">,</span> <span class="s2">&quot;confidence&quot;</span><span class="p">,</span> <span class="s2">&quot;prediction&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;none&quot;</span><span class="p">,</span>
+             <span class="n">only_intervals</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">direction</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;column&quot;</span><span class="p">,</span> <span class="s2">&quot;row&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;column&quot;</span><span class="p">,</span>
+             <span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">drop_attributes</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">cache</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">Forecast</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">x</span><span class="p">,</span> <span class="n">groups</span><span class="o">=</span><span class="n">groups</span><span class="p">,</span> <span class="n">length</span><span class="o">=</span><span class="n">length</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="n">method</span><span class="p">,</span> <span class="n">interval</span><span class="o">=</span><span class="n">interval</span><span class="p">,</span>
+                    <span class="n">only_intervals</span><span class="o">=</span><span class="n">only_intervals</span><span class="p">,</span> <span class="n">direction</span><span class="o">=</span><span class="n">direction</span><span class="p">,</span> <span class="n">drop</span><span class="o">=</span><span class="n">drop</span><span class="p">,</span>
+                    <span class="n">drop_attributes</span><span class="o">=</span><span class="n">drop_attributes</span><span class="p">,</span> <span class="n">cache</span><span class="o">=</span><span class="n">cache</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="gapfill"><a class="viewcode-back" href="../../pyrssa.html#pyrssa.base.gapfill">[docs]</a><span class="k">def</span> <span class="nf">gapfill</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="n">SSA</span><span class="p">,</span> <span class="n">groups</span><span class="p">,</span> <span class="n">base</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;original&quot;</span><span class="p">,</span> <span class="s2">&quot;reconstructed&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;original&quot;</span><span class="p">,</span>
+            <span class="n">method</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;sequential&quot;</span><span class="p">,</span> <span class="s2">&quot;simultaneous&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;sequential&quot;</span><span class="p">,</span> <span class="n">alpha</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="n">Callable</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">drop_attributes</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">cache</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">Gapfill</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">x</span><span class="p">,</span> <span class="n">groups</span><span class="o">=</span><span class="n">groups</span><span class="p">,</span> <span class="n">base</span><span class="o">=</span><span class="n">base</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="n">method</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="n">alpha</span><span class="p">,</span>
+                   <span class="n">drop</span><span class="o">=</span><span class="n">drop</span><span class="p">,</span> <span class="n">drop_attributes</span><span class="o">=</span><span class="n">drop_attributes</span><span class="p">,</span> <span class="n">cache</span><span class="o">=</span><span class="n">cache</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="igapfill"><a class="viewcode-back" href="../../pyrssa.html#pyrssa.base.igapfill">[docs]</a><span class="k">def</span> <span class="nf">igapfill</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="n">SSA</span><span class="p">,</span> <span class="n">groups</span><span class="p">,</span> <span class="n">fill</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">tol</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1e-6</span><span class="p">,</span> <span class="n">maxiter</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">norm</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+             <span class="n">base</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;original&quot;</span><span class="p">,</span> <span class="s2">&quot;reconstructed&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;original&quot;</span><span class="p">,</span> <span class="n">trace</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+             <span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">drop_attributes</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">cache</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">IGapfill</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">x</span><span class="p">,</span> <span class="n">groups</span><span class="o">=</span><span class="n">groups</span><span class="p">,</span> <span class="n">fill</span><span class="o">=</span><span class="n">fill</span><span class="p">,</span> <span class="n">tol</span><span class="o">=</span><span class="n">tol</span><span class="p">,</span> <span class="n">maxiter</span><span class="o">=</span><span class="n">maxiter</span><span class="p">,</span> <span class="n">norm</span><span class="o">=</span><span class="n">norm</span><span class="p">,</span> <span class="n">base</span><span class="o">=</span><span class="n">base</span><span class="p">,</span>
+                   <span class="n">trace</span><span class="o">=</span><span class="n">trace</span><span class="p">,</span> <span class="n">drop</span><span class="o">=</span><span class="n">drop</span><span class="p">,</span> <span class="n">drop_attributes</span><span class="o">=</span><span class="n">drop_attributes</span><span class="p">,</span> <span class="n">cache</span><span class="o">=</span><span class="n">cache</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="seed"><a class="viewcode-back" href="../../pyrssa.html#pyrssa.base.seed">[docs]</a><span class="k">def</span> <span class="nf">seed</span><span class="p">(</span><span class="n">value</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
+    <span class="n">r</span><span class="p">(</span><span class="s1">&#39;set.seed&#39;</span><span class="p">)(</span><span class="n">value</span><span class="p">)</span></div>
+
+
 <div class="viewcode-block" id="hmatr"><a class="viewcode-back" href="../../pyrssa.html#pyrssa.base.hmatr">[docs]</a><span class="k">def</span> <span class="nf">hmatr</span><span class="p">(</span><span class="n">F</span><span class="p">,</span> <span class="n">B</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">T</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">L</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">neig</span><span class="o">=</span><span class="mi">10</span><span class="p">):</span>
     <span class="k">return</span> <span class="n">HMatrix</span><span class="p">(</span><span class="n">F</span><span class="p">,</span> <span class="n">B</span><span class="o">=</span><span class="n">B</span><span class="p">,</span> <span class="n">T</span><span class="o">=</span><span class="n">T</span><span class="p">,</span> <span class="n">L</span><span class="o">=</span><span class="n">L</span><span class="p">,</span> <span class="n">neig</span><span class="o">=</span><span class="n">neig</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="grouping_auto_pgram"><a class="viewcode-back" href="../../pyrssa.html#pyrssa.base.grouping_auto_pgram">[docs]</a><span class="k">def</span> <span class="nf">grouping_auto_pgram</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="n">SSA</span><span class="p">,</span> <span class="n">groups</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">base</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;series&quot;</span><span class="p">,</span> <span class="s2">&quot;eigen&quot;</span><span class="p">,</span> <span class="s2">&quot;factor&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;series&quot;</span><span class="p">,</span>
+<div class="viewcode-block" id="grouping_auto_pgram"><a class="viewcode-back" href="../../pyrssa.html#pyrssa.base.grouping_auto_pgram">[docs]</a><span class="k">def</span> <span class="nf">grouping_auto_pgram</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="n">SSABase</span><span class="p">,</span> <span class="n">groups</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">base</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;series&quot;</span><span class="p">,</span> <span class="s2">&quot;eigen&quot;</span><span class="p">,</span> <span class="s2">&quot;factor&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;series&quot;</span><span class="p">,</span>
                         <span class="n">freq_bins</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">threshold</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">method</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;constant&quot;</span><span class="p">,</span> <span class="s2">&quot;linear&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;constant&quot;</span><span class="p">,</span>
                         <span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-
     <span class="k">return</span> <span class="n">GroupPgram</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">x</span><span class="p">,</span> <span class="n">groups</span><span class="o">=</span><span class="n">groups</span><span class="p">,</span> <span class="n">base</span><span class="o">=</span><span class="n">base</span><span class="p">,</span> <span class="n">freq_bins</span><span class="o">=</span><span class="n">freq_bins</span><span class="p">,</span> <span class="n">threshold</span><span class="o">=</span><span class="n">threshold</span><span class="p">,</span>
                       <span class="n">method</span><span class="o">=</span><span class="n">method</span><span class="p">,</span> <span class="n">drop</span><span class="o">=</span><span class="n">drop</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="grouping_auto_wcor"><a class="viewcode-back" href="../../pyrssa.html#pyrssa.base.grouping_auto_wcor">[docs]</a><span class="k">def</span> <span class="nf">grouping_auto_wcor</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="n">SSA</span><span class="p">,</span> <span class="n">groups</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">nclust</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<div class="viewcode-block" id="grouping_auto_wcor"><a class="viewcode-back" href="../../pyrssa.html#pyrssa.base.grouping_auto_wcor">[docs]</a><span class="k">def</span> <span class="nf">grouping_auto_wcor</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="n">SSABase</span><span class="p">,</span> <span class="n">groups</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">nclust</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
     <span class="k">return</span> <span class="n">GroupWCor</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">x</span><span class="p">,</span> <span class="n">groups</span><span class="o">=</span><span class="n">groups</span><span class="p">,</span> <span class="n">nclust</span><span class="o">=</span><span class="n">nclust</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="grouping_auto"><a class="viewcode-back" href="../../pyrssa.html#pyrssa.base.grouping_auto">[docs]</a><span class="k">def</span> <span class="nf">grouping_auto</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="n">SSA</span><span class="p">,</span> <span class="n">grouping_method</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;pgram&quot;</span><span class="p">,</span> <span class="s2">&quot;wcor&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;pgram&quot;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="nd">@overload</span>
+<span class="k">def</span> <span class="nf">grouping_auto</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="n">SSABase</span><span class="p">,</span> <span class="n">grouping_method</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;pgram&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;pgram&quot;</span><span class="p">,</span> <span class="n">groups</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">nclust</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                  <span class="n">base</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;series&quot;</span><span class="p">,</span> <span class="s2">&quot;eigen&quot;</span><span class="p">,</span> <span class="s2">&quot;factor&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;series&quot;</span><span class="p">,</span> <span class="n">freq_bins</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">threshold</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+                  <span class="n">method</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;constant&quot;</span><span class="p">,</span> <span class="s2">&quot;linear&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;constant&quot;</span><span class="p">,</span> <span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">GroupPgram</span><span class="p">:</span>
+    <span class="o">...</span>
+
+
+<span class="nd">@overload</span>
+<span class="k">def</span> <span class="nf">grouping_auto</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="n">SSABase</span><span class="p">,</span> <span class="n">grouping_method</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;wcor&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;wcor&quot;</span><span class="p">,</span> <span class="n">groups</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">nclust</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                  <span class="n">base</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;series&quot;</span><span class="p">,</span> <span class="s2">&quot;eigen&quot;</span><span class="p">,</span> <span class="s2">&quot;factor&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;series&quot;</span><span class="p">,</span>
+                  <span class="n">freq_bins</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">threshold</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+                  <span class="n">method</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;ward.D&quot;</span><span class="p">,</span> <span class="s2">&quot;ward.D2&quot;</span><span class="p">,</span> <span class="s2">&quot;single&quot;</span><span class="p">,</span> <span class="s2">&quot;complete&quot;</span><span class="p">,</span>
+                  <span class="s2">&quot;average&quot;</span><span class="p">,</span> <span class="s2">&quot;mcquitty&quot;</span><span class="p">,</span> <span class="s2">&quot;median&quot;</span><span class="p">,</span> <span class="s2">&quot;centroid&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;complete&quot;</span><span class="p">,</span>
+                  <span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">GroupWCor</span><span class="p">:</span>
+    <span class="o">...</span>
+
+
+<div class="viewcode-block" id="grouping_auto"><a class="viewcode-back" href="../../pyrssa.html#pyrssa.base.grouping_auto">[docs]</a><span class="k">def</span> <span class="nf">grouping_auto</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="n">SSABase</span><span class="p">,</span> <span class="n">grouping_method</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;pgram&quot;</span><span class="p">,</span> <span class="n">groups</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">nclust</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                  <span class="n">base</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;series&quot;</span><span class="p">,</span> <span class="s2">&quot;eigen&quot;</span><span class="p">,</span> <span class="s2">&quot;factor&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;series&quot;</span><span class="p">,</span> <span class="n">freq_bins</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">threshold</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+                  <span class="n">method</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;constant&quot;</span><span class="p">,</span> <span class="s2">&quot;linear&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;constant&quot;</span><span class="p">,</span> <span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
     <span class="k">if</span> <span class="n">grouping_method</span> <span class="o">==</span> <span class="s2">&quot;pgram&quot;</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">grouping_auto_pgram</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">grouping_auto_pgram</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">groups</span><span class="o">=</span><span class="n">groups</span><span class="p">,</span> <span class="n">base</span><span class="o">=</span><span class="n">base</span><span class="p">,</span> <span class="n">freq_bins</span><span class="o">=</span><span class="n">freq_bins</span><span class="p">,</span> <span class="n">threshold</span><span class="o">=</span><span class="n">threshold</span><span class="p">,</span>
+                                   <span class="n">method</span><span class="o">=</span><span class="n">method</span><span class="p">,</span> <span class="n">drop</span><span class="o">=</span><span class="n">drop</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
     <span class="k">elif</span> <span class="n">grouping_method</span> <span class="o">==</span> <span class="s2">&quot;wcor&quot;</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">grouping_auto_wcor</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">grouping_auto_wcor</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">groups</span><span class="o">=</span><span class="n">groups</span><span class="p">,</span> <span class="n">nclust</span><span class="o">=</span><span class="n">nclust</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="n">method</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Grouping method </span><span class="si">{</span><span class="n">grouping_method</span><span class="si">}</span><span class="s2"> is not in available methods: &#39;pgram&#39;, &#39;wcor&#39;&quot;</span><span class="p">)</span></div>
+
+
+<span class="nd">@overload</span>
+<span class="k">def</span> <span class="nf">lrr</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="n">SSABase</span><span class="p">,</span> <span class="n">groups</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">reverse</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">groups</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">drop</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">BaseLRR</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">x</span><span class="p">,</span> <span class="n">groups</span><span class="o">=</span><span class="n">groups</span><span class="p">,</span> <span class="n">reverse</span><span class="o">=</span><span class="n">reverse</span><span class="p">,</span> <span class="n">drop</span><span class="o">=</span><span class="n">drop</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">LRR</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">x</span><span class="p">,</span> <span class="n">groups</span><span class="o">=</span><span class="n">groups</span><span class="p">,</span> <span class="n">reverse</span><span class="o">=</span><span class="n">reverse</span><span class="p">,</span> <span class="n">drop</span><span class="o">=</span><span class="n">drop</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="lrr"><a class="viewcode-back" href="../../pyrssa.html#pyrssa.base.lrr">[docs]</a><span class="k">def</span> <span class="nf">lrr</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">groups</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">reverse</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">eps</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">finfo</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span><span class="o">.</span><span class="n">eps</span><span class="p">),</span>
+        <span class="n">raw</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">orthonormalize</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">groups</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">drop</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">BaseLRR</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">x</span><span class="p">,</span> <span class="n">groups</span><span class="o">=</span><span class="n">groups</span><span class="p">,</span> <span class="n">reverse</span><span class="o">=</span><span class="n">reverse</span><span class="p">,</span> <span class="n">drop</span><span class="o">=</span><span class="n">drop</span><span class="p">,</span>
+                       <span class="n">eps</span><span class="o">=</span><span class="n">eps</span><span class="p">,</span> <span class="n">raw</span><span class="o">=</span><span class="n">raw</span><span class="p">,</span> <span class="n">orthonormalize</span><span class="o">=</span><span class="n">orthonormalize</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">LRR</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">x</span><span class="p">,</span> <span class="n">groups</span><span class="o">=</span><span class="n">groups</span><span class="p">,</span> <span class="n">reverse</span><span class="o">=</span><span class="n">reverse</span><span class="p">,</span> <span class="n">drop</span><span class="o">=</span><span class="n">drop</span><span class="p">,</span>
+                   <span class="n">eps</span><span class="o">=</span><span class="n">eps</span><span class="p">,</span> <span class="n">raw</span><span class="o">=</span><span class="n">raw</span><span class="p">,</span> <span class="n">orthonormalize</span><span class="o">=</span><span class="n">orthonormalize</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="spectrum"><a class="viewcode-back" href="../../pyrssa.html#pyrssa.base.spectrum">[docs]</a><span class="k">def</span> <span class="nf">spectrum</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">spans</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">kernel</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">taper</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span>
+             <span class="n">pad</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">fast</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">demean</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">detrend</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">Periodogram</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">spans</span><span class="o">=</span><span class="n">spans</span><span class="p">,</span> <span class="n">kernel</span><span class="o">=</span><span class="n">kernel</span><span class="p">,</span> <span class="n">taper</span><span class="o">=</span><span class="n">taper</span><span class="p">,</span>
+                       <span class="n">pad</span><span class="o">=</span><span class="n">pad</span><span class="p">,</span> <span class="n">fast</span><span class="o">=</span><span class="n">fast</span><span class="p">,</span> <span class="n">demean</span><span class="o">=</span><span class="n">demean</span><span class="p">,</span> <span class="n">detrend</span><span class="o">=</span><span class="n">detrend</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
 </pre></div>
 
            </div>

@@ -2,6 +2,7 @@ from pyrssa.classes.SSA import SSABase
 from pyrssa.classes.Parestimate import BaseParestimate
 from pyrssa.classes.LRR import BaseLRR
 from pyrssa.classes.Periodogram import Periodogram
+from pyrssa.docs import add_doc
 from pyrssa import SSA, IOSSA, FOSSA, Parestimate, LRR
 from pyrssa import Cadzow
 from pyrssa import Reconstruction
@@ -16,9 +17,11 @@ import rpy2.robjects.conversion as conversion
 import rpy2.robjects.packages as rpackages
 from rpy2.rinterface_lib import callbacks
 import pandas as pd
+import numpy
 import numpy as np
 import os
 from typing import overload, Literal, Union, Callable
+from collections.abc import Iterable
 import inspect
 
 # Set conversion rules
@@ -45,7 +48,6 @@ def _set_datetime_index(dataframe, name):
     dataframe.index.freq = dataframe.index.inferred_freq
 
 
-# Read pyrssa dataframes
 def data(name, datetime_index=None):
     """
     Function for loading available in pyrssa package datasets. Available datasets are stored in the data directory.
@@ -72,216 +74,141 @@ def data(name, datetime_index=None):
         return result
 
 
-def calc_v(x: SSABase, idx, **kwargs):
+@add_doc
+def calc_v(x: SSABase, idx: Union[int, list, range, numpy.ndarray], **kwargs) -> numpy.ndarray:
+    """
+    Generic function for the factor vector calculation given the SSA decomposition.
+
+    Parameters
+    ----------
+    x
+        SSA object holding the decomposition.
+    idx
+        indices of the factor vectors to compute.
+    kwargs
+        additional arguments.
+
+    Returns
+    -------
+        numpy array of suitable length (usually depends on SSA method and window length).
+
+
+    Examples
+    --------
+
+    .. code-block:: python
+
+        co2 = prs.data("co2")
+        # Decompose 'co2' series with default parameters
+        s = prs.ssa(co2)
+        # Calculate the 5th factor vector
+        v = prs.calc_v(s, 5)
+    """
     return np.asarray(r_ssa.calc_v(x=x, idx=idx, **kwargs)).T
 
 
-def parestimate(x, groups, method="esprit", subspace="column", normalize_roots=None, dimensions=None,
-                solve_method="ls", drop=True):
-    """
+@add_doc
+def parestimate(x: SSA, groups: list, method: Literal["esprit", "pairs"] = "esprit",
+                dimensions: list = None, subspace: Literal["column", "row"] = "column",
+                normalize_roots: list = None, solve_method: Literal["ls", "tls"] = "ls",
+                drop: bool = True, **kwargs) -> BaseParestimate | Parestimate:
+    r"""
     Function to estimate the parameters (frequencies and rates) given a set of SSA eigenvectors.
 
-    :param x: SSA object
-    :param groups: list of indices of eigenvectors to estimate from
-    :param method: For 1D-SSA,
-        Toeplitz SSA, and MSSA: parameter estimation method, 'esprit' for 1D-ESPRIT (Algorithm 3.3 in Golyandina et al.
-        (2018)), 'pairs' for rough estimation based on pair of eigenvectors (Algorithm 3.4 in Golyandina et al (2018)).
-        For nD-SSA: parameter estimation method. For now only 'esprit' is supported (Algorithm 5.6 in Golyandina et al.
-        (2018)). lowest dimension, when possible (length of groups is one)
-    :param subspace: which subspace will be used for parameter estimation
-    :param normalize_roots: logical vector or None, force signal roots to lie on unit circle.
+    Parameters
+    ----------
+    x:
+        SSA object
+    groups:
+        list of indices of eigenvectors to estimate from
+    method:
+        for 1D-SSA, Toeplitz SSA, and MSSA: parameter estimation method, 'esprit' for 1D-ESPRIT (Algorithm 3.3 in
+        Golyandina et al. (2018)), 'pairs' for rough estimation based on pair of eigenvectors (Algorithm 3.4 in
+        Golyandina et al (2018)). For nD-SSA: parameter estimation method. For now only 'esprit' is supported
+        (Algorithm 5.6 in Golyandina et al. (2018)). lowest dimension, when possible (length of groups is one)
+    dimensions:
+        a vector of dimension indices to perform ESPRIT along. None means all dimensions.
+    subspace:
+        which subspace will be used for parameter estimation
+    normalize_roots:
+        force signal roots to lie on unit circle.
         None means automatic selection: normalize iff circular topology OR Toeplitz SSA used
-    :param dimensions: a vector of dimension indices to perform ESPRIT along. None means all dimensions.
-    :param solve_method: approximate matrix equation solving method, 'ls' for least-squares,
+    solve_method:
+        approximate matrix equation solving method, 'ls' for least-squares,
         'tls' for total-least-squares.
-    :param drop: logical, if 'TRUE' then the result is coerced to the lowest dimension,
-        when possible (length of groups is one)
+    drop:
+        if True then the result is coerced to the lowest dimension,
+        when possible (length of groups is one).
+    **kwargs:
+        further arguments passed to 'decompose' routine, if necessary
 
-    :return:
+    Returns
+    -------
 
+        |Parestimate| For 1D-SSA (and Toeplitz) - a list of |BaseParestimate| objects. For method = 'pairs'
+        all moduli are set equal to 1 and all rates equal to 0. In all cases elements of the list have the same names
+        as elements of groups. If group is unnamed, corresponding component gets name ‘Fn’, where ‘n’ is its index in
+        groups list. If drop is True and length of groups is one, then |BaseParestimate| is returned.
+
+    Examples
+    --------
+
+    .. code-block:: python
+
+        co2 = prs.data("co2")
+        # Decompose 'co2' series with default parameters
+        s = prs.ssa(co2, neig=20)
+        # Estimate the periods from 2nd and 3rd eigenvectors using 'pairs' method
+        print(prs.parestimate(s, groups=[[2, 3]], method = "pairs"))
+        # Estimate the periods from 2nd, 3rd, 5th and 6th eigenvectors using ESPRIT
+        pe = prs.parestimate(s, groups=[[2, 3, 5, 6]], method="esprit")
+        print(pe)
+        prs.plot(pe)
     """
-    if len(groups) == 1:
-        return BaseParestimate(x=x, groups=groups, method=method, subspace=subspace,
-                               normalize_roots=normalize_roots, dimensions=dimensions,
-                               solve_method=solve_method, drop=drop)
-    else:
-        return Parestimate(x=x, groups=groups, method=method, subspace=subspace,
-                           normalize_roots=normalize_roots, dimensions=dimensions,
-                           solve_method=solve_method, drop=drop)
+    return Parestimate(x=x, groups=groups, method=method, dimensions=dimensions,
+                       subspace=subspace, normalize_roots=normalize_roots,
+                       solve_method=solve_method, drop=drop, **kwargs)
 
 
-def ssa(x, L: int = None, neig: int = None, mask=None, wmask=None,
+@add_doc
+def ssa(x: Iterable, L: int = None, neig: int = None, mask=None, wmask=None,
         kind: Literal["1d-ssa", "2d-ssa", "nd-ssa", "toeplitz-ssa", "mssa", "cssa"] = "1d-ssa", circular=False,
         svd_method: Literal["auto", "nutrlan", "propack", "svd", "eigen", "rspectra", "primme"] = "auto",
         column_projector="none", row_projector="none", column_oblique="identity",
         row_oblique="identity",  force_decompose: bool = True, **kwargs) -> SSA:
     """
-
-    :param x: object to be decomposed. If DataFrame passed, the first column will be treated as a series
-    :type x: pandas.DataFrame, pandas.Series, numpy.ndarray, list
-    :param L: window length. Fixed to half of the series length by default.
-        Should be vector of length 2 for 2d SSA
-    :type L: int, optional
-    :param neig: number of desired eigentriples. If None, then sane default value
-        will be used.
-    :type neig: int, optional
-    :param mask: for shaped 2d SSA case only. Logical matrix with same dimension as x.
-        Specifies form of decomposed array. If None, then all non-NA elements will be used
-    :param wmask: for shaped 2d SSA case only. Logical matrix which specifies window form.
-    :param kind: SSA method. This includes ordinary 1d SSA, 2d SSA, Toeplitz variant of 1d SSA, multichannel
-        variant of SSA and complex SSA. Defaults to 1d SSA.
-    :type kind: str, optional
-    :param circular: logical vector of one or two elements, describes series topology for 1d SSA and Toeplitz SSA
-        or field topology for 2d SSA. 'TRUE' means series circularity for 1d case or circularity
-        by a corresponding coordinate for 2d case. See Shlemov and Golyandina (2014) for more information.
-    :param column_projector, row_projector: column and row signal subspaces projectors for SSA with projection.
-    :type column_projector: str or int, optional
-    :type row_projector: str or int, optional
-    :param svd_method: 	singular value decomposition method.
-    :return: SSA object. The precise layout of the object is mostly meant opaque and subject to
-        change in different version of the package.
-    :rtype: SSA
-
-    Description
-    ===========
-
     Set up the SSA object and perform the decomposition, if necessary.
 
-    Details
-    ===========
+    Parameters
+    ----------
+    x:
+        object to be decomposed. If DataFrame passed, the first column will be treated as a series.
+    L:
+        window length. Fixed to half of the series length by default. Should be a vector of length 2 for 2d SSA.
+    neig:
+        number of desired eigentriples. If None, then sane default value will be used.
+    mask:
+        for shaped 2d SSA case only. Logical matrix with same dimension as x. Specifies form of decomposed array.
+         If None, then all non-NA elements will be used
+    wmask:
+        for shaped 2d SSA case only. Logical matrix which specifies window form.
+    kind:
+        SSA method. This includes ordinary 1d SSA, 2d SSA, Toeplitz variant of 1d SSA, multichannel
+        variant of SSA and complex SSA. Defaults to 1d SSA.
+    circular:
+        logical vector of one or two elements, describes series topology for 1d SSA and Toeplitz SSA
+        or field topology for 2d SSA. 'TRUE' means series circularity for 1d case or circularity
+        by a corresponding coordinate for 2d case. See Shlemov and Golyandina (2014) for more information.
+    column_projector, row_projector:
+        column and row signal subspaces projectors for SSA with projection.
+    svd_method:
+        singular value decomposition method.
 
-    This is the main entry point to the package. This routine constructs the SSA object filling all necessary
-    internal structures and performing the decomposition if necessary. For the comprehensive description of SSA
-    modifications and their algorithms see Golyandina et al. (2018).
+    Returns
+    -------
 
-    Variants of SSA
-    ---------------
-
-    The following implementations of the SSA method are supported (corresponds to different values of kind argument):
-
-    * 1d-ssa
-
-        Basic 1d SSA as described in Chapter 1 of Golyandina et al. (2001). This is also known as Broomhead-King
-        variant of SSA or BK-SSA, see Broomhead and King (1986).
-
-    * toeplitz-ssa
-
-        Toeplitz variant of 1d SSA. See Section 1.7.2 in Golyandina et al. (2001). This is also known
-        as Vautard-Ghil variant of SSA or VG-SSA for analysis of stationary time series, see Vautard and Ghil (1989).
-
-    * mssa
-
-        Multichannel SSA for simultaneous decomposition of several time series (possible of unequal length). See
-        Golyandina and Stepanov (2005).
-
-    * cssa
-
-        Complex variant of 1d SSA.
-
-    * 2d-ssa
-
-        2d SSA for decomposition of images and arrays. See Golyandina and Usevich (2009) and Golyandina et al. (2015)
-        for more information.
-
-    * nd-ssa
-
-        Multidimensional SSA decomposition for arrays (tensors).
-
-    Window shape selection (for shaped 2d SSA)
-    ------------------------------------------
-
-    Window shape may be specified by argument wmask. If wmask is 'NULL', then standard rectangular window (specified
-    by L) will be used.
-
-    * circle(R)
-
-        circular mask of radius R
-
-    * triangle(side)
-
-        mask in form of isosceles right-angled triangle with cathetus side. Right angle lay on top left corner of
-        container square matrix
-
-    Also in wmask one may use following functions:
-
-    These functions are not exported, they defined only for wmask expression. If one has objects with the same names
-    and wants to use them rather than these functions, one should use special wrapper function I() (see 'Examples').
-
-    Projectors specification for SSA with projection
-    ------------------------------------------------
-
-    Projectors are specified by means of column.projector and row.projector arguments (see Golyandina and Shlemov (
-    2017)). Each may be a matrix of orthonormal (otherwise QR orthonormalization process will be performed) basis of
-    projection subspace, or single integer, which will be interpreted as dimension of orthogonal polynomial basis (
-    note that the dimension equals to degree plus 1, e.g. quadratic basis has dimension 3), or one of following
-    character strings (or unique prefix): 'none', 'constant' (or 'centering'), 'linear', 'quadratic' or 'qubic' for
-    orthonormal bases of the corresponding functions.
-
-    Here is the list of the most used options
-
-    * both projectors are 'none'
-
-        corresponds to ordinary 1D SSA,
-
-    * column.projector='centering'
-
-        corresponds to 1D SSA with centering,
-
-    * column.projector='centering' and row.projector='centering'
-
-        corresponds to 1D SSA with double centering.
-
-    SSA with centering and double centering may improve the separation of linear trend (see Golyandina et al. (2001)
-    for more information).
-
-    SVD methods
-    -----------
-
-    The main step of the SSA method is the singular decomposition of the so-called series trajectory matrix. Package
-    provides several implementations of this procedure (corresponds to different values of svd.method) argument:
-
-    * auto
-
-        Automatic method selection depending on the series length, window length, SSA kind and number of eigenvalues
-        requested.
-
-    * nutrlan
-
-        Thick-restart Lanczos eigensolver which operates on cross-product matrix. These methods exploit the Hankel
-        structure of the trajectory matrix efficiently and is really fast. The method allows the truncated SVD (only
-        specified amount of eigentriples to be computed) and the continuation of the decomposition. See Korobeynikov (
-        2010) for more information.
-
-    * propack
-
-        SVD via implicitly restarted Lanczos bidiagonalization with partial reorthogonalization. These methods exploit
-        the Hankel structure of the trajectory matrix efficiently and is really fast. This is the 'proper' SVD
-        implementation (the matrix of factor vectors are calculated), thus the memory requirements of the methods are
-        higher than for nu-TRLAN. Usually the method is slightly faster that nu-TRLAN and more numerically stable.
-        The method allows the truncated SVD (only specified amount of eigentriples to be computed). See Korobeynikov (
-        2010) for more information.
-
-    * svd
-
-        Full SVD as provided by LAPACK DGESDD routine. Neither continuation of the decomposition nor the truncated
-        SVD is supported. The method does not assume anything special about the trajectory matrix and thus is slow.
-
-    * eigen
-
-        Full SVD via eigendecompsition of the cross-product matrix. In many cases faster than previous method,
-        but still really slow for more or less non-trivial matrix sizes.
-
-    * rspectra
-
-        SVD via svds function from Rspectra package (if installed)
-
-    * primme
-
-        SVD via svds function from PRIMME package (if installed)
-
-    Usually the ssa function tries to provide the best SVD implementation for given series length and the window
-    size. In particular, for small series and window sizes it is better to use generic black-box routines (as
-    provided by 'svd' and 'eigen' methods). For long series special-purpose routines are to be used.
+        SSA object. The precise layout of the object is mostly meant opaque and subject to
+        change in different version of the package.
 
     Examples
     --------

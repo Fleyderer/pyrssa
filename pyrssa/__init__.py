@@ -4,9 +4,9 @@ import platform
 if os.environ.get("R_HOME") is None:
 
     if platform.system() == "Windows":
-        path = r"C:\Program Files\R"
-        if os.path.exists(path):
-            os.environ["R_HOME"] = os.path.join(path, os.listdir(path)[-1])
+        _path = r"C:\Program Files\R"
+        if os.path.exists(_path):
+            os.environ["R_HOME"] = os.path.join(_path, os.listdir(_path)[-1])
         else:
             raise FileNotFoundError("R_HOME variable does not exist")
     else:

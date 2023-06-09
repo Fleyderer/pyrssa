@@ -9,14 +9,8 @@ r_ssa = rpackages.importr('Rssa')
 
 class BaseParestimate:
 
-    def __init__(self, par_obj=None, x: SSABase = None, groups=None, method="esprit", subspace="column",
-                 normalize_roots=None, dimensions=None, solve_method="ls", drop=True):
-        if par_obj is not None:
-            self.obj = par_obj
-        else:
-            self.obj = r_ssa.parestimate(x=x, groups=groups, method=method, subspace=subspace,
-                                         normalize_roots=normalize_roots, dimensions=dimensions,
-                                         solve_method=solve_method, drop=drop)
+    def __init__(self, par_obj):
+        self.obj = par_obj
 
     @cached_property
     def roots(self):
@@ -54,13 +48,19 @@ class BaseParestimate:
 class Parestimate:
     """@DynamicAttrs"""
 
-    def __init__(self, x: SSABase, groups, method="esprit", subspace="column", normalize_roots=None,
-                 dimensions=None, solve_method="ls", drop=True):
+    def __new__(cls, x: SSABase, groups, method="esprit", dimensions=None, subspace="column",
+                normalize_roots=None, solve_method="ls", drop=True, **kwargs):
 
-        self.obj = r_ssa.parestimate(x=x, groups=groups, method=method, subspace=subspace,
-                                     normalize_roots=normalize_roots, dimensions=dimensions,
-                                     solve_method=solve_method, drop=drop)
-        self.names = list(robjects.r.names(self.obj))
+        par_obj = r_ssa.parestimate(x=x, groups=groups, method=method, subspace=subspace,
+                                    dimensions=dimensions, **{"normalize.roots": normalize_roots},
+                                    **{"solve.method": solve_method}, drop=drop, **kwargs)
+        if drop and len(groups) == 1:
+            return BaseParestimate(par_obj=par_obj)
+        else:
+            instance = super().__new__(cls)
+            cls.obj = par_obj
+            cls.names = robjects.r.names(cls.obj)
+            return instance
 
     def __getattribute__(self, item) -> BaseParestimate:
         try:
@@ -89,7 +89,7 @@ class Parestimate:
         return zip(self.keys(), self.values())
 
     def __str__(self):
-        return str(self.obj)
+        return "\n".join([f"{name}:\n{self.__getattribute__(name)}" for name in self.names])
 
     def __repr__(self):
         return self.__str__()

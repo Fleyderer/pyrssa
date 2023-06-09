@@ -6,11 +6,13 @@
   <title>Index &mdash; pyrssa 1.0.6 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/funcsigs.css" type="text/css" />
   <!--[if lt IE 9]>
     <script src="_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
         <script src="_static/doctools.js"></script>
         <script src="_static/sphinx_highlight.js"></script>
@@ -80,12 +82,14 @@
  | <a href="#G"><strong>G</strong></a>
  | <a href="#H"><strong>H</strong></a>
  | <a href="#I"><strong>I</strong></a>
+ | <a href="#K"><strong>K</strong></a>
  | <a href="#L"><strong>L</strong></a>
  | <a href="#M"><strong>M</strong></a>
  | <a href="#N"><strong>N</strong></a>
  | <a href="#P"><strong>P</strong></a>
  | <a href="#R"><strong>R</strong></a>
  | <a href="#S"><strong>S</strong></a>
+ | <a href="#U"><strong>U</strong></a>
  | <a href="#V"><strong>V</strong></a>
  | <a href="#W"><strong>W</strong></a>
  
@@ -93,10 +97,14 @@
 <h2 id="B">B</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="pyrssa.classes.html#pyrssa.classes.Forecast.BForecast">BForecast (class in pyrssa.classes.Forecast)</a>
+      <li><a href="pyrssa.classes.html#pyrssa.classes.Forecast.BaseForecast">BaseForecast (class in pyrssa.classes.Forecast)</a>
+</li>
+      <li><a href="pyrssa.classes.html#pyrssa.classes.Parestimate.BaseParestimate">BaseParestimate (class in pyrssa.classes.Parestimate)</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="pyrssa.classes.html#pyrssa.classes.Forecast.BForecast">BForecast (class in pyrssa.classes.Forecast)</a>
+</li>
       <li><a href="pyrssa.html#pyrssa.base.bforecast">bforecast() (in module pyrssa.base)</a>
 </li>
   </ul></td>
@@ -105,12 +113,24 @@
 <h2 id="C">C</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="pyrssa.classes.html#pyrssa.classes.SSA.IOSSA.contributions">contributions() (IOSSA method)</a>
+      <li><a href="pyrssa.html#pyrssa.base.cadzow">cadzow() (in module pyrssa.base)</a>
+</li>
+      <li><a href="pyrssa.html#pyrssa.base.calc_v">calc_v() (in module pyrssa.base)</a>
+</li>
+      <li><a href="pyrssa.html#pyrssa.conversion.collection_conversion">collection_conversion() (in module pyrssa.conversion)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="pyrssa.classes.html#pyrssa.classes.SSA.FOSSA.contributions">contributions() (FOSSA method)</a>
 
       <ul>
+        <li><a href="pyrssa.classes.html#pyrssa.classes.SSA.IOSSA.contributions">(IOSSA method)</a>
+</li>
         <li><a href="pyrssa.classes.html#pyrssa.classes.SSA.SSA.contributions">(SSA method)</a>
 </li>
       </ul></li>
+      <li><a href="pyrssa.html#pyrssa.conversion.convert">convert() (in module pyrssa.conversion)</a>
+</li>
   </ul></td>
 </tr></table>
 
@@ -121,23 +141,31 @@
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="pyrssa.html#pyrssa.conversion.dict_to_vec">dict_to_vec() (in module pyrssa.conversion)</a>
+      <li><a href="pyrssa.classes.html#pyrssa.classes.Forecast.BaseForecast.df">df (BaseForecast property)</a>
+
+      <ul>
+        <li><a href="pyrssa.classes.html#pyrssa.classes.Forecast.Forecast.df">(Forecast property)</a>
 </li>
+      </ul></li>
   </ul></td>
 </tr></table>
 
 <h2 id="F">F</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="pyrssa.classes.html#pyrssa.classes.SSA.IOSSA.F">F (IOSSA property)</a>
-
-      <ul>
-        <li><a href="pyrssa.classes.html#pyrssa.classes.SSA.SSA.F">(SSA property)</a>
+      <li><a href="pyrssa.classes.html#pyrssa.classes.Forecast.Forecast.fitted">fitted (Forecast property)</a>
 </li>
-      </ul></li>
+      <li><a href="pyrssa.classes.html#pyrssa.classes.Forecast.Forecast">Forecast (class in pyrssa.classes.Forecast)</a>
+</li>
+      <li><a href="pyrssa.html#pyrssa.base.forecast">forecast() (in module pyrssa.base)</a>
+</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="pyrssa.html#pyrssa.conversion.FloatVector">FloatVector (class in pyrssa.conversion)</a>
+      <li><a href="pyrssa.classes.html#pyrssa.classes.SSA.FOSSA">FOSSA (class in pyrssa.classes.SSA)</a>
+</li>
+      <li><a href="pyrssa.html#pyrssa.base.fossa">fossa() (in module pyrssa.base)</a>
+</li>
+      <li><a href="pyrssa.classes.html#pyrssa.classes.Parestimate.BaseParestimate.frequencies">frequencies (BaseParestimate property)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -145,7 +173,7 @@
 <h2 id="G">G</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="pyrssa.html#pyrssa.conversion.get_time_index">get_time_index() (in module pyrssa.conversion)</a>
+      <li><a href="pyrssa.html#pyrssa.base.gapfill">gapfill() (in module pyrssa.base)</a>
 </li>
       <li><a href="pyrssa.html#pyrssa.base.grouping_auto">grouping_auto() (in module pyrssa.base)</a>
 </li>
@@ -169,33 +197,61 @@
 <h2 id="I">I</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="pyrssa.html#pyrssa.installer.install_required">install_required() (in module pyrssa.installer)</a>
+      <li><a href="pyrssa.html#pyrssa.base.igapfill">igapfill() (in module pyrssa.base)</a>
 </li>
-      <li><a href="pyrssa.html#pyrssa.conversion.IntVector">IntVector (class in pyrssa.conversion)</a>
+      <li><a href="pyrssa.html#pyrssa.installer.install_required">install_required() (in module pyrssa.installer)</a>
 </li>
       <li><a href="pyrssa.classes.html#pyrssa.classes.SSA.IOSSA">IOSSA (class in pyrssa.classes.SSA)</a>
 </li>
       <li><a href="pyrssa.html#pyrssa.base.iossa">iossa() (in module pyrssa.base)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="pyrssa.classes.html#pyrssa.classes.SSA.IOSSA.iossa_groups">iossa_groups (IOSSA property)</a>
 </li>
       <li><a href="pyrssa.html#pyrssa.conversion.is_arr_of_type">is_arr_of_type() (in module pyrssa.conversion)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="pyrssa.html#pyrssa.conversion.is_arr_of_types">is_arr_of_types() (in module pyrssa.conversion)</a>
 </li>
       <li><a href="pyrssa.html#pyrssa.conversion.is_float_arr">is_float_arr() (in module pyrssa.conversion)</a>
 </li>
       <li><a href="pyrssa.html#pyrssa.conversion.is_int_arr">is_int_arr() (in module pyrssa.conversion)</a>
 </li>
-      <li><a href="pyrssa.html#pyrssa.conversion.is_of_int_lists_arr">is_of_int_lists_arr() (in module pyrssa.conversion)</a>
+      <li><a href="pyrssa.html#pyrssa.conversion.is_iterable">is_iterable() (in module pyrssa.conversion)</a>
 </li>
+      <li><a href="pyrssa.html#pyrssa.conversion.is_list">is_list() (in module pyrssa.conversion)</a>
+</li>
+      <li><a href="pyrssa.classes.html#pyrssa.classes.Parestimate.Parestimate.items">items() (Parestimate method)</a>
+
+      <ul>
+        <li><a href="pyrssa.classes.html#pyrssa.classes.Resonstruction.Reconstruction.items">(Reconstruction method)</a>
+</li>
+      </ul></li>
+  </ul></td>
+</tr></table>
+
+<h2 id="K">K</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="pyrssa.classes.html#pyrssa.classes.Parestimate.Parestimate.keys">keys() (Parestimate method)</a>
+
+      <ul>
+        <li><a href="pyrssa.classes.html#pyrssa.classes.Resonstruction.Reconstruction.keys">(Reconstruction method)</a>
+</li>
+      </ul></li>
   </ul></td>
 </tr></table>
 
 <h2 id="L">L</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="pyrssa.html#pyrssa.conversion.list_to_vec">list_to_vec() (in module pyrssa.conversion)</a>
+      <li><a href="pyrssa.classes.html#pyrssa.classes.Forecast.Forecast.level">level (Forecast property)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="pyrssa.classes.html#pyrssa.classes.Forecast.Forecast.lower">lower (Forecast property)</a>
+</li>
+      <li><a href="pyrssa.html#pyrssa.base.lrr">lrr() (in module pyrssa.base)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -203,7 +259,9 @@
 <h2 id="M">M</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="pyrssa.html#pyrssa.conversion.make_time_index">make_time_index() (in module pyrssa.conversion)</a>
+      <li><a href="pyrssa.classes.html#pyrssa.classes.Forecast.Forecast.mean">mean (Forecast property)</a>
+</li>
+      <li><a href="pyrssa.classes.html#pyrssa.classes.Forecast.Forecast.method">method (Forecast property)</a>
 </li>
       <li>
     module
@@ -229,6 +287,10 @@
 </li>
       </ul></li>
   </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="pyrssa.classes.html#pyrssa.classes.Parestimate.BaseParestimate.moduli">moduli (BaseParestimate property)</a>
+</li>
+  </ul></td>
 </tr></table>
 
 <h2 id="N">N</h2>
@@ -236,23 +298,29 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="pyrssa.html#pyrssa.conversion.none_to_null">none_to_null() (in module pyrssa.conversion)</a>
 </li>
-      <li><a href="pyrssa.classes.html#pyrssa.classes.SSA.IOSSA.nsigma">nsigma() (IOSSA method)</a>
+      <li><a href="pyrssa.classes.html#pyrssa.classes.SSA.FOSSA.nsigma">nsigma() (FOSSA method)</a>
 
       <ul>
+        <li><a href="pyrssa.classes.html#pyrssa.classes.SSA.IOSSA.nsigma">(IOSSA method)</a>
+</li>
         <li><a href="pyrssa.classes.html#pyrssa.classes.SSA.SSA.nsigma">(SSA method)</a>
+</li>
+      </ul></li>
+      <li><a href="pyrssa.classes.html#pyrssa.classes.SSA.FOSSA.nspecial">nspecial() (FOSSA method)</a>
+
+      <ul>
+        <li><a href="pyrssa.classes.html#pyrssa.classes.SSA.IOSSA.nspecial">(IOSSA method)</a>
+</li>
+        <li><a href="pyrssa.classes.html#pyrssa.classes.SSA.SSA.nspecial">(SSA method)</a>
 </li>
       </ul></li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="pyrssa.classes.html#pyrssa.classes.SSA.IOSSA.nspecial">nspecial() (IOSSA method)</a>
+      <li><a href="pyrssa.classes.html#pyrssa.classes.SSA.FOSSA.nu">nu() (FOSSA method)</a>
 
       <ul>
-        <li><a href="pyrssa.classes.html#pyrssa.classes.SSA.SSA.nspecial">(SSA method)</a>
+        <li><a href="pyrssa.classes.html#pyrssa.classes.SSA.IOSSA.nu">(IOSSA method)</a>
 </li>
-      </ul></li>
-      <li><a href="pyrssa.classes.html#pyrssa.classes.SSA.IOSSA.nu">nu() (IOSSA method)</a>
-
-      <ul>
         <li><a href="pyrssa.classes.html#pyrssa.classes.SSA.SSA.nu">(SSA method)</a>
 </li>
       </ul></li>
@@ -265,6 +333,8 @@
       <li><a href="pyrssa.classes.html#pyrssa.classes.Parestimate.Parestimate">Parestimate (class in pyrssa.classes.Parestimate)</a>
 </li>
       <li><a href="pyrssa.html#pyrssa.base.parestimate">parestimate() (in module pyrssa.base)</a>
+</li>
+      <li><a href="pyrssa.classes.html#pyrssa.classes.Parestimate.BaseParestimate.periods">periods (BaseParestimate property)</a>
 </li>
       <li>
     pyrssa.base
@@ -339,19 +409,27 @@
 <h2 id="R">R</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="pyrssa.html#pyrssa.conversion.r_list">r_list() (in module pyrssa.conversion)</a>
-</li>
       <li><a href="pyrssa.html#pyrssa.conversion.range_to_vec">range_to_vec() (in module pyrssa.conversion)</a>
+</li>
+      <li><a href="pyrssa.classes.html#pyrssa.classes.Parestimate.BaseParestimate.rates">rates (BaseParestimate property)</a>
 </li>
       <li><a href="pyrssa.html#pyrssa.base.reconstruct">reconstruct() (in module pyrssa.base)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="pyrssa.classes.html#pyrssa.classes.Resonstruction.Reconstruction">Reconstruction (class in pyrssa.classes.Resonstruction)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="pyrssa.classes.html#pyrssa.classes.Forecast.Forecast.residuals">residuals (Forecast property)</a>
+
+      <ul>
+        <li><a href="pyrssa.classes.html#pyrssa.classes.Resonstruction.Reconstruction.residuals">(Reconstruction property)</a>
+</li>
+      </ul></li>
       <li><a href="pyrssa.classes.html#pyrssa.classes.Forecast.RForecast">RForecast (class in pyrssa.classes.Forecast)</a>
 </li>
       <li><a href="pyrssa.html#pyrssa.base.rforecast">rforecast() (in module pyrssa.base)</a>
+</li>
+      <li><a href="pyrssa.classes.html#pyrssa.classes.Parestimate.BaseParestimate.roots">roots (BaseParestimate property)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -359,13 +437,57 @@
 <h2 id="S">S</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="pyrssa.classes.html#pyrssa.classes.SSA.SSA">SSA (class in pyrssa.classes.SSA)</a>
+      <li><a href="pyrssa.html#pyrssa.base.seed">seed() (in module pyrssa.base)</a>
 </li>
+      <li><a href="pyrssa.classes.html#pyrssa.classes.SSA.FOSSA.series">series (FOSSA property)</a>
+
+      <ul>
+        <li><a href="pyrssa.classes.html#pyrssa.classes.SSA.IOSSA.series">(IOSSA property)</a>
+</li>
+        <li><a href="pyrssa.classes.html#pyrssa.classes.Resonstruction.Reconstruction.series">(Reconstruction property)</a>
+</li>
+        <li><a href="pyrssa.classes.html#pyrssa.classes.SSA.SSA.series">(SSA property)</a>
+</li>
+      </ul></li>
+      <li><a href="pyrssa.classes.html#pyrssa.classes.SSA.FOSSA.sigma">sigma (FOSSA property)</a>
+
+      <ul>
+        <li><a href="pyrssa.classes.html#pyrssa.classes.SSA.IOSSA.sigma">(IOSSA property)</a>
+</li>
+        <li><a href="pyrssa.classes.html#pyrssa.classes.SSA.SSA.sigma">(SSA property)</a>
+</li>
+      </ul></li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="pyrssa.html#pyrssa.base.spectrum">spectrum() (in module pyrssa.base)</a>
+</li>
+      <li><a href="pyrssa.classes.html#pyrssa.classes.SSA.SSA">SSA (class in pyrssa.classes.SSA)</a>
+</li>
       <li><a href="pyrssa.html#pyrssa.base.ssa">ssa() (in module pyrssa.base)</a>
 </li>
-      <li><a href="pyrssa.classes.html#pyrssa.classes.SSA.IOSSA.summary">summary() (IOSSA method)</a>
+      <li><a href="pyrssa.classes.html#pyrssa.classes.SSA.FOSSA.summary">summary() (FOSSA method)</a>
+
+      <ul>
+        <li><a href="pyrssa.classes.html#pyrssa.classes.SSA.IOSSA.summary">(IOSSA method)</a>
+</li>
+      </ul></li>
+  </ul></td>
+</tr></table>
+
+<h2 id="U">U</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="pyrssa.classes.html#pyrssa.classes.SSA.FOSSA.U">U (FOSSA property)</a>
+
+      <ul>
+        <li><a href="pyrssa.classes.html#pyrssa.classes.SSA.IOSSA.U">(IOSSA property)</a>
+</li>
+        <li><a href="pyrssa.classes.html#pyrssa.classes.SSA.SSA.U">(SSA property)</a>
+</li>
+      </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="pyrssa.classes.html#pyrssa.classes.Forecast.Forecast.upper">upper (Forecast property)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -373,10 +495,24 @@
 <h2 id="V">V</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="pyrssa.classes.html#pyrssa.classes.Forecast.VForecast">VForecast (class in pyrssa.classes.Forecast)</a>
+      <li><a href="pyrssa.classes.html#pyrssa.classes.SSA.FOSSA.V">V (FOSSA property)</a>
+
+      <ul>
+        <li><a href="pyrssa.classes.html#pyrssa.classes.SSA.IOSSA.V">(IOSSA property)</a>
 </li>
+        <li><a href="pyrssa.classes.html#pyrssa.classes.SSA.SSA.V">(SSA property)</a>
+</li>
+      </ul></li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="pyrssa.classes.html#pyrssa.classes.Parestimate.Parestimate.values">values() (Parestimate method)</a>
+
+      <ul>
+        <li><a href="pyrssa.classes.html#pyrssa.classes.Resonstruction.Reconstruction.values">(Reconstruction method)</a>
+</li>
+      </ul></li>
+      <li><a href="pyrssa.classes.html#pyrssa.classes.Forecast.VForecast">VForecast (class in pyrssa.classes.Forecast)</a>
+</li>
       <li><a href="pyrssa.html#pyrssa.base.vforecast">vforecast() (in module pyrssa.base)</a>
 </li>
   </ul></td>

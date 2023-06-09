@@ -7,14 +7,17 @@
   <title>Structures &mdash; pyrssa 1.0.6 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/funcsigs.css" type="text/css" />
   <!--[if lt IE 9]>
     <script src="_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
         <script src="_static/doctools.js"></script>
         <script src="_static/sphinx_highlight.js"></script>
+        <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
@@ -54,34 +57,40 @@
 </li>
 <li class="toctree-l1"><a class="reference internal" href="#module-pyrssa.base">Functions</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#pyrssa.base.bforecast"><code class="docutils literal notranslate"><span class="pre">bforecast()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#pyrssa.base.cadzow"><code class="docutils literal notranslate"><span class="pre">cadzow()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#pyrssa.base.calc_v"><code class="docutils literal notranslate"><span class="pre">calc_v()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#pyrssa.base.data"><code class="docutils literal notranslate"><span class="pre">data()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#pyrssa.base.forecast"><code class="docutils literal notranslate"><span class="pre">forecast()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#pyrssa.base.fossa"><code class="docutils literal notranslate"><span class="pre">fossa()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#pyrssa.base.gapfill"><code class="docutils literal notranslate"><span class="pre">gapfill()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#pyrssa.base.grouping_auto"><code class="docutils literal notranslate"><span class="pre">grouping_auto()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#pyrssa.base.grouping_auto_pgram"><code class="docutils literal notranslate"><span class="pre">grouping_auto_pgram()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#pyrssa.base.grouping_auto_wcor"><code class="docutils literal notranslate"><span class="pre">grouping_auto_wcor()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#pyrssa.base.hmatr"><code class="docutils literal notranslate"><span class="pre">hmatr()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#pyrssa.base.igapfill"><code class="docutils literal notranslate"><span class="pre">igapfill()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#pyrssa.base.iossa"><code class="docutils literal notranslate"><span class="pre">iossa()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#pyrssa.base.lrr"><code class="docutils literal notranslate"><span class="pre">lrr()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#pyrssa.base.parestimate"><code class="docutils literal notranslate"><span class="pre">parestimate()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#pyrssa.base.reconstruct"><code class="docutils literal notranslate"><span class="pre">reconstruct()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#pyrssa.base.rforecast"><code class="docutils literal notranslate"><span class="pre">rforecast()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#pyrssa.base.seed"><code class="docutils literal notranslate"><span class="pre">seed()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#pyrssa.base.spectrum"><code class="docutils literal notranslate"><span class="pre">spectrum()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#pyrssa.base.ssa"><code class="docutils literal notranslate"><span class="pre">ssa()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#pyrssa.base.vforecast"><code class="docutils literal notranslate"><span class="pre">vforecast()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#pyrssa.base.wcor"><code class="docutils literal notranslate"><span class="pre">wcor()</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="#module-pyrssa.conversion">Conversions</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#pyrssa.conversion.FloatVector"><code class="docutils literal notranslate"><span class="pre">FloatVector</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="#pyrssa.conversion.IntVector"><code class="docutils literal notranslate"><span class="pre">IntVector</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="#pyrssa.conversion.dict_to_vec"><code class="docutils literal notranslate"><span class="pre">dict_to_vec()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="#pyrssa.conversion.get_time_index"><code class="docutils literal notranslate"><span class="pre">get_time_index()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#pyrssa.conversion.collection_conversion"><code class="docutils literal notranslate"><span class="pre">collection_conversion()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#pyrssa.conversion.convert"><code class="docutils literal notranslate"><span class="pre">convert()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#pyrssa.conversion.is_arr_of_type"><code class="docutils literal notranslate"><span class="pre">is_arr_of_type()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#pyrssa.conversion.is_arr_of_types"><code class="docutils literal notranslate"><span class="pre">is_arr_of_types()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#pyrssa.conversion.is_float_arr"><code class="docutils literal notranslate"><span class="pre">is_float_arr()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#pyrssa.conversion.is_int_arr"><code class="docutils literal notranslate"><span class="pre">is_int_arr()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="#pyrssa.conversion.is_of_int_lists_arr"><code class="docutils literal notranslate"><span class="pre">is_of_int_lists_arr()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="#pyrssa.conversion.list_to_vec"><code class="docutils literal notranslate"><span class="pre">list_to_vec()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="#pyrssa.conversion.make_time_index"><code class="docutils literal notranslate"><span class="pre">make_time_index()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#pyrssa.conversion.is_iterable"><code class="docutils literal notranslate"><span class="pre">is_iterable()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#pyrssa.conversion.is_list"><code class="docutils literal notranslate"><span class="pre">is_list()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#pyrssa.conversion.none_to_null"><code class="docutils literal notranslate"><span class="pre">none_to_null()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#pyrssa.conversion.pyrssa_to_rssa"><code class="docutils literal notranslate"><span class="pre">pyrssa_to_rssa()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="#pyrssa.conversion.r_list"><code class="docutils literal notranslate"><span class="pre">r_list()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#pyrssa.conversion.range_to_vec"><code class="docutils literal notranslate"><span class="pre">range_to_vec()</span></code></a></li>
 </ul>
 </li>
@@ -121,35 +130,88 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="pyrssa.classes.html">Forecast</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="pyrssa.classes.html#pyrssa.classes.Forecast.BForecast"><code class="docutils literal notranslate"><span class="pre">BForecast</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="pyrssa.classes.html#pyrssa.classes.Forecast.BaseForecast"><code class="docutils literal notranslate"><span class="pre">BaseForecast</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="pyrssa.classes.html#pyrssa.classes.Forecast.BaseForecast.df"><code class="docutils literal notranslate"><span class="pre">BaseForecast.df</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="pyrssa.classes.html#pyrssa.classes.Forecast.Forecast"><code class="docutils literal notranslate"><span class="pre">Forecast</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="pyrssa.classes.html#pyrssa.classes.Forecast.Forecast.df"><code class="docutils literal notranslate"><span class="pre">Forecast.df</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyrssa.classes.html#pyrssa.classes.Forecast.Forecast.fitted"><code class="docutils literal notranslate"><span class="pre">Forecast.fitted</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyrssa.classes.html#pyrssa.classes.Forecast.Forecast.level"><code class="docutils literal notranslate"><span class="pre">Forecast.level</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyrssa.classes.html#pyrssa.classes.Forecast.Forecast.lower"><code class="docutils literal notranslate"><span class="pre">Forecast.lower</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyrssa.classes.html#pyrssa.classes.Forecast.Forecast.mean"><code class="docutils literal notranslate"><span class="pre">Forecast.mean</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyrssa.classes.html#pyrssa.classes.Forecast.Forecast.method"><code class="docutils literal notranslate"><span class="pre">Forecast.method</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyrssa.classes.html#pyrssa.classes.Forecast.Forecast.residuals"><code class="docutils literal notranslate"><span class="pre">Forecast.residuals</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyrssa.classes.html#pyrssa.classes.Forecast.Forecast.upper"><code class="docutils literal notranslate"><span class="pre">Forecast.upper</span></code></a></li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="pyrssa.classes.html#pyrssa.classes.Forecast.RForecast"><code class="docutils literal notranslate"><span class="pre">RForecast</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="pyrssa.classes.html#pyrssa.classes.Forecast.VForecast"><code class="docutils literal notranslate"><span class="pre">VForecast</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="pyrssa.classes.html#module-pyrssa.classes.Parestimate">Parestimate</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="pyrssa.classes.html#pyrssa.classes.Parestimate.Parestimate"><code class="docutils literal notranslate"><span class="pre">Parestimate</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="pyrssa.classes.html#pyrssa.classes.Parestimate.BaseParestimate"><code class="docutils literal notranslate"><span class="pre">BaseParestimate</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="pyrssa.classes.html#pyrssa.classes.Parestimate.BaseParestimate.frequencies"><code class="docutils literal notranslate"><span class="pre">BaseParestimate.frequencies</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyrssa.classes.html#pyrssa.classes.Parestimate.BaseParestimate.moduli"><code class="docutils literal notranslate"><span class="pre">BaseParestimate.moduli</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyrssa.classes.html#pyrssa.classes.Parestimate.BaseParestimate.periods"><code class="docutils literal notranslate"><span class="pre">BaseParestimate.periods</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyrssa.classes.html#pyrssa.classes.Parestimate.BaseParestimate.rates"><code class="docutils literal notranslate"><span class="pre">BaseParestimate.rates</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyrssa.classes.html#pyrssa.classes.Parestimate.BaseParestimate.roots"><code class="docutils literal notranslate"><span class="pre">BaseParestimate.roots</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="pyrssa.classes.html#pyrssa.classes.Parestimate.Parestimate"><code class="docutils literal notranslate"><span class="pre">Parestimate</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="pyrssa.classes.html#pyrssa.classes.Parestimate.Parestimate.items"><code class="docutils literal notranslate"><span class="pre">Parestimate.items()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyrssa.classes.html#pyrssa.classes.Parestimate.Parestimate.keys"><code class="docutils literal notranslate"><span class="pre">Parestimate.keys()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyrssa.classes.html#pyrssa.classes.Parestimate.Parestimate.values"><code class="docutils literal notranslate"><span class="pre">Parestimate.values()</span></code></a></li>
+</ul>
+</li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="pyrssa.classes.html#module-pyrssa.classes.Resonstruction">Resonstruction</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="pyrssa.classes.html#pyrssa.classes.Resonstruction.Reconstruction"><code class="docutils literal notranslate"><span class="pre">Reconstruction</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="pyrssa.classes.html#pyrssa.classes.Resonstruction.Reconstruction"><code class="docutils literal notranslate"><span class="pre">Reconstruction</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="pyrssa.classes.html#pyrssa.classes.Resonstruction.Reconstruction.items"><code class="docutils literal notranslate"><span class="pre">Reconstruction.items()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyrssa.classes.html#pyrssa.classes.Resonstruction.Reconstruction.keys"><code class="docutils literal notranslate"><span class="pre">Reconstruction.keys()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyrssa.classes.html#pyrssa.classes.Resonstruction.Reconstruction.residuals"><code class="docutils literal notranslate"><span class="pre">Reconstruction.residuals</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyrssa.classes.html#pyrssa.classes.Resonstruction.Reconstruction.series"><code class="docutils literal notranslate"><span class="pre">Reconstruction.series</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyrssa.classes.html#pyrssa.classes.Resonstruction.Reconstruction.values"><code class="docutils literal notranslate"><span class="pre">Reconstruction.values()</span></code></a></li>
+</ul>
+</li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="pyrssa.classes.html#module-pyrssa.classes.SSA">SSA</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="pyrssa.classes.html#pyrssa.classes.SSA.FOSSA"><code class="docutils literal notranslate"><span class="pre">FOSSA</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="pyrssa.classes.html#pyrssa.classes.SSA.FOSSA.U"><code class="docutils literal notranslate"><span class="pre">FOSSA.U</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyrssa.classes.html#pyrssa.classes.SSA.FOSSA.V"><code class="docutils literal notranslate"><span class="pre">FOSSA.V</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyrssa.classes.html#pyrssa.classes.SSA.FOSSA.contributions"><code class="docutils literal notranslate"><span class="pre">FOSSA.contributions()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyrssa.classes.html#pyrssa.classes.SSA.FOSSA.nsigma"><code class="docutils literal notranslate"><span class="pre">FOSSA.nsigma()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyrssa.classes.html#pyrssa.classes.SSA.FOSSA.nspecial"><code class="docutils literal notranslate"><span class="pre">FOSSA.nspecial()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyrssa.classes.html#pyrssa.classes.SSA.FOSSA.nu"><code class="docutils literal notranslate"><span class="pre">FOSSA.nu()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyrssa.classes.html#pyrssa.classes.SSA.FOSSA.series"><code class="docutils literal notranslate"><span class="pre">FOSSA.series</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyrssa.classes.html#pyrssa.classes.SSA.FOSSA.sigma"><code class="docutils literal notranslate"><span class="pre">FOSSA.sigma</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyrssa.classes.html#pyrssa.classes.SSA.FOSSA.summary"><code class="docutils literal notranslate"><span class="pre">FOSSA.summary()</span></code></a></li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="pyrssa.classes.html#pyrssa.classes.SSA.IOSSA"><code class="docutils literal notranslate"><span class="pre">IOSSA</span></code></a><ul>
-<li class="toctree-l3"><a class="reference internal" href="pyrssa.classes.html#pyrssa.classes.SSA.IOSSA.F"><code class="docutils literal notranslate"><span class="pre">IOSSA.F</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyrssa.classes.html#pyrssa.classes.SSA.IOSSA.U"><code class="docutils literal notranslate"><span class="pre">IOSSA.U</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyrssa.classes.html#pyrssa.classes.SSA.IOSSA.V"><code class="docutils literal notranslate"><span class="pre">IOSSA.V</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="pyrssa.classes.html#pyrssa.classes.SSA.IOSSA.contributions"><code class="docutils literal notranslate"><span class="pre">IOSSA.contributions()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="pyrssa.classes.html#pyrssa.classes.SSA.IOSSA.iossa_groups"><code class="docutils literal notranslate"><span class="pre">IOSSA.iossa_groups</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="pyrssa.classes.html#pyrssa.classes.SSA.IOSSA.nsigma"><code class="docutils literal notranslate"><span class="pre">IOSSA.nsigma()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="pyrssa.classes.html#pyrssa.classes.SSA.IOSSA.nspecial"><code class="docutils literal notranslate"><span class="pre">IOSSA.nspecial()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="pyrssa.classes.html#pyrssa.classes.SSA.IOSSA.nu"><code class="docutils literal notranslate"><span class="pre">IOSSA.nu()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyrssa.classes.html#pyrssa.classes.SSA.IOSSA.series"><code class="docutils literal notranslate"><span class="pre">IOSSA.series</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyrssa.classes.html#pyrssa.classes.SSA.IOSSA.sigma"><code class="docutils literal notranslate"><span class="pre">IOSSA.sigma</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="pyrssa.classes.html#pyrssa.classes.SSA.IOSSA.summary"><code class="docutils literal notranslate"><span class="pre">IOSSA.summary()</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="pyrssa.classes.html#pyrssa.classes.SSA.SSA"><code class="docutils literal notranslate"><span class="pre">SSA</span></code></a><ul>
-<li class="toctree-l3"><a class="reference internal" href="pyrssa.classes.html#pyrssa.classes.SSA.SSA.F"><code class="docutils literal notranslate"><span class="pre">SSA.F</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyrssa.classes.html#pyrssa.classes.SSA.SSA.U"><code class="docutils literal notranslate"><span class="pre">SSA.U</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyrssa.classes.html#pyrssa.classes.SSA.SSA.V"><code class="docutils literal notranslate"><span class="pre">SSA.V</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="pyrssa.classes.html#pyrssa.classes.SSA.SSA.contributions"><code class="docutils literal notranslate"><span class="pre">SSA.contributions()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="pyrssa.classes.html#pyrssa.classes.SSA.SSA.nsigma"><code class="docutils literal notranslate"><span class="pre">SSA.nsigma()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="pyrssa.classes.html#pyrssa.classes.SSA.SSA.nspecial"><code class="docutils literal notranslate"><span class="pre">SSA.nspecial()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="pyrssa.classes.html#pyrssa.classes.SSA.SSA.nu"><code class="docutils literal notranslate"><span class="pre">SSA.nu()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyrssa.classes.html#pyrssa.classes.SSA.SSA.series"><code class="docutils literal notranslate"><span class="pre">SSA.series</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyrssa.classes.html#pyrssa.classes.SSA.SSA.sigma"><code class="docutils literal notranslate"><span class="pre">SSA.sigma</span></code></a></li>
 </ul>
 </li>
 </ul>
@@ -170,35 +232,100 @@
 <dd></dd></dl>
 
 <dl class="py function">
+<dt class="sig sig-object py" id="pyrssa.base.cadzow">
+<span class="sig-name descname"><span class="pre">cadzow</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rank</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">correct</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e-06</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">maxiter</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">norm</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">trace</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cache</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrssa/base.html#cadzow"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrssa.base.cadzow" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyrssa.base.calc_v">
+<span class="sig-name descname"><span class="pre">calc_v</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">idx</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrssa/base.html#calc_v"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrssa.base.calc_v" title="Permalink to this definition"></a></dt>
+<dd><p>Generic function for the factor vector calculation given the SSA decomposition.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">SSABase</span></code>) – SSA object holding the decomposition.</p></li>
+<li><p><strong>idx</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Union" title="(in Python v3.11)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#range" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">range</span></code></a>, <a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.24)"><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code></a>]) – indices of the factor vectors to compute.</p></li>
+<li><p><strong>kwargs</strong> – additional arguments.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.24)"><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code></a></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>numpy array of suitable length (usually depends on SSA method and window length).</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">co2</span> <span class="o">=</span> <span class="n">prs</span><span class="o">.</span><span class="n">data</span><span class="p">(</span><span class="s2">&quot;co2&quot;</span><span class="p">)</span>
+<span class="c1"># Decompose &#39;co2&#39; series with default parameters</span>
+<span class="n">s</span> <span class="o">=</span> <span class="n">prs</span><span class="o">.</span><span class="n">ssa</span><span class="p">(</span><span class="n">co2</span><span class="p">)</span>
+<span class="c1"># Calculate the 5th factor vector</span>
+<span class="n">v</span> <span class="o">=</span> <span class="n">prs</span><span class="o">.</span><span class="n">calc_v</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="mi">5</span><span class="p">)</span>
+</pre></div>
+</div>
+<section id="details">
+<h2>Details<a class="headerlink" href="#details" title="Permalink to this heading"></a></h2>
+<p>Factor vector is a column of the factor matrix V, which is calculated as follows:</p>
+<div class="math notranslate nohighlight">
+\[V = \Sigma^{-1} X^{T} U,\]</div>
+<p>where X is a Hankel trajectory matrix, U is the matrix of eigenvectors and Sigma is a matrix of singular values.</p>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p><a class="reference internal" href="#pyrssa.base.ssa" title="pyrssa.base.ssa"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ssa</span></code></a>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">decompose</span></code></p>
+</div>
+</section>
+</dd></dl>
+
+<dl class="py function">
 <dt class="sig sig-object py" id="pyrssa.base.data">
-<span class="sig-name descname"><span class="pre">data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrssa/base.html#data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrssa.base.data" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">datetime_index</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrssa/base.html#data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrssa.base.data" title="Permalink to this definition"></a></dt>
 <dd><p>Function for loading available in pyrssa package datasets. Available datasets are stored in the data directory.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>name</strong> – Name of dataset to load</p>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> – Name of dataset to load</p></li>
+<li><p><strong>datetime_index</strong> – Name of column, where date or time index is stored</p></li>
+</ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>Loaded dataset</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>pandas.DataFrame</p>
+<dd class="field-odd"><p>pandas.DataFrame or pandas.Series</p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py function">
+<dt class="sig sig-object py" id="pyrssa.base.forecast">
+<span class="sig-name descname"><span class="pre">forecast</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">groups</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">length</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">method</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'recurrent'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">interval</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'none'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">only_intervals</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">direction</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'column'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">drop</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">drop_attributes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cache</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrssa/base.html#forecast"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrssa.base.forecast" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyrssa.base.fossa">
+<span class="sig-name descname"><span class="pre">fossa</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nested_groups</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filter</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(-1,</span> <span class="pre">1)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gamma</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">inf</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">normalize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">call</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrssa/base.html#fossa"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrssa.base.fossa" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyrssa.base.gapfill">
+<span class="sig-name descname"><span class="pre">gapfill</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">groups</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">base</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'original'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">method</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'sequential'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alpha</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">drop</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">drop_attributes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cache</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrssa/base.html#gapfill"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrssa.base.gapfill" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
 <dt class="sig sig-object py" id="pyrssa.base.grouping_auto">
-<span class="sig-name descname"><span class="pre">grouping_auto</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="pyrssa.classes.html#pyrssa.classes.SSA.SSA" title="pyrssa.classes.SSA.SSA"><span class="pre">SSA</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">grouping_method</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'pgram'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'wcor'</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'pgram'</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrssa/base.html#grouping_auto"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrssa.base.grouping_auto" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">grouping_auto</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">SSABase</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">grouping_method</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Literal" title="(in Python v3.11)"><span class="pre">Literal</span></a><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'pgram'</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'pgram'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">groups</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nclust</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">base</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Literal" title="(in Python v3.11)"><span class="pre">Literal</span></a><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'series'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'eigen'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'factor'</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'series'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">freq_bins</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">threshold</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">method</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Literal" title="(in Python v3.11)"><span class="pre">Literal</span></a><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'constant'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'linear'</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'constant'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">drop</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">GroupPgram</span></span></span><a class="reference internal" href="_modules/pyrssa/base.html#grouping_auto"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrssa.base.grouping_auto" title="Permalink to this definition"></a></dt>
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">grouping_auto</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">SSABase</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">grouping_method</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Literal" title="(in Python v3.11)"><span class="pre">Literal</span></a><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'wcor'</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'wcor'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">groups</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nclust</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">base</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Literal" title="(in Python v3.11)"><span class="pre">Literal</span></a><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'series'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'eigen'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'factor'</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'series'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">freq_bins</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">threshold</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">method</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Literal" title="(in Python v3.11)"><span class="pre">Literal</span></a><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'ward.D'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'ward.D2'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'single'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'complete'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'average'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'mcquitty'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'median'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'centroid'</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'complete'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">drop</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">GroupWCor</span></span></span></dt>
 <dd></dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="pyrssa.base.grouping_auto_pgram">
-<span class="sig-name descname"><span class="pre">grouping_auto_pgram</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="pyrssa.classes.html#pyrssa.classes.SSA.SSA" title="pyrssa.classes.SSA.SSA"><span class="pre">SSA</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">groups</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">base</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'series'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'eigen'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'factor'</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'series'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">freq_bins</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">threshold</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">method</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'constant'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'linear'</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'constant'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">drop</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrssa/base.html#grouping_auto_pgram"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrssa.base.grouping_auto_pgram" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">grouping_auto_pgram</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">groups</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">base</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'series'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">freq_bins</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">threshold</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">method</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'constant'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">drop</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrssa/base.html#grouping_auto_pgram"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrssa.base.grouping_auto_pgram" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="pyrssa.base.grouping_auto_wcor">
-<span class="sig-name descname"><span class="pre">grouping_auto_wcor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="pyrssa.classes.html#pyrssa.classes.SSA.SSA" title="pyrssa.classes.SSA.SSA"><span class="pre">SSA</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">groups</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nclust</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrssa/base.html#grouping_auto_wcor"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrssa.base.grouping_auto_wcor" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">grouping_auto_wcor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">groups</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nclust</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrssa/base.html#grouping_auto_wcor"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrssa.base.grouping_auto_wcor" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py function">
@@ -207,51 +334,107 @@
 <dd></dd></dl>
 
 <dl class="py function">
+<dt class="sig sig-object py" id="pyrssa.base.igapfill">
+<span class="sig-name descname"><span class="pre">igapfill</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">groups</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fill</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e-06</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">maxiter</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">norm</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">base</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'original'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">trace</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">drop</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">drop_attributes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cache</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrssa/base.html#igapfill"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrssa.base.igapfill" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
 <dt class="sig sig-object py" id="pyrssa.base.iossa">
-<span class="sig-name descname"><span class="pre">iossa</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="pyrssa.classes.html#pyrssa.classes.SSA.SSA" title="pyrssa.classes.SSA.SSA"><span class="pre">SSA</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">nested_groups</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e-05</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kappa</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">maxiter</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">norm</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">trace</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kappa_balance</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.5</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrssa/base.html#iossa"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrssa.base.iossa" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">iossa</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nested_groups</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e-05</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kappa</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">maxiter</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">norm</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">trace</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kappa_balance</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.5</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrssa/base.html#iossa"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrssa.base.iossa" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyrssa.base.lrr">
+<span class="sig-name descname"><span class="pre">lrr</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">SSABase</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">groups</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reverse</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">drop</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrssa/base.html#lrr"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrssa.base.lrr" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="pyrssa.base.parestimate">
-<span class="sig-name descname"><span class="pre">parestimate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">groups</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">method</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'esprit'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">subspace</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'column'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">normalize_roots</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dimensions</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">solve_method</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'ls'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">drop</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrssa/base.html#parestimate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrssa.base.parestimate" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">parestimate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">groups</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">method</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'esprit'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dimensions</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">subspace</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'column'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">normalize_roots</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">solve_method</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'ls'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">drop</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrssa/base.html#parestimate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrssa.base.parestimate" title="Permalink to this definition"></a></dt>
 <dd><p>Function to estimate the parameters (frequencies and rates) given a set of SSA eigenvectors.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>x</strong> – SSA object</p></li>
-<li><p><strong>groups</strong> – list of indices of eigenvectors to estimate from</p></li>
-<li><p><strong>method</strong> – For 1D-SSA,
-Toeplitz SSA, and MSSA: parameter estimation method, ‘esprit’ for 1D-ESPRIT (Algorithm 3.3 in Golyandina et al (
-2018)), ‘pairs’ for rough estimation based on pair of eigenvectors (Algorithm 3.4 in Golyandina et al (2018)).
-For nD-SSA: parameter estimation method. For now only ‘esprit’ is supported (Algorithm 5.6 in Golyandina et al (
-2018)). lowest dimension, when possible (length of groups is one)</p></li>
-<li><p><strong>subspace</strong> – which subspace will be used for parameter estimation</p></li>
-<li><p><strong>normalize_roots</strong> – logical vector or None, force signal roots to lie on unit circle.
+<li><p><strong>x</strong> (<a class="reference internal" href="pyrssa.classes.html#pyrssa.classes.SSA.SSA" title="pyrssa.classes.SSA.SSA"><code class="xref py py-class docutils literal notranslate"><span class="pre">SSA</span></code></a>) – SSA object</p></li>
+<li><p><strong>groups</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code></a>) – list of indices of eigenvectors to estimate from</p></li>
+<li><p><strong>method</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Literal" title="(in Python v3.11)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Literal</span></code></a>[<code class="docutils literal notranslate"><span class="pre">'esprit'</span></code>, <code class="docutils literal notranslate"><span class="pre">'pairs'</span></code>]) – for 1D-SSA, Toeplitz SSA, and MSSA: parameter estimation method, ‘esprit’ for 1D-ESPRIT (Algorithm 3.3 in
+Golyandina et al. (2018)), ‘pairs’ for rough estimation based on pair of eigenvectors (Algorithm 3.4 in
+Golyandina et al (2018)). For nD-SSA: parameter estimation method. For now only ‘esprit’ is supported
+(Algorithm 5.6 in Golyandina et al. (2018)). lowest dimension, when possible (length of groups is one)</p></li>
+<li><p><strong>dimensions</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code></a>) – a vector of dimension indices to perform ESPRIT along. None means all dimensions.</p></li>
+<li><p><strong>subspace</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Literal" title="(in Python v3.11)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Literal</span></code></a>[<code class="docutils literal notranslate"><span class="pre">'column'</span></code>, <code class="docutils literal notranslate"><span class="pre">'row'</span></code>]) – which subspace will be used for parameter estimation</p></li>
+<li><p><strong>normalize_roots</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code></a>) – force signal roots to lie on unit circle.
 None means automatic selection: normalize iff circular topology OR Toeplitz SSA used</p></li>
-<li><p><strong>dimensions</strong> – a vector of dimension indices to perform ESPRIT along. None means all dimensions.</p></li>
-<li><p><strong>solve_method</strong> – approximate matrix equation solving method, ‘ls’ for least-squares,
+<li><p><strong>solve_method</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Literal" title="(in Python v3.11)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Literal</span></code></a>[<code class="docutils literal notranslate"><span class="pre">'ls'</span></code>, <code class="docutils literal notranslate"><span class="pre">'tls'</span></code>]) – approximate matrix equation solving method, ‘ls’ for least-squares,
 ‘tls’ for total-least-squares.</p></li>
-<li><p><strong>drop</strong> – logical, if ‘TRUE’ then the result is coerced to lowest dimension,
-when possible (length of groups is one)</p></li>
+<li><p><strong>drop</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a>) – if True then the result is coerced to the lowest dimension,
+when possible (length of groups is one).</p></li>
+<li><p><strong>**kwargs</strong> – further arguments passed to ‘decompose’ routine, if necessary</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p></p>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="pyrssa.classes.html#pyrssa.classes.Parestimate.BaseParestimate" title="pyrssa.classes.Parestimate.BaseParestimate"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseParestimate</span></code></a> | <a class="reference internal" href="pyrssa.classes.html#pyrssa.classes.Parestimate.Parestimate" title="pyrssa.classes.Parestimate.Parestimate"><code class="xref py py-class docutils literal notranslate"><span class="pre">Parestimate</span></code></a></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="pyrssa.classes.html#pyrssa.classes.Parestimate.Parestimate" title="pyrssa.classes.Parestimate.Parestimate"><code class="xref py py-class docutils literal notranslate"><span class="pre">Parestimate</span></code></a> For 1D-SSA (and Toeplitz) - a list of <a class="reference internal" href="pyrssa.classes.html#pyrssa.classes.Parestimate.BaseParestimate" title="pyrssa.classes.Parestimate.BaseParestimate"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseParestimate</span></code></a> objects. For ‘method’ = ‘pairs’
+all moduli are set equal to 1 and all rates equal to 0. In all cases elements of the list have the same names
+as elements of groups. If group is unnamed, corresponding component gets name ‘Fn’, where ‘n’ is its index in
+groups list. If ‘drop = TRUE’ and length of ‘groups’ is one, then <a class="reference internal" href="pyrssa.classes.html#pyrssa.classes.Parestimate.BaseParestimate" title="pyrssa.classes.Parestimate.BaseParestimate"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseParestimate</span></code></a> is returned.</p>
 </dd>
 </dl>
+<p class="rubric">Examples</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">co2</span> <span class="o">=</span> <span class="n">prs</span><span class="o">.</span><span class="n">data</span><span class="p">(</span><span class="s2">&quot;co2&quot;</span><span class="p">)</span>
+<span class="c1"># Decompose &#39;co2&#39; series with default parameters</span>
+<span class="n">s</span> <span class="o">=</span> <span class="n">prs</span><span class="o">.</span><span class="n">ssa</span><span class="p">(</span><span class="n">co2</span><span class="p">,</span> <span class="n">neig</span><span class="o">=</span><span class="mi">20</span><span class="p">)</span>
+<span class="c1"># Estimate the periods from 2nd and 3rd eigenvectors using &#39;pairs&#39; method</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">prs</span><span class="o">.</span><span class="n">parestimate</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">groups</span><span class="o">=</span><span class="p">[[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">]],</span> <span class="n">method</span> <span class="o">=</span> <span class="s2">&quot;pairs&quot;</span><span class="p">))</span>
+<span class="c1"># Estimate the peroids from 2nd, 3rd, 5th and 6th eigenvectors using ESPRIT</span>
+<span class="n">pe</span> <span class="o">=</span> <span class="n">prs</span><span class="o">.</span><span class="n">parestimate</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">groups</span><span class="o">=</span><span class="p">[[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">]],</span> <span class="n">method</span><span class="o">=</span><span class="s2">&quot;esprit&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">pe</span><span class="p">)</span>
+<span class="n">prs</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">pe</span><span class="p">)</span>
+</pre></div>
+</div>
+<section id="id1">
+<h2>Details<a class="headerlink" href="#id1" title="Permalink to this heading"></a></h2>
+<p>See Sections 3.1 and 5.3 in Golyandina et al (2018) for full details.</p>
+<p>Briefly, the time series is assumed to satisfy the model</p>
+<div class="math notranslate nohighlight">
+\[x_n = \sum_k{C_k\mu_k^n}\]</div>
+<p>for complex <span class="math notranslate nohighlight">\(\mu_k\)</span> or, alternatively,</p>
+<div class="math notranslate nohighlight">
+\[x_n = \sum_k{A_k \rho_k^n \sin(2\pi\omega_k n + \phi_k)}.\]</div>
+<p>The return value are the estimated moduli and
+arguments of complex <span class="math notranslate nohighlight">\(\mu_k\)</span>, more precisely, <span class="math notranslate nohighlight">\(\rho_k\)</span> (‘moduli’) and <span class="math notranslate nohighlight">\(T_k = 1/\omega_k\)</span></p>
+<p>For images, the model</p>
+<div class="math notranslate nohighlight">
+\[x_{ij}=\sum_k C_k \lambda_k^i \mu_k^j\]</div>
+<p>is considered.</p>
+<p class="rubric">References</p>
+<ul class="simple">
+<li><p>Golyandina N., Korobeynikov A., Zhigljavsky A. (2018): Singular Spectrum Analysis with R. Use R!. Springer, Berlin, Heidelberg.</p></li>
+<li><p>Roy, R., Kailath, T., (1989): ESPRIT: estimation of signal parameters via rotational invariance techniques. IEEE Trans. Acoust. 37, 984-995.</p></li>
+<li><p>Rouquette, S., Najim, M. (2001): Estimation of frequencies and damping factors by two- dimensional esprit type methods. IEEE Transactions on Signal Processing 49(1), 237-245.</p></li>
+<li><p>Wang, Y., Chan, J-W., Liu, Zh. (2005): Comments on вЂњestimation of frequencies and damping factors by two-dimensional esprit type methodsвЂќ. IEEE Transactions on Signal Processing 53(8), 3348-3349.</p></li>
+<li><p>Shlemov A, Golyandina N (2014) Shaped extensions of Singular Spectrum Analysis. In: 21st international symposium on mathematical theory of networks and systems, July 7-11, 2014. Groningen, The Netherlands, pp 1813-1820.</p></li>
+</ul>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p><a class="reference internal" href="#pyrssa.base.ssa" title="pyrssa.base.ssa"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ssa</span></code></a>, <a class="reference internal" href="#pyrssa.base.lrr" title="pyrssa.base.lrr"><code class="xref py py-obj docutils literal notranslate"><span class="pre">lrr</span></code></a></p>
+</div>
+</section>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="pyrssa.base.reconstruct">
-<span class="sig-name descname"><span class="pre">reconstruct</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">SSABase</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">groups</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">dict</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">GroupPgram</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">drop_attributes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cache</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrssa/base.html#reconstruct"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrssa.base.reconstruct" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">reconstruct</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">groups</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">drop_attributes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cache</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrssa/base.html#reconstruct"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrssa.base.reconstruct" title="Permalink to this definition"></a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>x</strong> (<a class="reference internal" href="pyrssa.classes.html#pyrssa.classes.SSA.SSA" title="pyrssa.classes.SSA.SSA"><em>SSA</em></a>) – SSA object</p></li>
-<li><p><strong>groups</strong> (<em>list</em><em> or </em><em>dict</em>) – list of numeric vectors, indices of elementary components used for reconstruction,
+<li><p><strong>groups</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.11)"><em>list</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.11)"><em>dict</em></a>) – list of numeric vectors, indices of elementary components used for reconstruction,
 the entries of the list can be named, see ‘Value’ for more information</p></li>
-<li><p><strong>drop_attributes</strong> (<em>bool</em>) – if <cite>True</cite> then the attributes of the input objects are not copied to the reconstructed ones.</p></li>
-<li><p><strong>cache</strong> (<em>bool</em>) – if <cite>True</cite> then intermediate results will be cached in the SSA object.</p></li>
+<li><p><strong>drop_attributes</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><em>bool</em></a>) – if <cite>True</cite> then the attributes of the input objects are not copied to the reconstructed ones.</p></li>
+<li><p><strong>cache</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><em>bool</em></a>) – if <cite>True</cite> then intermediate results will be cached in the SSA object.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
@@ -266,13 +449,13 @@ group is unnamed, then corresponding component will obtain name ‘Fn’, where 
 <h2>Description<a class="headerlink" href="#description" title="Permalink to this heading"></a></h2>
 <p>Reconstruct the data given the SSA decomposition and the desired grouping of the elementary components.</p>
 </section>
-<section id="details">
-<h2>Details<a class="headerlink" href="#details" title="Permalink to this heading"></a></h2>
+<section id="id2">
+<h2>Details<a class="headerlink" href="#id2" title="Permalink to this heading"></a></h2>
 <p>Reconstruction is performed in a common form for different types of input objects. See Section 1.1.2.6 in
-Golyandina et al (2018) for the explanation. Formal algorithms are described in this book in Algorithm 2.2 for
+Golyandina et al. (2018) for the explanation. Formal algorithms are described in this book in Algorithm 2.2 for
 1D-SSA, Algorithm 4.3 for MSSA, Algorithm 5.2 for 2D-SSA and Algorithm 5.6 for Shaped 2D-SSA.</p>
 <p>Fast implementation of reconstruction with the help of FFT is described in Korobeynikov (2010) for the 1D case
-and in Section 6.2 (Rank-one quasi-hankelization) of Golyandina et al (2015) for the general case.</p>
+and in Section 6.2 (Rank-one quasi-hankelization) of Golyandina et al. (2015) for the general case.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>By default (argument drop.attributes) the routine tries to preserve all the attributes of the input object. This
@@ -309,62 +492,92 @@ doi:10.18637/jss.v067.i02</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="pyrssa.base.rforecast">
-<span class="sig-name descname"><span class="pre">rforecast</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ds</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">groups</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">length</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">base</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'reconstructed'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">only_new</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reverse</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">drop</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">drop_attributes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cache</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrssa/base.html#rforecast"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrssa.base.rforecast" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">rforecast</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">groups</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">length</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">base</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'reconstructed'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">only_new</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reverse</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">drop</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">drop_attributes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cache</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrssa/base.html#rforecast"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrssa.base.rforecast" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyrssa.base.seed">
+<span class="sig-name descname"><span class="pre">seed</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrssa/base.html#seed"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrssa.base.seed" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyrssa.base.spectrum">
+<span class="sig-name descname"><span class="pre">spectrum</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">spans</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kernel</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">taper</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pad</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fast</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">demean</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">detrend</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrssa/base.html#spectrum"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrssa.base.spectrum" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="pyrssa.base.ssa">
-<span class="sig-name descname"><span class="pre">ssa</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">L</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">neig</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mask</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wmask</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kind</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'1d-ssa'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">circular</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">column_projector</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'none'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">row_projector</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'none'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">svd_method</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'auto'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrssa/base.html#ssa"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrssa.base.ssa" title="Permalink to this definition"></a></dt>
-<dd><dl class="field-list simple">
+<span class="sig-name descname"><span class="pre">ssa</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">L</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">neig</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mask</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wmask</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kind</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'1d-ssa'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">circular</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">svd_method</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'auto'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">column_projector</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'none'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">row_projector</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'none'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">column_oblique</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'identity'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">row_oblique</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'identity'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">force_decompose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrssa/base.html#ssa"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrssa.base.ssa" title="Permalink to this definition"></a></dt>
+<dd><p>Set up the SSA object and perform the decomposition, if necessary.</p>
+<dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>x</strong> (<em>pandas.DataFrame</em><em>, </em><em>pandas.Series</em><em>, </em><em>numpy.ndarray</em><em>, </em><em>list</em>) – object to be decomposed. If DataFrame passed, the first column will be treated as a series</p></li>
-<li><p><strong>L</strong> (<em>int</em><em>, </em><em>optional</em>) – window length. Fixed to half of the series length by default.
-Should be vector of length 2 for 2d SSA</p></li>
-<li><p><strong>neig</strong> (<em>int</em><em>, </em><em>optional</em>) – number of desired eigentriples. If None, then sane default value
-will be used.</p></li>
-<li><p><strong>mask</strong> – for shaped 2d SSA case only. Logical matrix with same dimension as x.
-Specifies form of decomposed array. If None, then all non-NA elements will be used</p></li>
+<li><p><strong>x</strong> – object to be decomposed. If DataFrame passed, the first column will be treated as a series.</p></li>
+<li><p><strong>L</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>) – window length. Fixed to half of the series length by default. Should be a vector of length 2 for 2d SSA.</p></li>
+<li><p><strong>neig</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>) – number of desired eigentriples. If None, then sane default value will be used.</p></li>
+<li><p><strong>mask</strong> – <dl class="simple">
+<dt>for shaped 2d SSA case only. Logical matrix with same dimension as x. Specifies form of decomposed array.</dt><dd><p>If None, then all non-NA elements will be used</p>
+</dd>
+</dl>
+</p></li>
 <li><p><strong>wmask</strong> – for shaped 2d SSA case only. Logical matrix which specifies window form.</p></li>
-<li><p><strong>kind</strong> (<em>str</em><em>, </em><em>optional</em>) – SSA method. This includes ordinary 1d SSA, 2d SSA, Toeplitz variant of 1d SSA, multichannel
+<li><p><strong>kind</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Literal" title="(in Python v3.11)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Literal</span></code></a>[<code class="docutils literal notranslate"><span class="pre">'1d-ssa'</span></code>, <code class="docutils literal notranslate"><span class="pre">'2d-ssa'</span></code>, <code class="docutils literal notranslate"><span class="pre">'nd-ssa'</span></code>, <code class="docutils literal notranslate"><span class="pre">'toeplitz-ssa'</span></code>, <code class="docutils literal notranslate"><span class="pre">'mssa'</span></code>, <code class="docutils literal notranslate"><span class="pre">'cssa'</span></code>]) – SSA method. This includes ordinary 1d SSA, 2d SSA, Toeplitz variant of 1d SSA, multichannel
 variant of SSA and complex SSA. Defaults to 1d SSA.</p></li>
 <li><p><strong>circular</strong> – logical vector of one or two elements, describes series topology for 1d SSA and Toeplitz SSA
 or field topology for 2d SSA. ‘TRUE’ means series circularity for 1d case or circularity
 by a corresponding coordinate for 2d case. See Shlemov and Golyandina (2014) for more information.</p></li>
-<li><p><strong>row_projector</strong> (<em>str</em><em> or </em><em>int</em><em>, </em><em>optional</em>) – column and row signal subspaces projectors for SSA with projection.</p></li>
-<li><p><strong>svd_method</strong> – singular value decomposition method.</p></li>
+<li><p><strong>column_projector</strong> – column and row signal subspaces projectors for SSA with projection.</p></li>
+<li><p><strong>row_projector</strong> – column and row signal subspaces projectors for SSA with projection.</p></li>
+<li><p><strong>svd_method</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Literal" title="(in Python v3.11)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Literal</span></code></a>[<code class="docutils literal notranslate"><span class="pre">'auto'</span></code>, <code class="docutils literal notranslate"><span class="pre">'nutrlan'</span></code>, <code class="docutils literal notranslate"><span class="pre">'propack'</span></code>, <code class="docutils literal notranslate"><span class="pre">'svd'</span></code>, <code class="docutils literal notranslate"><span class="pre">'eigen'</span></code>, <code class="docutils literal notranslate"><span class="pre">'rspectra'</span></code>, <code class="docutils literal notranslate"><span class="pre">'primme'</span></code>]) – singular value decomposition method.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>SSA object. The precise layout of the object is mostly meant opaque and subject to
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="pyrssa.classes.html#pyrssa.classes.SSA.SSA" title="pyrssa.classes.SSA.SSA"><code class="xref py py-class docutils literal notranslate"><span class="pre">SSA</span></code></a></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>SSA object. The precise layout of the object is mostly meant opaque and subject to
 change in different version of the package.</p>
 </dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference internal" href="pyrssa.classes.html#pyrssa.classes.SSA.SSA" title="pyrssa.classes.SSA.SSA">SSA</a></p>
-</dd>
 </dl>
-<section id="id1">
-<h2>Description<a class="headerlink" href="#id1" title="Permalink to this heading"></a></h2>
-<p>Set up the SSA object and perform the decomposition, if necessary.</p>
-</section>
-<section id="id2">
-<h2>Details<a class="headerlink" href="#id2" title="Permalink to this heading"></a></h2>
+<p class="rubric">Examples</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">pyrssa</span> <span class="k">as</span> <span class="nn">prs</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+<span class="n">AustralianWine</span> <span class="o">=</span> <span class="n">prs</span><span class="o">.</span><span class="n">data</span><span class="p">(</span><span class="s2">&quot;AustralianWine&quot;</span><span class="p">)</span>
+<span class="n">fort</span> <span class="o">=</span> <span class="n">AustralianWine</span><span class="p">[</span><span class="s1">&#39;Fortified&#39;</span><span class="p">][:</span><span class="mi">174</span><span class="p">]</span>
+<span class="n">fort</span><span class="o">.</span><span class="n">index</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">date_range</span><span class="p">(</span><span class="n">start</span><span class="o">=</span><span class="s1">&#39;1980/01/01&#39;</span><span class="p">,</span> <span class="n">freq</span><span class="o">=</span><span class="s1">&#39;M&#39;</span><span class="p">,</span> <span class="n">periods</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">fort</span><span class="p">))</span>
+<span class="n">s_fort</span> <span class="o">=</span> <span class="n">prs</span><span class="o">.</span><span class="n">ssa</span><span class="p">(</span><span class="n">fort</span><span class="p">,</span> <span class="n">L</span><span class="o">=</span><span class="mi">84</span><span class="p">,</span> <span class="n">kind</span><span class="o">=</span><span class="s2">&quot;1d-ssa&quot;</span><span class="p">)</span>
+
+<span class="n">co2</span> <span class="o">=</span> <span class="n">data</span><span class="p">(</span><span class="s2">&quot;co2&quot;</span><span class="p">)</span>
+<span class="n">s2</span> <span class="o">=</span> <span class="n">prs</span><span class="o">.</span><span class="n">ssa</span><span class="p">(</span><span class="n">co2</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="n">column_projector</span><span class="o">=</span><span class="s2">&quot;centering&quot;</span><span class="p">,</span> <span class="n">row_projector</span><span class="o">=</span><span class="s2">&quot;centering&quot;</span><span class="p">)</span>
+<span class="n">s4</span> <span class="o">=</span> <span class="n">prs</span><span class="o">.</span><span class="n">ssa</span><span class="p">(</span><span class="n">co2</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="n">column_projector</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">row_projector</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+
+<span class="n">S</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">a</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">n</span> <span class="o">+</span> <span class="mi">1</span><span class="p">))</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">n</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">/</span> <span class="mi">7</span><span class="p">)</span>
+<span class="n">f</span> <span class="o">=</span> <span class="n">S</span> <span class="o">+</span> <span class="n">sigma</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="n">n</span><span class="p">)</span>
+<span class="n">f_center</span> <span class="o">=</span> <span class="n">f</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+<span class="n">s</span> <span class="o">=</span> <span class="n">prs</span><span class="o">.</span><span class="n">ssa</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">L</span><span class="o">=</span><span class="n">L</span><span class="p">,</span> <span class="n">kind</span><span class="o">=</span><span class="s2">&quot;1d-ssa&quot;</span><span class="p">)</span>
+<span class="n">st</span> <span class="o">=</span> <span class="n">prs</span><span class="o">.</span><span class="n">ssa</span><span class="p">(</span><span class="n">f_center</span><span class="p">,</span> <span class="n">L</span><span class="o">=</span><span class="n">L</span><span class="p">,</span> <span class="n">kind</span><span class="o">=</span><span class="s1">&#39;toeplitz-ssa&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<section id="id3">
+<h2>Details<a class="headerlink" href="#id3" title="Permalink to this heading"></a></h2>
 <p>This is the main entry point to the package. This routine constructs the SSA object filling all necessary
 internal structures and performing the decomposition if necessary. For the comprehensive description of SSA
-modifications and their algorithms see Golyandina et al (2018).</p>
+modifications and their algorithms see Golyandina et al. (2018).</p>
 <section id="variants-of-ssa">
 <h3>Variants of SSA<a class="headerlink" href="#variants-of-ssa" title="Permalink to this heading"></a></h3>
 <p>The following implementations of the SSA method are supported (corresponds to different values of kind argument):</p>
 <ul>
 <li><p>1d-ssa</p>
 <blockquote>
-<div><p>Basic 1d SSA as described in Chapter 1 of Golyandina et al (2001). This is also known as Broomhead-King
+<div><p>Basic 1d SSA as described in Chapter 1 of Golyandina et al. (2001). This is also known as Broomhead-King
 variant of SSA or BK-SSA, see Broomhead and King (1986).</p>
 </div></blockquote>
 </li>
 <li><p>toeplitz-ssa</p>
 <blockquote>
-<div><p>Toeplitz variant of 1d SSA. See Section 1.7.2 in Golyandina et al (2001). This is also known
+<div><p>Toeplitz variant of 1d SSA. See Section 1.7.2 in Golyandina et al. (2001). This is also known
 as Vautard-Ghil variant of SSA or VG-SSA for analysis of stationary time series, see Vautard and Ghil (1989).</p>
 </div></blockquote>
 </li>
@@ -381,7 +594,7 @@ Golyandina and Stepanov (2005).</p>
 </li>
 <li><p>2d-ssa</p>
 <blockquote>
-<div><p>2d SSA for decomposition of images and arrays. See Golyandina and Usevich (2009) and Golyandina et.al (2015)
+<div><p>2d SSA for decomposition of images and arrays. See Golyandina and Usevich (2009) and Golyandina et al. (2015)
 for more information.</p>
 </div></blockquote>
 </li>
@@ -404,7 +617,7 @@ by L) will be used.</p>
 </li>
 <li><p>triangle(side)</p>
 <blockquote>
-<div><p>mask in form of isosceles right-angled triangle with cathetus side. Right angle lay on topleft corner of
+<div><p>mask in form of isosceles right-angled triangle with cathetus side. Right angle lay on top left corner of
 container square matrix</p>
 </div></blockquote>
 </li>
@@ -416,12 +629,12 @@ and wants to use them rather than these functions, one should use special wrappe
 <section id="projectors-specification-for-ssa-with-projection">
 <h3>Projectors specification for SSA with projection<a class="headerlink" href="#projectors-specification-for-ssa-with-projection" title="Permalink to this heading"></a></h3>
 <p>Projectors are specified by means of column.projector and row.projector arguments (see Golyandina and Shlemov (
-2017)). Each may be a matrix of orthonormal (otherwise QR orthonormalization process will be perfomed) basis of
+2017)). Each may be a matrix of orthonormal (otherwise QR orthonormalization process will be performed) basis of
 projection subspace, or single integer, which will be interpreted as dimension of orthogonal polynomial basis (
 note that the dimension equals to degree plus 1, e.g. quadratic basis has dimension 3), or one of following
 character strings (or unique prefix): ‘none’, ‘constant’ (or ‘centering’), ‘linear’, ‘quadratic’ or ‘qubic’ for
 orthonormal bases of the corresponding functions.</p>
-<p>Here is the the list of the most used options</p>
+<p>Here is the list of the most used options</p>
 <ul>
 <li><p>both projectors are ‘none’</p>
 <blockquote>
@@ -439,7 +652,7 @@ orthonormal bases of the corresponding functions.</p>
 </div></blockquote>
 </li>
 </ul>
-<p>SSA with centering and double centering may improve the separation of linear trend (see Golyandina et.al (2001)
+<p>SSA with centering and double centering may improve the separation of linear trend (see Golyandina et al. (2001)
 for more information).</p>
 </section>
 <section id="svd-methods">
@@ -455,19 +668,19 @@ requested.</p>
 </li>
 <li><p>nutrlan</p>
 <blockquote>
-<div><p>Thick-restart Lanczos eigensolver which operates on cross-product matrix. This methods exploits the Hankel
+<div><p>Thick-restart Lanczos eigensolver which operates on cross-product matrix. These methods exploit the Hankel
 structure of the trajectory matrix efficiently and is really fast. The method allows the truncated SVD (only
-specifid amount of eigentriples to be computed) and the continuation of the decomposition. See Korobeynikov (
+specified amount of eigentriples to be computed) and the continuation of the decomposition. See Korobeynikov (
 2010) for more information.</p>
 </div></blockquote>
 </li>
 <li><p>propack</p>
 <blockquote>
-<div><p>SVD via implicitly restarted Lanczos bidiagonalization with partial reothogonalization. This methods exploits
+<div><p>SVD via implicitly restarted Lanczos bidiagonalization with partial reorthogonalization. These methods exploit
 the Hankel structure of the trajectory matrix efficiently and is really fast. This is the ‘proper’ SVD
 implementation (the matrix of factor vectors are calculated), thus the memory requirements of the methods are
 higher than for nu-TRLAN. Usually the method is slightly faster that nu-TRLAN and more numerically stable.
-The method allows the truncated SVD (only specifid amount of eigentriples to be computed). See Korobeynikov (
+The method allows the truncated SVD (only specified amount of eigentriples to be computed). See Korobeynikov (
 2010) for more information.</p>
 </div></blockquote>
 </li>
@@ -497,34 +710,13 @@ but still really slow for more or less non-trivial matrix sizes.</p>
 <p>Usually the ssa function tries to provide the best SVD implementation for given series length and the window
 size. In particular, for small series and window sizes it is better to use generic black-box routines (as
 provided by ‘svd’ and ‘eigen’ methods). For long series special-purpose routines are to be used.</p>
-<p class="rubric">Examples</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">pyrssa</span> <span class="k">as</span> <span class="nn">prs</span>
-<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-
-<span class="n">AustralianWine</span> <span class="o">=</span> <span class="n">prs</span><span class="o">.</span><span class="n">data</span><span class="p">(</span><span class="s2">&quot;AustralianWine&quot;</span><span class="p">)</span>
-<span class="n">fort</span> <span class="o">=</span> <span class="n">AustralianWine</span><span class="p">[</span><span class="s1">&#39;Fortified&#39;</span><span class="p">][:</span><span class="mi">174</span><span class="p">]</span>
-<span class="n">fort</span><span class="o">.</span><span class="n">index</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">date_range</span><span class="p">(</span><span class="n">start</span><span class="o">=</span><span class="s1">&#39;1980/01/01&#39;</span><span class="p">,</span> <span class="n">freq</span><span class="o">=</span><span class="s1">&#39;M&#39;</span><span class="p">,</span> <span class="n">periods</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">fort</span><span class="p">))</span>
-<span class="n">s_fort</span> <span class="o">=</span> <span class="n">prs</span><span class="o">.</span><span class="n">ssa</span><span class="p">(</span><span class="n">fort</span><span class="p">,</span> <span class="n">L</span><span class="o">=</span><span class="mi">84</span><span class="p">,</span> <span class="n">kind</span><span class="o">=</span><span class="s2">&quot;1d-ssa&quot;</span><span class="p">)</span>
-
-<span class="n">co2</span> <span class="o">=</span> <span class="n">data</span><span class="p">(</span><span class="s2">&quot;co2&quot;</span><span class="p">)</span>
-<span class="n">s2</span> <span class="o">=</span> <span class="n">prs</span><span class="o">.</span><span class="n">ssa</span><span class="p">(</span><span class="n">co2</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="n">column_projector</span><span class="o">=</span><span class="s2">&quot;centering&quot;</span><span class="p">,</span> <span class="n">row_projector</span><span class="o">=</span><span class="s2">&quot;centering&quot;</span><span class="p">)</span>
-<span class="n">s4</span> <span class="o">=</span> <span class="n">prs</span><span class="o">.</span><span class="n">ssa</span><span class="p">(</span><span class="n">co2</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="n">column_projector</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">row_projector</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
-
-<span class="n">S</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">a</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">n</span> <span class="o">+</span> <span class="mi">1</span><span class="p">))</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">n</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">/</span> <span class="mi">7</span><span class="p">)</span>
-<span class="n">f</span> <span class="o">=</span> <span class="n">S</span> <span class="o">+</span> <span class="n">sigma</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="n">n</span><span class="p">)</span>
-<span class="n">f_center</span> <span class="o">=</span> <span class="n">f</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
-<span class="n">s</span> <span class="o">=</span> <span class="n">prs</span><span class="o">.</span><span class="n">ssa</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">L</span><span class="o">=</span><span class="n">L</span><span class="p">,</span> <span class="n">kind</span><span class="o">=</span><span class="s2">&quot;1d-ssa&quot;</span><span class="p">)</span>
-<span class="n">st</span> <span class="o">=</span> <span class="n">prs</span><span class="o">.</span><span class="n">ssa</span><span class="p">(</span><span class="n">f_center</span><span class="p">,</span> <span class="n">L</span><span class="o">=</span><span class="n">L</span><span class="p">,</span> <span class="n">kind</span><span class="o">=</span><span class="s1">&#39;toeplitz-ssa&#39;</span><span class="p">)</span>
-</pre></div>
-</div>
 </section>
 </section>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="pyrssa.base.vforecast">
-<span class="sig-name descname"><span class="pre">vforecast</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ds</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">groups</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">length</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">only_new</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">drop</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">drop_attributes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrssa/base.html#vforecast"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrssa.base.vforecast" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">vforecast</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">groups</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">length</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">only_new</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">drop</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">drop_attributes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrssa/base.html#vforecast"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrssa.base.vforecast" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py function">
@@ -535,26 +727,14 @@ provided by ‘svd’ and ‘eigen’ methods). For long series special-purpose 
 </section>
 <section id="module-pyrssa.conversion">
 <span id="conversions"></span><h1>Conversions<a class="headerlink" href="#module-pyrssa.conversion" title="Permalink to this heading"></a></h1>
-<dl class="py class">
-<dt class="sig sig-object py" id="pyrssa.conversion.FloatVector">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">FloatVector</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrssa/conversion.html#FloatVector"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrssa.conversion.FloatVector" title="Permalink to this definition"></a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">FloatVector</span></code></p>
-</dd></dl>
-
-<dl class="py class">
-<dt class="sig sig-object py" id="pyrssa.conversion.IntVector">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">IntVector</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrssa/conversion.html#IntVector"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrssa.conversion.IntVector" title="Permalink to this definition"></a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">IntVector</span></code></p>
-</dd></dl>
-
 <dl class="py function">
-<dt class="sig sig-object py" id="pyrssa.conversion.dict_to_vec">
-<span class="sig-name descname"><span class="pre">dict_to_vec</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrssa/conversion.html#dict_to_vec"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrssa.conversion.dict_to_vec" title="Permalink to this definition"></a></dt>
+<dt class="sig sig-object py" id="pyrssa.conversion.collection_conversion">
+<span class="sig-name descname"><span class="pre">collection_conversion</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrssa/conversion.html#collection_conversion"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrssa.conversion.collection_conversion" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="pyrssa.conversion.get_time_index">
-<span class="sig-name descname"><span class="pre">get_time_index</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">series</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrssa/conversion.html#get_time_index"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrssa.conversion.get_time_index" title="Permalink to this definition"></a></dt>
+<dt class="sig sig-object py" id="pyrssa.conversion.convert">
+<span class="sig-name descname"><span class="pre">convert</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrssa/conversion.html#convert"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrssa.conversion.convert" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py function">
@@ -563,43 +743,38 @@ provided by ‘svd’ and ‘eigen’ methods). For long series special-purpose 
 <dd></dd></dl>
 
 <dl class="py function">
+<dt class="sig sig-object py" id="pyrssa.conversion.is_arr_of_types">
+<span class="sig-name descname"><span class="pre">is_arr_of_types</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">check_types</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">allow_inf</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">allow_na</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrssa/conversion.html#is_arr_of_types"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrssa.conversion.is_arr_of_types" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
 <dt class="sig sig-object py" id="pyrssa.conversion.is_float_arr">
-<span class="sig-name descname"><span class="pre">is_float_arr</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">arr</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrssa/conversion.html#is_float_arr"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrssa.conversion.is_float_arr" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">is_float_arr</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrssa/conversion.html#is_float_arr"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrssa.conversion.is_float_arr" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="pyrssa.conversion.is_int_arr">
-<span class="sig-name descname"><span class="pre">is_int_arr</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">arr</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrssa/conversion.html#is_int_arr"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrssa.conversion.is_int_arr" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">is_int_arr</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrssa/conversion.html#is_int_arr"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrssa.conversion.is_int_arr" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="pyrssa.conversion.is_of_int_lists_arr">
-<span class="sig-name descname"><span class="pre">is_of_int_lists_arr</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">arr</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrssa/conversion.html#is_of_int_lists_arr"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrssa.conversion.is_of_int_lists_arr" title="Permalink to this definition"></a></dt>
+<dt class="sig sig-object py" id="pyrssa.conversion.is_iterable">
+<span class="sig-name descname"><span class="pre">is_iterable</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrssa/conversion.html#is_iterable"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrssa.conversion.is_iterable" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="pyrssa.conversion.list_to_vec">
-<span class="sig-name descname"><span class="pre">list_to_vec</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrssa/conversion.html#list_to_vec"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrssa.conversion.list_to_vec" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="pyrssa.conversion.make_time_index">
-<span class="sig-name descname"><span class="pre">make_time_index</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">series</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Series</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">DataFrame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">time_index</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DatetimeIndex</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">only_new</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrssa/conversion.html#make_time_index"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrssa.conversion.make_time_index" title="Permalink to this definition"></a></dt>
+<dt class="sig sig-object py" id="pyrssa.conversion.is_list">
+<span class="sig-name descname"><span class="pre">is_list</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrssa/conversion.html#is_list"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrssa.conversion.is_list" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="pyrssa.conversion.none_to_null">
-<span class="sig-name descname"><span class="pre">none_to_null</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrssa/conversion.html#none_to_null"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrssa.conversion.none_to_null" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">none_to_null</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">_</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrssa/conversion.html#none_to_null"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrssa.conversion.none_to_null" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="pyrssa.conversion.pyrssa_to_rssa">
 <span class="sig-name descname"><span class="pre">pyrssa_to_rssa</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrssa/conversion.html#pyrssa_to_rssa"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrssa.conversion.pyrssa_to_rssa" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="pyrssa.conversion.r_list">
-<span class="sig-name descname"><span class="pre">r_list</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrssa/conversion.html#r_list"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrssa.conversion.r_list" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py function">
