@@ -30,7 +30,8 @@ extensions = [
     'sphinx.ext.napoleon',
     'sphinx_autodoc_typehints',
     'sphinx.ext.intersphinx',
-    'autodocsumm'
+    'autodocsumm',
+    'sphinxcontrib.jquery'
 ]
 
 templates_path = ['_templates']
