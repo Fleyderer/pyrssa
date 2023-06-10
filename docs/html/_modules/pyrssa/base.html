@@ -96,6 +96,7 @@
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">overload</span><span class="p">,</span> <span class="n">Literal</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Callable</span>
+<span class="kn">from</span> <span class="nn">collections.abc</span> <span class="kn">import</span> <span class="n">Iterable</span>
 <span class="kn">import</span> <span class="nn">inspect</span>
 
 <span class="c1"># Set conversion rules</span>
@@ -219,10 +220,10 @@
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
 
-<span class="sd">        |Parestimate| For 1D-SSA (and Toeplitz) - a list of |BaseParestimate| objects. For &#39;method&#39; = &#39;pairs&#39;</span>
+<span class="sd">        |Parestimate| For 1D-SSA (and Toeplitz) - a list of |BaseParestimate| objects. For method = &#39;pairs&#39;</span>
 <span class="sd">        all moduli are set equal to 1 and all rates equal to 0. In all cases elements of the list have the same names</span>
 <span class="sd">        as elements of groups. If group is unnamed, corresponding component gets name ‘Fn’, where ‘n’ is its index in</span>
-<span class="sd">        groups list. If &#39;drop = TRUE&#39; and length of &#39;groups&#39; is one, then |BaseParestimate| is returned.</span>
+<span class="sd">        groups list. If drop is True and length of groups is one, then |BaseParestimate| is returned.</span>
 
 <span class="sd">    Examples</span>
 <span class="sd">    --------</span>
@@ -234,7 +235,7 @@
 <span class="sd">        s = prs.ssa(co2, neig=20)</span>
 <span class="sd">        # Estimate the periods from 2nd and 3rd eigenvectors using &#39;pairs&#39; method</span>
 <span class="sd">        print(prs.parestimate(s, groups=[[2, 3]], method = &quot;pairs&quot;))</span>
-<span class="sd">        # Estimate the peroids from 2nd, 3rd, 5th and 6th eigenvectors using ESPRIT</span>
+<span class="sd">        # Estimate the periods from 2nd, 3rd, 5th and 6th eigenvectors using ESPRIT</span>
 <span class="sd">        pe = prs.parestimate(s, groups=[[2, 3, 5, 6]], method=&quot;esprit&quot;)</span>
 <span class="sd">        print(pe)</span>
 <span class="sd">        prs.plot(pe)</span>
@@ -245,7 +246,7 @@
 
 
 <div class="viewcode-block" id="ssa"><a class="viewcode-back" href="../../pyrssa.html#pyrssa.base.ssa">[docs]</a><span class="nd">@add_doc</span>
-<span class="k">def</span> <span class="nf">ssa</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">L</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">neig</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">mask</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">wmask</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+<span class="k">def</span> <span class="nf">ssa</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">,</span> <span class="n">L</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">neig</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">mask</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">wmask</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
         <span class="n">kind</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;1d-ssa&quot;</span><span class="p">,</span> <span class="s2">&quot;2d-ssa&quot;</span><span class="p">,</span> <span class="s2">&quot;nd-ssa&quot;</span><span class="p">,</span> <span class="s2">&quot;toeplitz-ssa&quot;</span><span class="p">,</span> <span class="s2">&quot;mssa&quot;</span><span class="p">,</span> <span class="s2">&quot;cssa&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;1d-ssa&quot;</span><span class="p">,</span> <span class="n">circular</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
         <span class="n">svd_method</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;auto&quot;</span><span class="p">,</span> <span class="s2">&quot;nutrlan&quot;</span><span class="p">,</span> <span class="s2">&quot;propack&quot;</span><span class="p">,</span> <span class="s2">&quot;svd&quot;</span><span class="p">,</span> <span class="s2">&quot;eigen&quot;</span><span class="p">,</span> <span class="s2">&quot;rspectra&quot;</span><span class="p">,</span> <span class="s2">&quot;primme&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;auto&quot;</span><span class="p">,</span>
         <span class="n">column_projector</span><span class="o">=</span><span class="s2">&quot;none&quot;</span><span class="p">,</span> <span class="n">row_projector</span><span class="o">=</span><span class="s2">&quot;none&quot;</span><span class="p">,</span> <span class="n">column_oblique</span><span class="o">=</span><span class="s2">&quot;identity&quot;</span><span class="p">,</span>
