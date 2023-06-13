@@ -249,10 +249,11 @@ class Plot:
     @staticmethod
     def sigma(ts: SSABase, show=True):
         plt.suptitle('Component norms', fontweight="bold")
-        plt.plot(ts.sigma, marker='o')
+        plt.plot(ts.sigma, marker='o', markersize=5)
         plt.xlabel('Index')
         plt.ylabel('Norms')
         plt.yscale('log')
+        plt.locator_params(axis='y', base=10 ** 0.5)
         if show:
             plt.show()
         return plt
@@ -381,7 +382,6 @@ class Plot:
         if show:
             plt.show()
         return plt
-
 
     def __call__(self, obj, x_labels=None, kind: Literal["vectors", "paired"] = None,
                  add_residuals=True, add_original=True, idx=None, scales=None,

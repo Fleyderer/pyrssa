@@ -42,6 +42,7 @@ exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#options-for-html-output
 
 html_theme = 'sphinx_rtd_theme'
+html_show_sphinx = False
 html_static_path = ['_static']
 add_module_names = False
 pyrssa_classes = [class_name for class_name, class_value in inspect.getmembers(prs) if class_name != '__builtins__'
