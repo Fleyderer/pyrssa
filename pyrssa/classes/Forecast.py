@@ -2,14 +2,13 @@ import pandas as pd
 from rpy2 import robjects
 from pyrssa.classes.SSA import SSA
 import rpy2.robjects.packages as rpackages
-from rpy2.robjects import conversion
-from pyrssa.indexing import get_time_index, make_time_index
+from rpy2.robjects import conversion, r
+from pyrssa.indexing import get_time_index, make_time_index, make_range_index
 from functools import cached_property
 import numpy as np
 from typing import Literal
 
 r_ssa = rpackages.importr('Rssa')
-frc = rpackages.importr("forecast")
 
 
 class BaseForecast:
@@ -23,6 +22,7 @@ class BaseForecast:
         cls._drop = drop
         cls._drop_attributes = drop_attributes
         cls._datetime_index = get_time_index(series)
+        cls._index = series.index
         cls._forecast_datetime_index = None
 
         instance = super().__new__(cls)
@@ -52,6 +52,10 @@ class BaseForecast:
                                                                 only_new=self._only_new,
                                                                 reverse=self._reverse)
             f_series.index = self._forecast_datetime_index
+        elif isinstance(self._index, pd.RangeIndex):
+            f_series.index = make_range_index(len(f_series), self._index,
+                                              only_new=self._only_new,
+                                              reverse=self._reverse)
         return f_series
 
     @cached_property
@@ -135,9 +139,11 @@ class Forecast:
     def __init__(self, x: SSA, groups, length=1, method: Literal["recurrent", "vector"] = "recurrent",
                  interval: Literal["none", "confidence", "prediction"] = "none",
                  only_intervals=True, direction: Literal["column", "row"] = "column",
-                 drop=True, drop_attributes=False, cache=True, **kwargs):
+                 drop=True, drop_attributes=False, cache=True, seed: int = None, **kwargs):
         self.series = x.series
         self.model = x
+        if seed:
+            r('set.seed')(seed)
         self.obj = r_ssa.forecast_1d_ssa(object=x, groups=groups, len=length, method=method, interval=interval,
                                          **{"only.intervals": only_intervals}, direction=direction, drop=drop,
                                          **{"drop.attributes": drop_attributes}, cache=cache, **kwargs)

@@ -108,9 +108,9 @@ def calc_v(x: SSABase, idx: Union[int, list, range, numpy.ndarray], **kwargs) ->
 
 
 @add_doc
-def parestimate(x: SSA, groups: list, method: Literal["esprit", "pairs"] = "esprit",
+def parestimate(x: SSA, groups: Iterable, method: Literal["esprit", "pairs"] = "esprit",
                 dimensions: list = None, subspace: Literal["column", "row"] = "column",
-                normalize_roots: list = None, solve_method: Literal["ls", "tls"] = "ls",
+                normalize_roots: Union[bool, list] = None, solve_method: Literal["ls", "tls"] = "ls",
                 drop: bool = True, **kwargs) -> BaseParestimate | Parestimate:
     r"""
     Function to estimate the parameters (frequencies and rates) given a set of SSA eigenvectors.
@@ -242,7 +242,7 @@ def ssa(x: Iterable, L: int = None, neig: int = None, mask=None, wmask=None,
 
 
 def reconstruct(x: SSABase,
-                groups: Union[list, dict, np.ndarray, GroupPgram, GroupWCor],
+                groups: Iterable,
                 drop_attributes=False,
                 cache=True):
     """
@@ -279,7 +279,7 @@ def reconstruct(x: SSABase,
     Note
     ----
 
-    By default (argument drop.attributes) the routine tries to preserve all the attributes of the input object. This
+    By default (argument drop_attributes) the routine tries to preserve all the attributes of the input object. This
     way, for example, the reconstruction result of 'ts' object is the 'ts' object with the same time scale.
 
     References
@@ -364,10 +364,10 @@ def bforecast(x, groups, length=1, R=100, level=0.95, kind="recurrent", interval
 def forecast(x: SSA, groups, length=1, method: Literal["recurrent", "vector"] = "recurrent",
              interval: Literal["none", "confidence", "prediction"] = "none",
              only_intervals=True, direction: Literal["column", "row"] = "column",
-             drop=True, drop_attributes=False, cache=True, **kwargs):
+             drop=True, drop_attributes=False, cache=True, seed: int = None, **kwargs):
     return Forecast(x=x, groups=groups, length=length, method=method, interval=interval,
                     only_intervals=only_intervals, direction=direction, drop=drop,
-                    drop_attributes=drop_attributes, cache=cache, **kwargs)
+                    drop_attributes=drop_attributes, cache=cache, seed=seed, **kwargs)
 
 
 def gapfill(x: SSA, groups, base: Literal["original", "reconstructed"] = "original",
@@ -382,10 +382,6 @@ def igapfill(x: SSA, groups, fill=None, tol: float = 1e-6, maxiter=0, norm=None,
              drop=True, drop_attributes=False, cache=True, **kwargs):
     return IGapfill(x=x, groups=groups, fill=fill, tol=tol, maxiter=maxiter, norm=norm, base=base,
                    trace=trace, drop=drop, drop_attributes=drop_attributes, cache=cache, **kwargs)
-
-
-def seed(value: int):
-    r('set.seed')(value)
 
 
 def hmatr(F, B=None, T=None, L=None, neig=10):

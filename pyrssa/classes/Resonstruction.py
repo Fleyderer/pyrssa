@@ -6,6 +6,7 @@ from pyrssa.classes.AutoSSA import GroupPgram, GroupWCor
 from pyrssa.indexing import get_time_index
 import rpy2.robjects.packages as rpackages
 from typing import Union
+from collections.abc import Iterable
 from functools import cached_property
 
 r_ssa = rpackages.importr('Rssa')
@@ -14,7 +15,7 @@ r_ssa = rpackages.importr('Rssa')
 class Reconstruction:
     """@DynamicAttrs"""
 
-    def __init__(self, x: SSABase, groups: Union[list, dict, np.ndarray, GroupPgram, GroupWCor],
+    def __init__(self, x: SSABase, groups: Iterable,
                  drop_attributes=False, cache=True):
         if isinstance(groups, GroupPgram) or isinstance(groups, GroupWCor):
             groups = dict(zip(groups.names, groups.groups))
@@ -40,6 +41,8 @@ class Reconstruction:
                 series.name = item
                 if self._datetime_index is not None:
                     series.index = self._datetime_index
+                else:
+                    series.index = self.series.index
                 setattr(self, item, series)
                 return series
             else:

@@ -21,3 +21,18 @@ def make_time_index(length: int, time_index: pd.DatetimeIndex,
         return new
     else:
         return time_index.union(new)
+
+
+def make_range_index(length: int, range_index: pd.RangeIndex, only_new=False, reverse=False):
+    # if only_new is False, we have to ignore old series, when creating new indices
+    length = length - (not only_new) * len(range_index)
+    if reverse:
+        end = min(range_index)
+        new = pd.RangeIndex(start=end - length - 1, stop=end - 1)
+    else:
+        start = max(range_index)
+        new = pd.RangeIndex(start=start + 1, stop=start + length + 1)
+    if only_new:
+        return new
+    else:
+        return range_index.union(new)
